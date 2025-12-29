@@ -117,10 +117,10 @@ export const BATTLES: Battle[] = [
           { id: 'H4', number: 14, position: 'CB', line: 'DEF', x: 20, y: 35, name: '马斯切拉诺', role: '拦截型中卫', team: 'home' },
           { id: 'H5', number: 22, position: 'LB', line: 'DEF', x: 35, y: 10, name: '阿比达尔', role: '内切型边后卫', team: 'home' },
           { id: 'H6', number: 16, position: 'CDM', line: 'MID', x: 25, y: 50, name: '布斯克茨', role: '节拍器', team: 'home' },
-          { id: 'H7', number: 6, position: 'CM', line: 'MID', x: 45, y: 65, name: '哈维', role: '组织核心', team: 'home' },
+          { id: 'H7', number: 6, position: 'CM', line: 'MID', x: 45, y: 65, name: '哈维', role: '组织核心', team: 'home', physical: {age: 31, height: '170cm', weight: '68kg', foot: 'Right'}, scoutingStats: [{label: 'Passing', value: 99}, {label: 'Vision', value: 98}, {label: 'Dribbling', value: 92}, {label: 'Control', value: 99}, {label: 'Speed', value: 72}], tacticalBrief: ['掌控比赛节奏', '寻找渗透性直传', '高位逼抢发起者'] },
           { id: 'H8', number: 8, position: 'CM', line: 'MID', x: 45, y: 35, name: '伊涅斯塔', role: '突击组织', team: 'home' },
           { id: 'H9', number: 17, position: 'RW', line: 'FWD', x: 65, y: 80, name: '佩德罗', role: '空间拉开者', team: 'home' },
-          { id: 'H10', number: 10, position: 'CF', line: 'FWD', x: 55, y: 50, name: '梅西', role: '伪九号', team: 'home' },
+          { id: 'H10', number: 10, position: 'CF', line: 'FWD', x: 55, y: 50, name: '梅西', role: '伪九号', team: 'home', physical: {age: 23, height: '170cm', weight: '72kg', foot: 'Left'}, scoutingStats: [{label: 'Dribbling', value: 99}, {label: 'Finishing', value: 96}, {label: 'Passing', value: 94}, {label: 'Speed', value: 92}, {label: 'Agility', value: 98}], tacticalBrief: ['回撤至中场接球', '吸引曼联中卫前移', '禁区边缘的致命一击'] },
           { id: 'H11', number: 7, position: 'LW', line: 'FWD', x: 65, y: 20, name: '比利亚', role: '内切射手', team: 'home' },
         ],
         awayPlayers: [
@@ -133,7 +133,7 @@ export const BATTLES: Battle[] = [
           { id: 'A7', number: 16, position: 'CM', line: 'MID', x: 60, y: 60, name: '卡里克', role: '后腰', team: 'away' },
           { id: 'A8', number: 11, position: 'CM', line: 'MID', x: 60, y: 40, name: '吉格斯', role: '核心', team: 'away' },
           { id: 'A9', number: 13, position: 'LM', line: 'MID', x: 55, y: 15, name: '朴智星', role: '防守工兵', team: 'away' },
-          { id: 'A10', number: 10, position: 'SS', line: 'FWD', x: 45, y: 50, name: '鲁尼', role: '二传手', team: 'away' },
+          { id: 'A10', number: 10, position: 'SS', line: 'FWD', x: 45, y: 50, name: '鲁尼', role: '二传手', team: 'away', physical: {age: 25, height: '176cm', weight: '83kg', foot: 'Right'}, scoutingStats: [{label: 'Power', value: 92}, {label: 'Finishing', value: 90}, {label: 'Passing', value: 85}, {label: 'Stamina', value: 94}, {label: 'Workrate', value: 98}], tacticalBrief: ['回撤衔接中前场', '寻找快速反击长传', '全场飞奔参与防守'] },
           { id: 'A11', number: 14, position: 'ST', line: 'FWD', x: 40, y: 50, name: '埃尔南德斯', role: '射手', team: 'away' },
         ],
         connections: [

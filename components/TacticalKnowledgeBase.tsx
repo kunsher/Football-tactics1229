@@ -13,18 +13,19 @@ const CustomRadarTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
     return (
-      <div className="bg-[#0a0f14] border border-blue-500/40 p-3 rounded-xl shadow-[0_10px_30px_rgba(0,0,0,0.8)] backdrop-blur-md animate-fade-in">
-        <p className="text-[10px] text-gray-500 font-black uppercase tracking-widest mb-1">Tactical Dimension</p>
-        <div className="flex items-center justify-between gap-8">
-          <span className="text-sm font-bold text-white">{data.subject}</span>
-          <span className="text-sm font-black text-blue-400">{data.A}%</span>
+      <div className="bg-[#0f172a]/95 border border-blue-500/50 p-4 rounded-xl shadow-[0_20px_40px_rgba(0,0,0,0.9)] backdrop-blur-xl animate-fade-in ring-1 ring-white/10">
+        <p className="text-[10px] text-blue-400 font-black uppercase tracking-[0.2em] mb-2">战术维度 / Dimension</p>
+        <div className="flex items-center justify-between gap-12">
+          <span className="text-base font-black text-white">{data.subject}</span>
+          <span className="text-lg font-black text-blue-500">{data.A}%</span>
         </div>
-        <div className="w-full h-1 bg-gray-800 rounded-full mt-2 overflow-hidden">
+        <div className="w-full h-1.5 bg-white/10 rounded-full mt-3 overflow-hidden border border-white/5">
           <div 
-            className="h-full bg-blue-500 transition-all duration-500" 
+            className="h-full bg-gradient-to-r from-blue-600 to-blue-400 transition-all duration-700 ease-out" 
             style={{ width: `${data.A}%` }}
           ></div>
         </div>
+        <p className="text-[9px] text-gray-500 mt-3 font-medium italic">基于历史战役数据的理论分析指标</p>
       </div>
     );
   }
@@ -38,9 +39,10 @@ export const TacticalKnowledgeBase: React.FC<TacticalKnowledgeBaseProps> = ({ on
   return (
     <div className="flex flex-col gap-6 animate-fade-in max-w-7xl mx-auto">
       {/* Header - 居中标题区 */}
-      <div className="bg-blue-600/10 border border-blue-500/30 rounded-2xl p-8 text-center">
-        <h2 className="text-3xl font-black text-white mb-3 tracking-tight">战术体系百科 <span className="text-blue-500/50 text-sm ml-2 font-bold uppercase tracking-widest">Tactical DNA Library</span></h2>
-        <p className="text-base text-blue-300/80 leading-relaxed max-w-2xl mx-auto">
+      <div className="bg-blue-600/10 border border-blue-500/30 rounded-2xl p-8 text-center relative overflow-hidden group">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
+        <h2 className="text-3xl font-black text-white mb-3 tracking-tight relative z-10">战术体系百科 <span className="text-blue-500/50 text-sm ml-2 font-bold uppercase tracking-widest">Tactical DNA Library</span></h2>
+        <p className="text-base text-blue-300/80 leading-relaxed max-w-2xl mx-auto relative z-10">
           深入探索改变足球历史的经典战术流派，从理论 DNA 到实战应用，构建您的专业足球知识体系。
         </p>
       </div>
@@ -91,7 +93,7 @@ export const TacticalKnowledgeBase: React.FC<TacticalKnowledgeBaseProps> = ({ on
                     {selectedSystem.relatedBattleId && onNavigateToBattle && (
                         <button 
                             onClick={() => onNavigateToBattle(selectedSystem.relatedBattleId!)}
-                            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-black uppercase px-4 py-1.5 rounded-lg shadow-lg shadow-blue-600/20 transition-all transform hover:scale-105"
+                            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-black uppercase px-4 py-1.5 rounded-lg shadow-lg shadow-blue-600/20 transition-all transform hover:scale-105 active:scale-95"
                         >
                             进入实战复盘 <span className="text-sm">→</span>
                         </button>
@@ -119,7 +121,7 @@ export const TacticalKnowledgeBase: React.FC<TacticalKnowledgeBaseProps> = ({ on
                             <h4 className="text-xs font-bold text-blue-500 uppercase tracking-widest mb-4">核心特征 / Key Traits</h4>
                             <div className="flex flex-wrap gap-3">
                                 {selectedSystem.keyTraits?.map(trait => (
-                                    <span key={trait} className="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-sm text-gray-300 font-bold hover:bg-blue-500/10 hover:border-blue-500/30 transition-colors">
+                                    <span key={trait} className="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-sm text-gray-300 font-bold hover:bg-blue-500/10 hover:border-blue-500/30 transition-all cursor-default">
                                         {trait}
                                     </span>
                                 ))}
@@ -128,15 +130,18 @@ export const TacticalKnowledgeBase: React.FC<TacticalKnowledgeBaseProps> = ({ on
                     </div>
 
                     {/* 右侧：雷达图展示 */}
-                    <div className="bg-white/5 rounded-3xl p-6 border border-white/5 flex flex-col items-center">
-                        <p className="text-[11px] text-center text-gray-500 font-black uppercase tracking-widest mb-6">理论战术指纹 / Tactical DNA Profile</p>
-                        <div className="h-72 w-full cursor-crosshair">
+                    <div className="bg-white/5 rounded-3xl p-8 border border-white/5 flex flex-col items-center group/chart relative overflow-hidden">
+                        <div className="absolute inset-0 bg-blue-500/5 opacity-0 group-hover/chart:opacity-100 transition-opacity pointer-events-none"></div>
+                        <p className="text-[11px] text-center text-gray-400 font-black uppercase tracking-widest mb-8 relative z-10">
+                          理论战术指纹 / <span className="text-blue-500">DNA Profile</span>
+                        </p>
+                        <div className="h-72 w-full cursor-crosshair relative z-10">
                             <ResponsiveContainer width="100%" height="100%">
                                 <RadarChart cx="50%" cy="50%" outerRadius="80%" data={selectedSystem.radarProfile}>
-                                    <PolarGrid stroke="rgba(255,255,255,0.1)" />
+                                    <PolarGrid stroke="rgba(255,255,255,0.08)" />
                                     <PolarAngleAxis 
                                         dataKey="subject" 
-                                        tick={{fill: '#9ca3af', fontSize: 11, fontWeight: 'bold'}} 
+                                        tick={{fill: '#94a3b8', fontSize: 12, fontWeight: '700'}} 
                                     />
                                     <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
                                     <Radar
@@ -146,18 +151,22 @@ export const TacticalKnowledgeBase: React.FC<TacticalKnowledgeBaseProps> = ({ on
                                         strokeWidth={3}
                                         fill="#3b82f6"
                                         fillOpacity={0.4}
-                                        activeDot={{ r: 6, fill: '#fff', stroke: '#3b82f6', strokeWidth: 2 }}
+                                        dot={{ r: 4, fill: '#3b82f6', strokeWidth: 2, stroke: '#fff', fillOpacity: 1 }}
+                                        activeDot={{ r: 8, fill: '#fff', stroke: '#3b82f6', strokeWidth: 3, className: 'animate-pulse' }}
                                         isAnimationActive={true}
-                                        animationDuration={1000}
+                                        animationDuration={1200}
+                                        animationEasing="ease-out"
                                     />
                                     <Tooltip 
                                         content={<CustomRadarTooltip />}
-                                        cursor={{ stroke: 'rgba(59, 130, 246, 0.2)', strokeWidth: 1 }}
+                                        cursor={{ stroke: 'rgba(59, 130, 246, 0.3)', strokeWidth: 2, strokeDasharray: '4 4' }}
                                     />
                                 </RadarChart>
                             </ResponsiveContainer>
                         </div>
-                        <p className="text-[10px] text-gray-600 italic mt-4">悬停节点以解码具体战术参数</p>
+                        <p className="text-[10px] text-gray-600 italic mt-6 font-bold uppercase tracking-tighter animate-pulse relative z-10">
+                          悬停节点解码战术基因参数
+                        </p>
                     </div>
                 </div>
 
@@ -171,7 +180,7 @@ export const TacticalKnowledgeBase: React.FC<TacticalKnowledgeBaseProps> = ({ on
                             <div 
                                 key={team} 
                                 onClick={() => selectedSystem.relatedBattleId && onNavigateToBattle?.(selectedSystem.relatedBattleId)}
-                                className="p-5 bg-white/5 rounded-2xl border border-white/5 flex items-center justify-between group hover:bg-white/10 hover:border-blue-500/20 transition-all cursor-pointer"
+                                className="p-6 bg-white/5 rounded-2xl border border-white/5 flex items-center justify-between group hover:bg-blue-600/10 hover:border-blue-500/30 transition-all cursor-pointer shadow-sm hover:shadow-blue-900/20"
                             >
                                 <span className="text-base font-bold text-white group-hover:text-blue-400 transition-colors">{team}</span>
                                 <div className="flex items-center gap-2 text-[11px] text-blue-500 font-black uppercase opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">

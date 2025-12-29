@@ -6,6 +6,7 @@ import { StatsDashboard } from './components/StatsDashboard';
 import { BattleSelector } from './components/BattleSelector';
 import { ProjectMission } from './components/ProjectMission';
 import { TacticalKnowledgeBase } from './components/TacticalKnowledgeBase';
+import { PlayerModal } from './components/PlayerModal'; // 新增
 import type { PlayerPosition, Battle } from './types';
 import { BATTLES } from './constants';
 import { GithubIcon } from './components/icons';
@@ -16,6 +17,7 @@ const App: React.FC = () => {
   const [selectedBattle, setSelectedBattle] = useState<Battle>(BATTLES[0]);
   const [currentPhaseIndex, setCurrentPhaseIndex] = useState(0);
   const [hoveredPlayer, setHoveredPlayer] = useState<PlayerPosition | null>(null);
+  const [selectedPlayerForModal, setSelectedPlayerForModal] = useState<PlayerPosition | null>(null); // 新增
   const [activeTab, setActiveTab] = useState<ActiveTab>('simulation');
 
   const currentPhase = selectedBattle.phases[currentPhaseIndex];
@@ -36,6 +38,14 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#0a0f14] text-gray-200 flex flex-col p-4 md:p-6 font-sans selection:bg-blue-500/30">
+      {/* 球员球探报告模态框 */}
+      {selectedPlayerForModal && (
+        <PlayerModal 
+          player={selectedPlayerForModal} 
+          onClose={() => setSelectedPlayerForModal(null)} 
+        />
+      )}
+
       <header className="flex flex-col md:flex-row justify-between items-start md:items-center pb-6 border-b border-white/10 gap-4">
         <div>
           <div className="flex items-center gap-3">
@@ -92,6 +102,7 @@ const App: React.FC = () => {
                         passingNetwork={{ connections: currentPhase.connections }}
                         hoveredPlayer={hoveredPlayer}
                         onPlayerHover={setHoveredPlayer}
+                        onPlayerClick={setSelectedPlayerForModal} // 新增
                         homeColor={selectedBattle.teams.home.color}
                         awayColor={selectedBattle.teams.away.color}
                       />
@@ -125,12 +136,12 @@ const App: React.FC = () => {
             
             {activeTab !== 'knowledge' && (
                 <div className="hidden lg:block text-[10px] text-gray-600 uppercase font-bold tracking-widest text-center mt-2 opacity-50">
-                    Interactive Tactical Simulation v1.0
+                    Interactive Tactical Simulation v1.0 | Click a player for scouting report
                 </div>
             )}
         </div>
 
-        {/* 右侧侧边栏：在百科模式下隐藏以实现剧中效果 */}
+        {/* 右侧侧边栏 */}
         {activeTab !== 'knowledge' && (
             <aside className="lg:col-span-4 flex flex-col gap-6 w-full animate-fade-in">
               {activeTab === 'simulation' && (

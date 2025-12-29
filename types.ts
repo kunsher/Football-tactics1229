@@ -1,4 +1,16 @@
 
+export interface ScoutingStat {
+  label: string;
+  value: number; // 0-100
+}
+
+export interface PlayerPhysicalInfo {
+  age: number;
+  height: string;
+  weight: string;
+  foot: 'Left' | 'Right' | 'Both';
+}
+
 export interface PlayerPosition {
   id: string;
   number: number;
@@ -9,6 +21,10 @@ export interface PlayerPosition {
   name: string;
   role: string;
   team: 'home' | 'away';
+  // 新增字段
+  physical?: PlayerPhysicalInfo;
+  scoutingStats?: ScoutingStat[];
+  tacticalBrief?: string[];
 }
 
 export interface RadarPoint {

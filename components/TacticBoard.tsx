@@ -8,6 +8,7 @@ interface TacticBoardProps {
   passingNetwork: { connections: Connection[] };
   hoveredPlayer: PlayerPosition | null;
   onPlayerHover: (player: PlayerPosition | null) => void;
+  onPlayerClick: (player: PlayerPosition) => void; // 新增
   homeColor: string;
   awayColor: string;
 }
@@ -23,7 +24,6 @@ const FootballPitch: React.FC = () => (
         <stop offset="0%" stopColor="transparent" stopOpacity="0" />
         <stop offset="100%" stopColor="#0a0f14" stopOpacity="0.5" />
       </radialGradient>
-      {/* 球员发光滤镜 */}
       <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
         <feGaussianBlur stdDeviation="4" result="blur" />
         <feComposite in="SourceGraphic" in2="blur" operator="over" />
@@ -33,16 +33,13 @@ const FootballPitch: React.FC = () => (
     <rect width="1050" height="680" fill="url(#stripes)" rx="10" />
     <rect width="1050" height="680" fill="url(#pitchGradient)" rx="10" pointerEvents="none" />
 
-    {/* 场地标线 */}
     <rect x="5" y="5" width="1040" height="670" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth="2.5" />
     <line x1="525" y1="5" x2="525" y2="675" stroke="rgba(255,255,255,0.6)" strokeWidth="2.5" />
     <circle cx="525" cy="340" r="91.5" stroke="rgba(255,255,255,0.6)" strokeWidth="2.5" fill="none" />
     
-    {/* 战术参考线 (肋部) */}
     <line x1="5" y1="138.5" x2="1045" y2="138.5" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5" strokeDasharray="10 5" />
     <line x1="5" y1="541.5" x2="1045" y2="541.5" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5" strokeDasharray="10 5" />
 
-    {/* 禁区 */}
     <rect x="5" y="138.5" width="165" height="403" stroke="rgba(255,255,255,0.6)" strokeWidth="2.5" fill="none" />
     <rect x="880" y="138.5" width="165" height="403" stroke="rgba(255,255,255,0.6)" strokeWidth="2.5" fill="none" />
   </svg>
@@ -52,8 +49,9 @@ const Player: React.FC<{
     player: PlayerPosition; 
     color: string;
     onHover: (player: PlayerPosition | null) => void; 
+    onClick: (player: PlayerPosition) => void;
     isHovered: boolean 
-}> = ({ player, color, onHover, isHovered }) => {
+}> = ({ player, color, onHover, onClick, isHovered }) => {
   return (
     <g
       style={{
@@ -62,9 +60,9 @@ const Player: React.FC<{
       }}
       onMouseEnter={() => onHover(player)}
       onMouseLeave={() => onHover(null)}
+      onClick={() => onClick(player)}
       className="cursor-pointer group"
     >
-      {/* 悬停时的光晕背景 */}
       {isHovered && (
         <circle 
             r="22" 
@@ -97,11 +95,11 @@ const Player: React.FC<{
         {player.number}
       </text>
       
-      {/* 球员姓名悬浮标签 */}
       {isHovered && (
-          <g transform="translate(0, -42)" className="animate-fade-in">
-              <rect x="-45" y="-12" width="90" height="22" rx="6" fill="rgba(10, 15, 20, 0.95)" stroke="rgba(255,255,255,0.2)" strokeWidth="1" />
-              <text textAnchor="middle" fill="#fff" fontSize="11" fontWeight="bold" className="font-sans tracking-tight">{player.name}</text>
+          <g transform="translate(0, -48)" className="animate-fade-in pointer-events-none">
+              <rect x="-65" y="-16" width="130" height="36" rx="8" fill="rgba(10, 15, 20, 0.98)" stroke="rgba(255,255,255,0.15)" strokeWidth="1.5" />
+              <text y="-2" textAnchor="middle" fill="#fff" fontSize="11" fontWeight="900" className="font-sans tracking-tight">{player.name}</text>
+              <text y="11" textAnchor="middle" fill="#3b82f6" fontSize="8" fontWeight="900" className="font-sans tracking-widest uppercase opacity-90">{player.role}</text>
           </g>
       )}
     </g>
@@ -114,6 +112,7 @@ export const TacticBoard: React.FC<TacticBoardProps> = ({
     passingNetwork, 
     hoveredPlayer, 
     onPlayerHover,
+    onPlayerClick,
     homeColor,
     awayColor
 }) => {
@@ -123,7 +122,6 @@ export const TacticBoard: React.FC<TacticBoardProps> = ({
                 <FootballPitch />
             </div>
             <svg viewBox="0 0 1050 680" className="w-full h-full relative z-10">
-                {/* 传球网络 */}
                 <g>
                     {passingNetwork.connections.map((conn, i) => {
                         const from = homePlayers.find(p => p.id === conn.from);
@@ -148,13 +146,11 @@ export const TacticBoard: React.FC<TacticBoardProps> = ({
                     })}
                 </g>
 
-                {/* 渲染客队球员 */}
                 {awayPlayers.map(p => (
-                    <Player key={p.id} player={p} color="#111827" onHover={onPlayerHover} isHovered={hoveredPlayer?.id === p.id} />
+                    <Player key={p.id} player={p} color="#111827" onHover={onPlayerHover} onClick={onPlayerClick} isHovered={hoveredPlayer?.id === p.id} />
                 ))}
-                {/* 渲染主队球员 */}
                 {homePlayers.map(p => (
-                    <Player key={p.id} player={p} color={homeColor} onHover={onPlayerHover} isHovered={hoveredPlayer?.id === p.id} />
+                    <Player key={p.id} player={p} color={homeColor} onHover={onPlayerHover} onClick={onPlayerClick} isHovered={hoveredPlayer?.id === p.id} />
                 ))}
             </svg>
         </div>
