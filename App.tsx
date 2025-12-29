@@ -4,6 +4,7 @@ import { TacticBoard } from './components/TacticBoard';
 import { AnalysisPanel } from './components/AnalysisPanel';
 import { StatsDashboard } from './components/StatsDashboard';
 import { BattleSelector } from './components/BattleSelector';
+import { ProjectMission } from './components/ProjectMission';
 import type { PlayerPosition, Battle } from './types';
 import { BATTLES } from './constants';
 import { GithubIcon } from './components/icons';
@@ -44,7 +45,6 @@ const App: React.FC = () => {
         </div>
       </header>
       
-      {/* 使用 items-start 确保 sticky 效果生效 */}
       <main className="flex-grow flex flex-col lg:grid lg:grid-cols-12 gap-8 mt-6 items-start">
         
         {/* 左侧：球场区域 - 在 lg 屏幕上固定 */}
@@ -99,6 +99,9 @@ const App: React.FC = () => {
             colors={{ home: selectedBattle.teams.home.color, away: selectedBattle.teams.away.color }}
             teams={selectedBattle.teams}
           />
+          
+          {/* 这里加入了您提供的图片中的项目内容 */}
+          <ProjectMission />
           
           <footer className="mt-4 pb-8 text-center text-[10px] text-gray-600 uppercase tracking-widest border-t border-white/5 pt-6">
             <p>© 2024 Soccer Tactic Lab - Graduation Project</p>

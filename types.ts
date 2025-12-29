@@ -11,6 +11,12 @@ export interface PlayerPosition {
   team: 'home' | 'away';
 }
 
+export interface GlossaryTerm {
+  term: string;
+  definition: string;
+  category: 'Position' | 'Phase' | 'Action';
+}
+
 export interface TacticPhase {
   id: string;
   title: string;
