@@ -130,30 +130,43 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({ player, onClose }) => 
               </div>
             </div>
 
-            {/* Tactical Intelligence */}
+            {/* Tactical Brief / Instructions */}
             <div className="space-y-10">
-              <div>
-                <p className="text-xs font-bold text-blue-400 uppercase tracking-widest mb-6">战术指令集</p>
-                <div className="space-y-4">
-                  {player.tacticalBrief ? player.tacticalBrief.map((brief, i) => (
-                    <div key={i} className="flex items-start gap-4 p-4 rounded-2xl bg-white/5 border border-white/5 hover:border-blue-500/20 transition-all group">
-                      <div className="w-6 h-6 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center text-[10px] font-black group-hover:bg-blue-500 group-hover:text-white transition-all">
-                        {i + 1}
+              <div className="animate-fade-in">
+                <div className="flex items-center justify-between mb-6">
+                    <p className="text-xs font-bold text-blue-400 uppercase tracking-widest">战术简报 / Tactical Brief</p>
+                    <span className="text-[9px] bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded border border-blue-500/20 font-black">阶段性指令</span>
+                </div>
+                
+                <div className="space-y-3">
+                  {player.tacticalBrief && player.tacticalBrief.length > 0 ? (
+                    player.tacticalBrief.map((brief, i) => (
+                      <div key={i} className="flex items-start gap-4 p-4 rounded-xl bg-white/5 border border-white/10 hover:border-blue-500/30 transition-all group relative overflow-hidden">
+                        <div className="absolute top-0 left-0 w-1 h-full bg-blue-600 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300"></div>
+                        <div className="mt-1.5 w-2 h-2 rounded-full bg-blue-500 group-hover:scale-125 transition-transform shrink-0 shadow-[0_0_8px_rgba(59,130,246,0.5)]"></div>
+                        <p className="text-sm text-gray-300 font-medium leading-relaxed group-hover:text-white transition-colors">
+                          {brief}
+                        </p>
                       </div>
-                      <p className="text-sm text-gray-300 font-medium leading-relaxed italic">{brief}</p>
+                    ))
+                  ) : (
+                    <div className="p-8 rounded-xl border border-dashed border-white/10 flex flex-col items-center justify-center text-center opacity-40">
+                      <div className="w-8 h-8 rounded-full border border-gray-600 flex items-center justify-center mb-3">
+                        <span className="text-xs">!</span>
+                      </div>
+                      <p className="text-[11px] text-gray-500 uppercase font-bold tracking-widest">当前阶段无特殊指令</p>
                     </div>
-                  )) : (
-                    <p className="text-xs text-gray-600">暂无针对该阶段的特殊战术要求</p>
                   )}
                 </div>
               </div>
 
               <div className="pt-8 border-t border-white/5">
-                <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">角色定义</p>
-                <div className="p-6 bg-gradient-to-br from-blue-600/10 to-transparent border border-blue-500/20 rounded-2xl">
-                  <p className="text-sm text-blue-200 font-medium leading-relaxed">
-                    在当前战役中，<span className="text-white font-black">{player.name}</span> 作为核心 <span className="text-blue-400 font-black">{player.role}</span>，
-                    其主要任务是利用其卓越的 <span className="text-white">空间感知</span> 与 <span className="text-white">传球能力</span> 彻底撕裂对方防线。
+                <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">角色深度定义</p>
+                <div className="p-6 bg-gradient-to-br from-blue-600/10 to-transparent border border-blue-500/20 rounded-2xl relative group">
+                  <div className="absolute top-2 right-4 text-[40px] font-black text-white/5 pointer-events-none italic select-none">ROLE</div>
+                  <p className="text-sm text-blue-100 font-medium leading-relaxed relative z-10">
+                    在当前复盘片段中，<span className="text-white font-black underline decoration-blue-500/30 underline-offset-4">{player.name}</span> 承担着 <span className="text-blue-400 font-black">{player.role}</span> 的关键职责。
+                    主教练要求其在进攻端保持高度的 <span className="text-white">战术纪律</span>，通过频繁的 <span className="text-white">弱侧移动</span> 为队友扯开关键防守空档。
                   </p>
                 </div>
               </div>
@@ -161,10 +174,10 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({ player, onClose }) => 
           </div>
           
           {/* Footer Branding */}
-          <div className="flex items-center justify-center gap-4 opacity-50 pt-4">
+          <div className="flex items-center justify-center gap-4 opacity-30 pt-4">
             <div className="h-px w-20 bg-gradient-to-r from-transparent to-gray-700"></div>
             <div className="text-[10px] text-gray-600 uppercase tracking-widest font-black">
-              足球战术实验室 球探引擎
+              Soccer Tactic Lab Intelligence
             </div>
             <div className="h-px w-20 bg-gradient-to-l from-transparent to-gray-700"></div>
           </div>

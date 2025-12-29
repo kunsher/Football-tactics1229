@@ -41,37 +41,47 @@ export const GLOSSARY: GlossaryTerm[] = [
   { term: '低位防守 (Low Block)', definition: '防守方将防线整体退缩至本方禁区前沿，压缩纵向空间，使对方难以通过传球打透。', category: 'Phase' },
 ];
 
+// 标准能力维度模板
+const getScoutingStats = (s: number, f: number, p: number, d: number, def: number, phy: number) => [
+    { label: '速度', value: s },
+    { label: '射门', value: f },
+    { label: '传球', value: p },
+    { label: '盘带', value: d },
+    { label: '防守', value: def },
+    { label: '身体', value: phy },
+];
+
 // --- 2011 Barca vs ManU Squads ---
 const getBarcaSquad2011 = (overrides: Partial<PlayerPosition>[] = []): PlayerPosition[] => {
   const base: PlayerPosition[] = [
-    { id: 'H1', number: 1, position: 'GK', line: 'GK', x: 5, y: 50, name: '巴尔德斯', role: '清道夫门将', team: 'home' },
-    { id: 'H2', number: 2, position: 'RB', line: 'DEF', x: 28, y: 88, name: '阿尔维斯', role: '进攻侧翼', team: 'home' },
-    { id: 'H3', number: 3, position: 'CB', line: 'DEF', x: 15, y: 62, name: '皮克', role: '出球中卫', team: 'home' },
-    { id: 'H14', number: 14, position: 'CB', line: 'DEF', x: 15, y: 38, name: '马斯切拉诺', role: '防守大闸', team: 'home' },
-    { id: 'H22', number: 22, position: 'LB', line: 'DEF', x: 28, y: 12, name: '阿比达尔', role: '内收后卫', team: 'home' },
-    { id: 'H16', number: 16, position: 'CDM', line: 'MID', x: 32, y: 50, name: '布斯克茨', role: '单后腰', team: 'home' },
-    { id: 'H6', number: 6, position: 'CM', line: 'MID', x: 45, y: 65, name: '哈维', role: '指挥官', team: 'home' },
-    { id: 'H8', number: 8, position: 'CM', line: 'MID', x: 45, y: 35, name: '伊涅斯塔', role: '核心', team: 'home' },
-    { id: 'H17', number: 17, position: 'RW', line: 'FWD', x: 55, y: 82, name: '佩德罗', role: '边锋', team: 'home' },
-    { id: 'H10', number: 10, position: 'CF', line: 'FWD', x: 55, y: 50, name: '梅西', role: '伪九号', team: 'home' },
-    { id: 'H7', number: 7, position: 'LW', line: 'FWD', x: 55, y: 18, name: '比利亚', role: '射手', team: 'home' },
+    { id: 'H1', number: 1, position: 'GK', line: 'GK', x: 5, y: 50, name: '巴尔德斯', role: '清道夫门将', team: 'home', physical: { age: 29, height: '183cm', weight: '78kg', foot: 'Right' } },
+    { id: 'H2', number: 2, position: 'RB', line: 'DEF', x: 28, y: 88, name: '阿尔维斯', role: '进攻侧翼', team: 'home', physical: { age: 28, height: '172cm', weight: '70kg', foot: 'Right' } },
+    { id: 'H3', number: 3, position: 'CB', line: 'DEF', x: 15, y: 62, name: '皮克', role: '出球中卫', team: 'home', physical: { age: 24, height: '194cm', weight: '85kg', foot: 'Right' } },
+    { id: 'H14', number: 14, position: 'CB', line: 'DEF', x: 15, y: 38, name: '马斯切拉诺', role: '防守大闸', team: 'home', physical: { age: 27, height: '174cm', weight: '73kg', foot: 'Right' } },
+    { id: 'H22', number: 22, position: 'LB', line: 'DEF', x: 28, y: 12, name: '阿比达尔', role: '内收后卫', team: 'home', physical: { age: 31, height: '186cm', weight: '75kg', foot: 'Left' } },
+    { id: 'H16', number: 16, position: 'CDM', line: 'MID', x: 32, y: 50, name: '布斯克茨', role: '单后腰', team: 'home', physical: { age: 22, height: '189cm', weight: '76kg', foot: 'Right' }, scoutingStats: getScoutingStats(65, 60, 95, 88, 92, 80) },
+    { id: 'H6', number: 6, position: 'CM', line: 'MID', x: 45, y: 65, name: '哈维', role: '指挥官', team: 'home', physical: { age: 31, height: '170cm', weight: '68kg', foot: 'Right' }, scoutingStats: getScoutingStats(72, 75, 99, 94, 70, 75) },
+    { id: 'H8', number: 8, position: 'CM', line: 'MID', x: 45, y: 35, name: '伊涅斯塔', role: '核心', team: 'home', physical: { age: 27, height: '171cm', weight: '68kg', foot: 'Right' }, scoutingStats: getScoutingStats(84, 80, 96, 99, 65, 70) },
+    { id: 'H17', number: 17, position: 'RW', line: 'FWD', x: 55, y: 82, name: '佩德罗', role: '边锋', team: 'home', physical: { age: 23, height: '169cm', weight: '65kg', foot: 'Both' } },
+    { id: 'H10', number: 10, position: 'CF', line: 'FWD', x: 55, y: 50, name: '梅西', role: '伪九号', team: 'home', tacticalBrief: ['撤出禁区吸引维迪奇', '在中圈持球分配两侧'], physical: { age: 23, height: '170cm', weight: '72kg', foot: 'Left' }, scoutingStats: getScoutingStats(94, 98, 96, 99, 45, 78) },
+    { id: 'H7', number: 7, position: 'LW', line: 'FWD', x: 55, y: 18, name: '比利亚', role: '射手', team: 'home', tacticalBrief: ['利用梅西扯出的空间进行内切', '寻找远角推射机会'], physical: { age: 29, height: '175cm', weight: '69kg', foot: 'Both' }, scoutingStats: getScoutingStats(88, 95, 82, 89, 40, 75) },
   ];
   return base.map(p => ({ ...p, ...overrides.find(o => o.id === p.id) }));
 };
 
 const getUnitedSquad2011 = (overrides: Partial<PlayerPosition>[] = []): PlayerPosition[] => {
   const base: PlayerPosition[] = [
-    { id: 'A1', number: 1, position: 'GK', line: 'GK', x: 95, y: 50, name: '范德萨', role: '门将', team: 'away' },
-    { id: 'A20', number: 20, position: 'RB', line: 'DEF', x: 72, y: 82, name: '法比奥', role: '后卫', team: 'away' },
-    { id: 'A5', number: 5, position: 'CB', line: 'DEF', x: 80, y: 60, name: '费迪南德', role: '中卫', team: 'away' },
-    { id: 'A15', number: 15, position: 'CB', line: 'DEF', x: 80, y: 40, name: '维迪奇', role: '中卫', team: 'away' },
-    { id: 'A3', number: 3, position: 'LB', line: 'DEF', x: 72, y: 18, name: '埃弗拉', role: '后卫', team: 'away' },
-    { id: 'A25', number: 25, position: 'RM', line: 'MID', x: 62, y: 85, name: '瓦伦西亚', role: '边中场', team: 'away' },
-    { id: 'A16', number: 16, position: 'CM', line: 'MID', x: 68, y: 58, name: '卡里克', role: '后腰', team: 'away' },
-    { id: 'A11', number: 11, position: 'CM', line: 'MID', x: 68, y: 42, name: '吉格斯', role: '中场', team: 'away' },
-    { id: 'A13', number: 13, position: 'LM', line: 'MID', x: 62, y: 15, name: '朴智星', role: '边中场', team: 'away' },
-    { id: 'A10', number: 10, position: 'SS', line: 'FWD', x: 45, y: 55, name: '鲁尼', role: '影锋', team: 'away' },
-    { id: 'A14', number: 14, position: 'ST', line: 'FWD', x: 35, y: 45, name: '埃尔南德斯', role: '前锋', team: 'away' },
+    { id: 'A1', number: 1, position: 'GK', line: 'GK', x: 95, y: 50, name: '范德萨', role: '门将', team: 'away', physical: { age: 40, height: '197cm', weight: '83kg', foot: 'Right' } },
+    { id: 'A20', number: 20, position: 'RB', line: 'DEF', x: 72, y: 82, name: '法比奥', role: '后卫', team: 'away', physical: { age: 20, height: '172cm', weight: '69kg', foot: 'Right' } },
+    { id: 'A5', number: 5, position: 'CB', line: 'DEF', x: 80, y: 60, name: '费迪南德', role: '中卫', team: 'away', physical: { age: 32, height: '189cm', weight: '82kg', foot: 'Right' } },
+    { id: 'A15', number: 15, position: 'CB', line: 'DEF', x: 80, y: 40, name: '维迪奇', role: '中卫', team: 'away', physical: { age: 29, height: '190cm', weight: '84kg', foot: 'Right' } },
+    { id: 'A3', number: 3, position: 'LB', line: 'DEF', x: 72, y: 18, name: '埃弗拉', role: '后卫', team: 'away', physical: { age: 30, height: '174cm', weight: '72kg', foot: 'Left' } },
+    { id: 'A25', number: 25, position: 'RM', line: 'MID', x: 62, y: 85, name: '瓦伦西亚', role: '边中场', team: 'away', physical: { age: 25, height: '180cm', weight: '78kg', foot: 'Right' } },
+    { id: 'A16', number: 16, position: 'CM', line: 'MID', x: 68, y: 58, name: '卡里克', role: '后腰', team: 'away', physical: { age: 29, height: '188cm', weight: '74kg', foot: 'Right' }, scoutingStats: getScoutingStats(68, 70, 92, 78, 88, 82) },
+    { id: 'A11', number: 11, position: 'CM', line: 'MID', x: 68, y: 42, name: '吉格斯', role: '中场', team: 'away', physical: { age: 37, height: '179cm', weight: '71kg', foot: 'Left' } },
+    { id: 'A13', number: 13, position: 'LM', line: 'MID', x: 62, y: 15, name: '朴智星', role: '边中场', team: 'away', physical: { age: 30, height: '178cm', weight: '73kg', foot: 'Right' } },
+    { id: 'A10', number: 10, position: 'SS', line: 'FWD', x: 45, y: 55, name: '鲁尼', role: '影锋', team: 'away', physical: { age: 25, height: '176cm', weight: '82kg', foot: 'Right' }, scoutingStats: getScoutingStats(82, 94, 88, 86, 60, 92) },
+    { id: 'A14', number: 14, position: 'ST', line: 'FWD', x: 35, y: 45, name: '埃尔南德斯', role: '前锋', team: 'away', physical: { age: 22, height: '175cm', weight: '71kg', foot: 'Right' } },
   ];
   return base.map(p => ({ ...p, ...overrides.find(o => o.id === p.id) }));
 };
@@ -79,34 +89,34 @@ const getUnitedSquad2011 = (overrides: Partial<PlayerPosition>[] = []): PlayerPo
 // --- 2012 Real Madrid vs Barca Squads ---
 const getMadridSquad2012 = (overrides: Partial<PlayerPosition>[] = []): PlayerPosition[] => {
   const base: PlayerPosition[] = [
-    { id: 'M1', number: 1, position: 'GK', line: 'GK', x: 5, y: 50, name: '卡西利亚斯', role: '门神', team: 'home' },
-    { id: 'M17', number: 17, position: 'RB', line: 'DEF', x: 30, y: 85, name: '阿韦洛亚', role: '防守后卫', team: 'home' },
-    { id: 'M3', number: 3, position: 'CB', line: 'DEF', x: 22, y: 62, name: '佩佩', role: '防守核心', team: 'home' },
-    { id: 'M4', number: 4, position: 'CB', line: 'DEF', x: 22, y: 38, name: '拉莫斯', role: '空中霸主', team: 'home' },
-    { id: 'M5', number: 5, position: 'LB', line: 'DEF', x: 30, y: 15, name: '科恩特朗', role: '边路防线', team: 'home' },
-    { id: 'M14', number: 14, position: 'CDM', line: 'MID', x: 40, y: 65, name: '哈维·阿隆索', role: '长传大师', team: 'home' },
-    { id: 'M6', number: 6, position: 'CDM', line: 'MID', x: 40, y: 35, name: '赫迪拉', role: '覆盖者', team: 'home' },
-    { id: 'M22', number: 22, position: 'RM', line: 'MID', x: 55, y: 85, name: '迪马利亚', role: '突击手', team: 'home' },
-    { id: 'M10', number: 10, position: 'AM', line: 'MID', x: 50, y: 50, name: '厄齐尔', role: '组织核心', team: 'home' },
-    { id: 'M7', number: 7, position: 'LM', line: 'FWD', x: 55, y: 15, name: 'C罗', role: '终结者', team: 'home' },
-    { id: 'M9', number: 9, position: 'ST', line: 'FWD', x: 62, y: 50, name: '本泽马', role: '全能前锋', team: 'home' },
+    { id: 'M1', number: 1, position: 'GK', line: 'GK', x: 5, y: 50, name: '卡西利亚斯', role: '门神', team: 'home', physical: { age: 30, height: '185cm', weight: '80kg', foot: 'Right' } },
+    { id: 'M17', number: 17, position: 'RB', line: 'DEF', x: 30, y: 85, name: '阿韦洛亚', role: '防守后卫', team: 'home', physical: { age: 29, height: '184cm', weight: '79kg', foot: 'Right' } },
+    { id: 'M3', number: 3, position: 'CB', line: 'DEF', x: 22, y: 62, name: '佩佩', role: '防守核心', team: 'home', physical: { age: 29, height: '188cm', weight: '81kg', foot: 'Right' } },
+    { id: 'M4', number: 4, position: 'CB', line: 'DEF', x: 22, y: 38, name: '拉莫斯', role: '空中霸主', team: 'home', physical: { age: 26, height: '184cm', weight: '82kg', foot: 'Right' } },
+    { id: 'M5', number: 5, position: 'LB', line: 'DEF', x: 30, y: 15, name: '科恩特朗', role: '边路防线', team: 'home', physical: { age: 24, height: '179cm', weight: '72kg', foot: 'Left' } },
+    { id: 'M14', number: 14, position: 'CDM', line: 'MID', x: 40, y: 65, name: '哈维·阿隆索', role: '长传大师', team: 'home', tacticalBrief: ['就地断球后第一时间寻找前场接应点', '控制转换节奏'], physical: { age: 30, height: '183cm', weight: '80kg', foot: 'Right' }, scoutingStats: getScoutingStats(72, 80, 98, 82, 88, 85) },
+    { id: 'M6', number: 6, position: 'CDM', line: 'MID', x: 40, y: 35, name: '赫迪拉', role: '覆盖者', team: 'home', physical: { age: 25, height: '189cm', weight: '83kg', foot: 'Right' } },
+    { id: 'M22', number: 22, position: 'RM', line: 'MID', x: 55, y: 85, name: '迪马利亚', role: '突击手', team: 'home', physical: { age: 24, height: '180cm', weight: '70kg', foot: 'Left' }, scoutingStats: getScoutingStats(90, 82, 88, 92, 60, 75) },
+    { id: 'M10', number: 10, position: 'AM', line: 'MID', x: 50, y: 50, name: '厄齐尔', role: '组织核心', team: 'home', tacticalBrief: ['在对方双后腰间寻找反击空档', '观察C罗跑位送出致命斜传'], physical: { age: 23, height: '180cm', weight: '76kg', foot: 'Left' }, scoutingStats: getScoutingStats(86, 80, 96, 95, 45, 72) },
+    { id: 'M7', number: 7, position: 'LM', line: 'FWD', x: 55, y: 15, name: 'C罗', role: '终结者', team: 'home', tacticalBrief: ['埋伏在边卫身后区域', '利用斜切跑位甩开马斯切拉诺', '冷静完成最后一击'], physical: { age: 27, height: '187cm', weight: '83kg', foot: 'Right' }, scoutingStats: getScoutingStats(98, 99, 82, 92, 50, 94) },
+    { id: 'M9', number: 9, position: 'ST', line: 'FWD', x: 62, y: 50, name: '本泽马', role: '全能前锋', team: 'home', tacticalBrief: ['回撤带开对方中卫', '为后插上的C罗创造肋部空间'], physical: { age: 24, height: '185cm', weight: '81kg', foot: 'Right' }, scoutingStats: getScoutingStats(84, 92, 88, 90, 45, 82) },
   ];
   return base.map(p => ({ ...p, ...overrides.find(o => o.id === p.id) }));
 };
 
 const getBarcaSquad2012 = (overrides: Partial<PlayerPosition>[] = []): PlayerPosition[] => {
   const base: PlayerPosition[] = [
-    { id: 'B1', number: 1, position: 'GK', line: 'GK', x: 95, y: 50, name: '巴尔德斯', role: '门将', team: 'away' },
-    { id: 'B2', number: 2, position: 'RB', line: 'DEF', x: 65, y: 92, name: '阿尔维斯', role: '进攻侧翼', team: 'away' },
-    { id: 'B5', number: 5, position: 'CB', line: 'DEF', x: 80, y: 62, name: '普约尔', role: '防魂', team: 'away' },
-    { id: 'B14', number: 14, position: 'CB', line: 'DEF', x: 80, y: 38, name: '马斯切拉诺', role: '防守专家', team: 'away' },
-    { id: 'B21', number: 21, position: 'LB', line: 'DEF', x: 75, y: 12, name: '阿德里亚诺', role: '边后卫', team: 'away' },
-    { id: 'B16', number: 16, position: 'CDM', line: 'MID', x: 70, y: 50, name: '布斯克茨', role: '支点', team: 'away' },
-    { id: 'B6', number: 6, position: 'CM', line: 'MID', x: 65, y: 68, name: '哈维', role: '中场核心', team: 'away' },
-    { id: 'B11', number: 11, position: 'CM', line: 'MID', x: 65, y: 32, name: '蒂亚戈', role: '新星', team: 'away' },
-    { id: 'B37', number: 37, position: 'RW', line: 'FWD', x: 55, y: 88, name: '特略', role: '边锋', team: 'away' },
-    { id: 'B10', number: 10, position: 'CF', line: 'FWD', x: 55, y: 50, name: '梅西', role: '核心', team: 'away' },
-    { id: 'B8', number: 8, position: 'LW', line: 'FWD', x: 55, y: 15, name: '伊涅斯塔', role: '边路组织', team: 'away' },
+    { id: 'B1', number: 1, position: 'GK', line: 'GK', x: 95, y: 50, name: '巴尔德斯', role: '门将', team: 'away', physical: { age: 30, height: '183cm', weight: '78kg', foot: 'Right' } },
+    { id: 'B2', number: 2, position: 'RB', line: 'DEF', x: 65, y: 92, name: '阿尔维斯', role: '进攻侧翼', team: 'away', physical: { age: 28, height: '172cm', weight: '70kg', foot: 'Right' } },
+    { id: 'B5', number: 5, position: 'CB', line: 'DEF', x: 80, y: 62, name: '普约尔', role: '防魂', team: 'away', physical: { age: 34, height: '178cm', weight: '80kg', foot: 'Right' } },
+    { id: 'B14', number: 14, position: 'CB', line: 'DEF', x: 80, y: 38, name: '马斯切拉诺', role: '防守专家', team: 'away', physical: { age: 27, height: '174cm', weight: '73kg', foot: 'Right' } },
+    { id: 'B21', number: 21, position: 'LB', line: 'DEF', x: 75, y: 12, name: '阿德里亚诺', role: '边后卫', team: 'away', physical: { age: 27, height: '172cm', weight: '72kg', foot: 'Both' } },
+    { id: 'B16', number: 16, position: 'CDM', line: 'MID', x: 70, y: 50, name: '布斯克茨', role: '支点', team: 'away', physical: { age: 23, height: '189cm', weight: '76kg', foot: 'Right' } },
+    { id: 'B6', number: 6, position: 'CM', line: 'MID', x: 65, y: 68, name: '哈维', role: '中场核心', team: 'away', physical: { age: 32, height: '170cm', weight: '68kg', foot: 'Right' }, scoutingStats: getScoutingStats(70, 78, 99, 94, 75, 75) },
+    { id: 'B11', number: 11, position: 'CM', line: 'MID', x: 65, y: 32, name: '蒂亚戈', role: '新星', team: 'away', physical: { age: 21, height: '174cm', weight: '70kg', foot: 'Right' } },
+    { id: 'B37', number: 37, position: 'RW', line: 'FWD', x: 55, y: 88, name: '特略', role: '边锋', team: 'away', physical: { age: 20, height: '178cm', weight: '72kg', foot: 'Right' } },
+    { id: 'B10', number: 10, position: 'CF', line: 'FWD', x: 55, y: 50, name: '梅西', role: '核心', team: 'away', physical: { age: 24, height: '170cm', weight: '72kg', foot: 'Left' }, scoutingStats: getScoutingStats(92, 98, 96, 99, 45, 78) },
+    { id: 'B8', number: 8, position: 'LW', line: 'FWD', x: 55, y: 15, name: '伊涅斯塔', role: '边路组织', team: 'away', physical: { age: 27, height: '171cm', weight: '68kg', foot: 'Right' }, scoutingStats: getScoutingStats(82, 82, 97, 99, 60, 70) },
   ];
   return base.map(p => ({ ...p, ...overrides.find(o => o.id === p.id) }));
 };
@@ -189,30 +199,30 @@ export const BATTLES: Battle[] = [
         title: '冷酷处决：Calma！冷静瞬间',
         description: 'C罗过掉出击的巴尔德斯，在极窄角度推射破门。这一球宣告了联赛冠军的归属，C罗双手下压，让喧闹的诺坎普瞬间安静。',
         homePlayers: getMadridSquad2012([ 
-          { id: 'M7', x: 94, y: 42 },   // C罗进球位置
-          { id: 'M9', x: 92, y: 58 },   // 本泽马后点包抄
-          { id: 'M10', x: 75, y: 50 },  // 厄齐尔观察
-          { id: 'M22', x: 82, y: 88 },  // 迪马利亚冲刺
-          { id: 'M14', x: 55, y: 62 },  // 阿隆索跟进
-          { id: 'M6', x: 55, y: 38 },   // 赫迪拉跟进
-          { id: 'M17', x: 45, y: 85 },  // 阿韦洛亚
-          { id: 'M5', x: 45, y: 15 },   // 科恩特朗
-          { id: 'M3', x: 38, y: 60 },   // 佩佩
-          { id: 'M4', x: 38, y: 40 },   // 拉莫斯
-          { id: 'M1', x: 10, y: 50 },   // 卡西
+          { id: 'M7', x: 94, y: 42 },   
+          { id: 'M9', x: 92, y: 58 },   
+          { id: 'M10', x: 75, y: 50 },  
+          { id: 'M22', x: 82, y: 88 },  
+          { id: 'M14', x: 55, y: 62 },  
+          { id: 'M6', x: 55, y: 38 },   
+          { id: 'M17', x: 45, y: 85 },  
+          { id: 'M5', x: 45, y: 15 },   
+          { id: 'M3', x: 38, y: 60 },   
+          { id: 'M4', x: 38, y: 40 },   
+          { id: 'M1', x: 10, y: 50 },   
         ]),
         awayPlayers: getBarcaSquad2012([
-          { id: 'B1', x: 96, y: 46 },   // 巴尔德斯扑救无果
-          { id: 'B14', x: 92, y: 38 },  // 马斯切拉诺最后封堵
-          { id: 'B5', x: 88, y: 52 },   // 普约尔失守
-          { id: 'B21', x: 85, y: 22 },  // 阿德里亚诺
-          { id: 'B16', x: 75, y: 45 },  // 布斯克茨回追
-          { id: 'B6', x: 70, y: 60 },   // 哈维
-          { id: 'B11', x: 68, y: 35 },  // 蒂亚戈
-          { id: 'B2', x: 55, y: 92 },   // 阿尔维斯失位
-          { id: 'B10', x: 52, y: 52 },  // 梅西目睹
-          { id: 'B8', x: 50, y: 18 },   // 伊涅斯塔
-          { id: 'B37', x: 60, y: 85 },  // 特略
+          { id: 'B1', x: 96, y: 46 },   
+          { id: 'B14', x: 92, y: 38 },  
+          { id: 'B5', x: 88, y: 52 },   
+          { id: 'B21', x: 85, y: 22 },  
+          { id: 'B16', x: 75, y: 45 },  
+          { id: 'B6', x: 70, y: 60 },   
+          { id: 'B11', x: 68, y: 35 },  
+          { id: 'B2', x: 55, y: 92 },   
+          { id: 'B10', x: 52, y: 52 },  
+          { id: 'B8', x: 50, y: 18 },   
+          { id: 'B37', x: 60, y: 85 },  
         ]),
         connections: [{ from: 'M7', to: 'B1', weight: 100, successRate: 0.1 }] 
       }
