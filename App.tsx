@@ -141,7 +141,7 @@ const App: React.FC = () => {
       当前比赛：${selectedBattle.title} (${selectedBattle.subtitle})
       当前阶段：${currentPhase.title}
       描述：${currentPhase.description}
-      请用通俗易懂但专业的方式，为普通球迷解码这一瞬间的战术核心。重点解释球员位置的变化（如为何进入肋部或Zone 14）以及背后的博弈原理。字数在150字以内。`;
+      请用通俗易懂但专业的方式，为普通球迷解码这一瞬间的战术核心。字数在150字以内。`;
 
       const response = await ai.models.generateContent({
         model: 'gemini-3-flash-preview',
@@ -196,14 +196,14 @@ const App: React.FC = () => {
             <div className="animate-fade-in">
               <div className="flex items-center gap-3">
                 <h1 className="text-3xl font-black text-white tracking-tighter uppercase">Soccer Tactic <span className="text-blue-500">Lab</span></h1>
-                <span className="px-2 py-0.5 rounded bg-blue-500/10 border border-blue-500/30 text-blue-400 text-[10px] font-bold uppercase tracking-widest">v1.6 DUAL-MODE</span>
+                <span className="px-2 py-0.5 rounded bg-blue-500/10 border border-blue-500/30 text-blue-400 text-[10px] font-bold uppercase tracking-widest">v1.8 SENSORY</span>
               </div>
-              <p className="text-sm text-gray-400 mt-1 italic opacity-80">战术转译、模拟与创作一站式平台</p>
+              <p className="text-sm text-gray-400 mt-1 italic opacity-80">足球战术解码与仿真平台</p>
             </div>
         </div>
 
         <div className="flex items-center gap-6 w-full md:w-auto justify-between md:justify-end animate-fade-in">
-            <nav className="flex bg-white/5 p-1 rounded-xl border border-white/5">
+            <nav className="flex bg-white/5 p-1 rounded-xl border border-white/5 backdrop-blur-md">
                 {[
                     { id: 'simulation', label: '实战复盘' },
                     { id: 'sandbox', label: '战术沙盒' },
@@ -213,10 +213,10 @@ const App: React.FC = () => {
                     <button
                         key={tab.id}
                         onClick={() => setActiveTab(tab.id as ActiveTab)}
-                        className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                        className={`px-4 py-1.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${
                             activeTab === tab.id 
-                            ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30' 
-                            : 'text-gray-400 hover:text-white'
+                            ? 'bg-blue-600 text-white shadow-lg' 
+                            : 'text-gray-500 hover:text-white'
                         }`}
                     >
                         {tab.label}
@@ -252,13 +252,6 @@ const App: React.FC = () => {
                                     className="w-5 h-5 rounded-full border-none cursor-pointer bg-transparent appearance-none [&::-webkit-color-swatch-wrapper]:p-0 [&::-webkit-color-swatch]:rounded-full [&::-webkit-color-swatch]:border-none"
                                 />
                             </div>
-                            <div className="relative group/color">
-                                <input 
-                                    type="color" value={awayColor} 
-                                    onChange={(e) => setAwayColor(e.target.value)}
-                                    className="w-5 h-5 rounded-full border-none cursor-pointer bg-transparent appearance-none [&::-webkit-color-swatch-wrapper]:p-0 [&::-webkit-color-swatch]:rounded-full [&::-webkit-color-swatch]:border-none"
-                                />
-                            </div>
                         </div>
                     </div>
                 )}
@@ -273,7 +266,7 @@ const App: React.FC = () => {
                     <div className="text-left hidden md:block">
                         <p className={`text-[10px] font-black uppercase tracking-tight ${user.isGuest ? 'text-gray-500' : 'text-white'}`}>{user.name}</p>
                         <p className={`text-[8px] font-bold uppercase tracking-widest ${user.isGuest ? 'text-gray-600' : 'text-blue-500'}`}>
-                            {user.isGuest ? '访客模式' : '已验证分析师'}
+                            {user.isGuest ? '访客' : '已连接'}
                         </p>
                     </div>
                 </button>
@@ -285,7 +278,7 @@ const App: React.FC = () => {
         <div className={`${(activeTab === 'knowledge' || activeTab === 'sandbox') ? 'lg:col-span-12' : 'lg:col-span-8 lg:sticky lg:top-6 self-start'} flex flex-col gap-4 w-full transition-all duration-700`}>
             {activeTab === 'simulation' && (
                 <>
-                    <div className="bg-gray-800/20 rounded-2xl p-4 md:p-8 border border-white/5 backdrop-blur-sm relative overflow-hidden group shadow-2xl animate-fade-in">
+                    <div className="bg-gray-800/10 rounded-2xl p-4 md:p-8 border border-white/5 backdrop-blur-md relative overflow-hidden group shadow-2xl animate-fade-in">
                        <TacticBoard 
                         homePlayers={currentPhase.homePlayers}
                         awayPlayers={currentPhase.awayPlayers}
@@ -298,29 +291,23 @@ const App: React.FC = () => {
                         animationSpeed={animationSpeed}
                         isPlaying={isPlaying}
                         showZones={showZones}
+                        isScanning={isDecoding} // 开启 AI 扫描态滤镜
                       />
                       
-                      {aiInsight !== null && (
-                        <div className="absolute top-8 left-8 right-8 bg-blue-900/80 backdrop-blur-xl p-6 rounded-2xl border border-blue-500/30 shadow-2xl animate-fade-in z-[50]">
-                            <div className="flex items-center justify-between mb-2">
+                      {aiInsight && (
+                        <div className="absolute bottom-10 left-10 right-10 bg-black/80 backdrop-blur-xl p-6 rounded-2xl border border-blue-500/30 shadow-2xl animate-fade-in z-[50]">
+                            <div className="flex items-center justify-between mb-3">
                                 <div className="flex items-center gap-2">
-                                    <div className="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></div>
-                                    <span className="text-[10px] font-black text-blue-300 uppercase tracking-widest">Gemini 战术解码器</span>
+                                    <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></div>
+                                    <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest">AI 解码专家结论</span>
                                 </div>
-                                <button onClick={() => setAiInsight(null)} className="text-blue-300 hover:text-white">×</button>
+                                <button onClick={() => setAiInsight(null)} className="text-gray-500 hover:text-white transition-colors">×</button>
                             </div>
-                            <p className="text-sm text-white font-medium leading-relaxed italic">
-                                {isDecoding ? "正在从云端调取专家级解析..." : aiInsight}
+                            <p className="text-sm text-gray-200 italic leading-relaxed">
+                                {isDecoding ? "正在解析战术博弈中的深层逻辑..." : aiInsight}
                             </p>
                         </div>
                       )}
-
-                      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 w-1/3 h-1.5 bg-white/5 rounded-full overflow-hidden border border-white/10 backdrop-blur-md">
-                         <div 
-                            className="h-full bg-gradient-to-r from-blue-600 to-blue-400 transition-all duration-500 ease-out" 
-                            style={{ width: `${((currentPhaseIndex + 1) / selectedBattle.phases.length) * 100}%`, backgroundColor: homeColor }}
-                         ></div>
-                      </div>
                     </div>
 
                     <div className="bg-gray-900/40 rounded-xl p-4 border border-white/5 flex flex-col md:flex-row items-center justify-between gap-6 animate-fade-in">
@@ -328,8 +315,8 @@ const App: React.FC = () => {
                             <button 
                                 onClick={togglePlayback}
                                 className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all ${
-                                    isPlaying ? 'bg-red-500 text-white shadow-[0_0_20px_rgba(239,68,68,0.3)]' : 'bg-blue-600 text-white shadow-[0_0_20px_rgba(59,130,246,0.4)]'
-                                } group relative overflow-hidden`}
+                                    isPlaying ? 'bg-red-500' : 'bg-blue-600'
+                                } shadow-xl shadow-black/40`}
                                 style={!isPlaying ? { backgroundColor: homeColor } : {}}
                             >
                                 {isPlaying ? (
@@ -342,7 +329,7 @@ const App: React.FC = () => {
                             <button 
                                 onClick={decodeTactic}
                                 disabled={isDecoding}
-                                className="flex flex-col items-center justify-center bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/30 w-14 h-14 rounded-2xl transition-all group"
+                                className="flex flex-col items-center justify-center bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/30 w-14 h-14 rounded-2xl transition-all group active:scale-95"
                             >
                                 <span className={`text-xl ${isDecoding ? 'animate-spin' : ''}`}>⚡</span>
                                 <span className="text-[8px] font-black text-blue-400 uppercase tracking-tighter mt-0.5">解码</span>
@@ -354,22 +341,21 @@ const App: React.FC = () => {
                                         key={phase.id}
                                         onClick={() => handlePhaseChange(idx)}
                                         className={`px-5 py-2.5 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${
-                                            idx === currentPhaseIndex ? 'text-white' : 'bg-white/5 text-gray-500 hover:text-white'
+                                            idx === currentPhaseIndex ? 'text-white shadow-lg' : 'bg-white/5 text-gray-500 hover:text-white'
                                         }`}
                                         style={idx === currentPhaseIndex ? { backgroundColor: homeColor } : {}}
                                     >
-                                        {phase.title.includes('：') ? phase.title.split('：')[0] : phase.title}
+                                        第{idx + 1}阶段
                                     </button>
                                 ))}
                             </div>
                         </div>
                         
                         <div className="flex items-center gap-1 bg-black/40 p-2 rounded-xl border border-white/10 shrink-0">
-                            <span className="text-[9px] font-black text-gray-500 uppercase tracking-widest px-2">速度调节</span>
-                            {[0.5, 1.0, 1.5, 2.0].map((speed) => (
+                            {[0.5, 1.0, 2.0].map((speed) => (
                                 <button
                                     key={speed} onClick={() => setAnimationSpeed(speed)}
-                                    className={`w-12 py-1.5 rounded-lg text-[10px] font-black transition-all ${animationSpeed === speed ? 'bg-blue-500 text-white' : 'text-gray-600 hover:text-white'}`}
+                                    className={`w-11 py-1.5 rounded-lg text-[10px] font-black transition-all ${animationSpeed === speed ? 'bg-blue-500 text-white' : 'text-gray-600 hover:text-white'}`}
                                     style={animationSpeed === speed ? { backgroundColor: homeColor } : {}}
                                 >
                                     {speed.toFixed(1)}x

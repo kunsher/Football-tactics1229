@@ -17,7 +17,7 @@ const Tooltip: React.FC<{ termObj: GlossaryTerm; children: React.ReactNode }> = 
             <span 
                 onMouseEnter={() => setShow(true)}
                 onMouseLeave={() => setShow(false)}
-                className="text-blue-400 font-bold border-b-2 border-blue-500/30 cursor-help hover:bg-blue-500/10 transition-all px-1 rounded-sm relative z-10"
+                className="text-blue-400 font-bold border-b-2 border-blue-500/30 cursor-help hover:text-blue-300 transition-all px-1 rounded-sm relative z-10"
             >
                 {children}
             </span>
@@ -33,8 +33,6 @@ const Tooltip: React.FC<{ termObj: GlossaryTerm; children: React.ReactNode }> = 
                     <p className="text-sm text-gray-300 leading-relaxed font-medium">
                         {termObj.definition}
                     </p>
-                    
-                    {/* Tail */}
                     <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-[1px] border-x-[10px] border-x-transparent border-t-[10px] border-t-blue-500/30"></div>
                     <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-[2px] border-x-[10px] border-x-transparent border-t-[10px] border-t-[#0f172a]"></div>
                 </div>
@@ -48,43 +46,55 @@ const SmartText: React.FC<{ text: string }> = ({ text }) => {
         const matches = GLOSSARY.flatMap(g => {
             const cleanTerm = g.term.split(' (')[0];
             const englishTerm = g.term.includes('(') ? g.term.match(/\(([^)]+)\)/)?.[1] : null;
-            
             return [
                 { match: cleanTerm, data: g },
                 { match: englishTerm, data: g },
                 { match: g.term, data: g }
             ].filter(item => item.match && item.match.length > 1);
         });
-        
         return matches.sort((a, b) => (b.match?.length || 0) - (a.match?.length || 0));
     }, []);
 
-    let parts: (string | React.ReactNode)[] = [text];
+    // 分句处理以实现 Staggered Animation
+    const sentences = useMemo(() => text.split('。').filter(s => s.trim()), [text]);
 
-    termsToMatch.forEach(({ match, data }) => {
-        if (!match) return;
-        const escapedMatch = match.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        
-        const isEnglish = /^[A-Za-z0-9\s-]+$/.test(match);
-        const regex = new RegExp(isEnglish ? `(\\b${escapedMatch}\\b)` : `(${escapedMatch})`, 'gi');
+    return (
+      <div className="space-y-2">
+        {sentences.map((sentence, sIdx) => {
+          let parts: (string | React.ReactNode)[] = [sentence + "。"];
+          termsToMatch.forEach(({ match, data }) => {
+              if (!match) return;
+              const escapedMatch = match.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+              const isEnglish = /^[A-Za-z0-9\s-]+$/.test(match);
+              const regex = new RegExp(isEnglish ? `(\\b${escapedMatch}\\b)` : `(${escapedMatch})`, 'gi');
 
-        parts = parts.flatMap(part => {
-            if (typeof part !== 'string') return part;
-            const subParts = part.split(regex);
-            return subParts.map((subPart, i) => 
-                subPart.toLowerCase() === match.toLowerCase() 
-                    ? <Tooltip key={`${match}-${i}`} termObj={data}>{subPart}</Tooltip>
-                    : subPart
-            );
-        });
-    });
+              parts = parts.flatMap(part => {
+                  if (typeof part !== 'string') return part;
+                  const subParts = part.split(regex);
+                  return subParts.map((subPart, i) => 
+                      subPart.toLowerCase() === match.toLowerCase() 
+                          ? <Tooltip key={`${match}-${sIdx}-${i}`} termObj={data}>{subPart}</Tooltip>
+                          : subPart
+                  );
+              });
+          });
 
-    return <>{parts}</>;
+          return (
+            <p 
+              key={sIdx} 
+              className="animate-fade-in fill-mode-forwards opacity-0"
+              style={{ animationDelay: `${sIdx * 0.15}s`, animationFillMode: 'forwards' }}
+            >
+              {parts}
+            </p>
+          );
+        })}
+      </div>
+    );
 };
 
 const GlossaryItem: React.FC<{ termObj: GlossaryTerm }> = ({ termObj }) => {
     const [showTooltip, setShowTooltip] = useState(false);
-    
     return (
         <div className="relative">
             <button 
@@ -104,9 +114,7 @@ const GlossaryItem: React.FC<{ termObj: GlossaryTerm }> = ({ termObj }) => {
                         <div className="h-px flex-grow bg-blue-500/20"></div>
                     </div>
                     <p className="text-base font-bold text-white mb-2 tracking-tight underline decoration-blue-500/30 decoration-2 underline-offset-4">{termObj.term}</p>
-                    <p className="text-sm text-gray-200 leading-relaxed font-medium">
-                        {termObj.definition}
-                    </p>
+                    <p className="text-sm text-gray-200 leading-relaxed font-medium">{termObj.definition}</p>
                     <div className="absolute top-full left-6 -mt-[2px] border-x-[8px] border-x-transparent border-t-[8px] border-t-blue-500/40"></div>
                     <div className="absolute top-full left-6 -mt-[4px] border-x-[8px] border-x-transparent border-t-[8px] border-t-gray-900"></div>
                 </div>
@@ -117,76 +125,80 @@ const GlossaryItem: React.FC<{ termObj: GlossaryTerm }> = ({ termObj }) => {
 
 export const AnalysisPanel: React.FC<AnalysisPanelProps> = ({ phase, battle, hoveredPlayer }) => {
   return (
-    <div className="bg-gray-900/50 rounded-2xl p-6 border border-white/10 flex flex-col gap-6 backdrop-blur-md">
-      <div>
-        <div className="flex items-center gap-2 mb-2">
-            <div className="w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse"></div>
-            <h2 className="text-base font-bold text-blue-400 uppercase tracking-widest">实战战术分析</h2>
+    <div className="bg-gray-900/60 rounded-2xl p-6 border border-white/10 flex flex-col gap-6 backdrop-blur-xl shadow-2xl">
+      <div key={phase.id}>
+        <div className="flex items-center gap-2 mb-4">
+            <span className="text-[10px] font-black text-blue-500 uppercase tracking-widest bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20">实时战术解码单元</span>
+            <div className="h-px flex-grow bg-gradient-to-r from-blue-500/40 to-transparent"></div>
         </div>
         
-        {/* Battle Summary with SmartText */}
-        <div className="mb-4 bg-white/5 p-4 rounded-xl border border-white/5 border-l-4 border-l-blue-500">
-            <p className="text-sm font-bold text-blue-400 uppercase tracking-tighter mb-1">战役背景</p>
-            <div className="text-sm text-gray-300 leading-relaxed font-medium italic">
-                <SmartText text={battle.description} />
-            </div>
-        </div>
-
-        <h3 className="text-2xl font-bold text-white mb-2">{phase.title}</h3>
-        <div className="text-base text-gray-400 leading-relaxed border-l-2 border-blue-500/30 pl-4 py-1 italic">
+        <h3 className="text-2xl font-black text-white mb-3 tracking-tight transition-all duration-500">{phase.title}</h3>
+        <div className="text-base text-gray-300 leading-relaxed pl-4 border-l-2 border-blue-600/50 italic py-1 bg-white/[0.02] rounded-r-xl">
           <SmartText text={phase.description} />
         </div>
       </div>
 
       <div className="flex-grow">
-        <h4 className="text-sm font-semibold text-gray-500 uppercase mb-3 flex items-center gap-2">
-            <PlayerIcon className="w-4 h-4" /> 球员考察
+        <h4 className="text-xs font-black text-gray-500 uppercase mb-4 flex items-center gap-2 tracking-widest">
+            <PlayerIcon className="w-4 h-4" /> 球员战术考察报告
         </h4>
-        <div className="bg-[#0a0f14] rounded-xl p-5 min-h-[140px] border border-white/5 relative overflow-hidden group">
+        <div className={`bg-[#05080b] rounded-2xl p-5 min-h-[140px] border transition-all duration-500 relative overflow-hidden group ${hoveredPlayer ? 'border-blue-500/40 shadow-[0_0_30px_rgba(59,130,246,0.1)] scale-[1.02]' : 'border-white/5 opacity-80'}`}>
           {hoveredPlayer ? (
             <div className="animate-fade-in relative z-10">
               <div className="flex justify-between items-start">
                 <div>
-                  <p className="text-3xl font-black text-white tracking-tight">{hoveredPlayer.name}</p>
-                  <p className="text-sm font-bold text-blue-500 uppercase tracking-tighter">{hoveredPlayer.role}</p>
+                  <p className="text-[10px] font-black text-blue-500 uppercase tracking-widest mb-1">正在锁定扫描对象</p>
+                  <p className="text-3xl font-black text-white tracking-tighter">{hoveredPlayer.name}</p>
+                  <p className="text-sm font-bold text-blue-400 uppercase tracking-tighter mt-1">{hoveredPlayer.role}</p>
                 </div>
-                <div className="text-4xl font-black text-white/10 italic">#{hoveredPlayer.number}</div>
+                <div className="w-12 h-12 rounded-xl bg-blue-600/15 border border-blue-500/30 flex items-center justify-center shadow-lg">
+                   <span className="text-2xl font-black text-blue-400 italic">#{hoveredPlayer.number}</span>
+                </div>
               </div>
               
               <div className="mt-5 grid grid-cols-2 gap-4">
-                  <div className="bg-white/5 rounded-lg p-3">
-                      <p className="text-xs text-gray-500 uppercase font-bold mb-1">位置</p>
-                      <p className="text-base text-gray-200">{hoveredPlayer.position}</p>
+                  <div className="bg-white/5 rounded-xl p-3 border border-white/5 group-hover:bg-white/10 transition-colors">
+                      <p className="text-[9px] text-gray-500 uppercase font-black mb-1 tracking-widest">执行区域</p>
+                      <p className="text-sm text-gray-200 font-bold">{hoveredPlayer.position}</p>
                   </div>
-                  <div className="bg-white/5 rounded-lg p-3">
-                      <p className="text-xs text-gray-500 uppercase font-bold mb-1">所属球队</p>
-                      <p className="text-base text-gray-200">{hoveredPlayer.team === 'home' ? battle.teams.home.name : battle.teams.away.name}</p>
+                  <div className="bg-white/5 rounded-xl p-3 border border-white/5 group-hover:bg-white/10 transition-colors">
+                      <p className="text-[9px] text-gray-500 uppercase font-black mb-1 tracking-widest">所属阵营</p>
+                      <p className="text-sm text-gray-200 font-bold">{hoveredPlayer.team === 'home' ? battle.teams.home.name : battle.teams.away.name}</p>
                   </div>
               </div>
             </div>
           ) : (
-            <div className="h-full flex flex-col items-center justify-center text-center opacity-40">
+            <div className="h-full flex flex-col items-center justify-center text-center opacity-40 py-4">
               <InfoIcon className="w-10 h-10 mb-3 text-gray-600" />
-              <p className="text-base text-gray-500">悬停于球员图标<br/>获取战术职责分析</p>
+              <p className="text-sm text-gray-500 font-bold uppercase tracking-[0.2em]">悬停于球员图标<br/>同步战术职责分析</p>
             </div>
           )}
-          <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-blue-600/10 rounded-full blur-2xl group-hover:bg-blue-600/20 transition-all duration-700"></div>
+          <div className="absolute top-0 right-0 w-32 h-32 bg-blue-600/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
         </div>
       </div>
 
-      <div className="bg-blue-600/5 rounded-xl p-6 border border-blue-500/15">
+      <div className="bg-blue-600/5 rounded-2xl p-6 border border-blue-500/15">
           <div className="flex items-center justify-between mb-4">
-            <h4 className="text-sm font-bold text-blue-400 uppercase tracking-wider flex items-center gap-2">
+            <h4 className="text-[11px] font-black text-blue-400 uppercase tracking-widest flex items-center gap-2">
                 <span className="w-1.5 h-4 bg-blue-500 rounded-full"></span>
-                战术库
+                核心术语百科
             </h4>
-            <span className="text-xs text-gray-500 font-bold uppercase tracking-widest bg-white/5 px-3 py-1 rounded-full">悬停以学习</span>
+            <span className="text-[9px] text-gray-500 font-black uppercase tracking-widest bg-white/5 px-3 py-1 rounded-full">悬停交互以学习</span>
           </div>
           <div className="flex flex-wrap gap-3">
               {GLOSSARY.map((term, idx) => (
                   <GlossaryItem key={idx} termObj={term} />
               ))}
           </div>
+      </div>
+      
+      <div className="pt-4 mt-auto border-t border-white/5 flex items-center justify-between opacity-50">
+         <p className="text-[9px] text-gray-600 font-bold uppercase tracking-[0.3em]">Tactical Engine V4.2 / AI Decoder</p>
+         <div className="flex gap-1.5">
+            <div className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse"></div>
+            <div className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse delay-100"></div>
+            <div className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse delay-200"></div>
+         </div>
       </div>
     </div>
   );
