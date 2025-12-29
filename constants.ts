@@ -77,7 +77,7 @@ export const BATTLES: Battle[] = [
     id: 'tiki-taka-2011',
     title: '2011 欧冠决赛：传控之巅',
     subtitle: '巴塞罗那 vs 曼联',
-    description: '温布利大球场，瓜迪奥拉的巴萨展现了极致的 Tiki-taka 战术。梅西作为“伪九号”让曼联的两名顶级中卫无所适从。',
+    description: '温布利大球场，瓜迪奥拉的巴萨展现了极致的 Tiki-taka 战术。梅西作为“伪九号” (False 9) 让曼联的两名顶级中卫无所适从，辅以教科书般的高位逼抢 (Gegenpressing) 彻底统治了比赛。',
     teams: {
       home: { 
         name: '巴塞罗那', 
@@ -108,7 +108,7 @@ export const BATTLES: Battle[] = [
       {
         id: 'build-up',
         title: '后场组织阶段',
-        description: '布斯克茨回撤至中卫之间接球，两名边后卫大幅压上，形成 3-4-3 雏形，利用球场宽度拉开曼联防线。',
+        description: '布斯克茨回撤至中卫之间接球，两名边后卫大幅压上，形成 3-4-3 雏形，利用球场宽度拉开曼联防线，这是 Tiki-taka 体系的标准起手式。',
         homePlayers: [
           { id: 'H1', number: 1, position: 'GK', line: 'GK', x: 5, y: 50, name: '巴尔德斯', role: '门将', team: 'home' },
           { id: 'H2', number: 2, position: 'RB', line: 'DEF', x: 35, y: 90, name: '阿尔维斯', role: '进攻型边后卫', team: 'home' },
@@ -144,7 +144,7 @@ export const BATTLES: Battle[] = [
       {
         id: 'final-third',
         title: '进攻三区压迫',
-        description: '当球进入曼联半场，梅西后撤吸引费迪南德，两侧边锋向肋部斜插，造成曼联防线混乱。',
+        description: '当球进入曼联半场，梅西作为伪九号后撤吸引中卫，两侧边锋通过肋部插上斜切，并在丢球后迅速发起高位逼抢。',
         homePlayers: [
           { id: 'H1', number: 1, position: 'GK', line: 'GK', x: 10, y: 50, name: '巴尔德斯', role: '门将', team: 'home' },
           { id: 'H2', number: 2, position: 'RB', line: 'DEF', x: 65, y: 95, name: '阿尔维斯', role: '进攻型边后卫', team: 'home' },

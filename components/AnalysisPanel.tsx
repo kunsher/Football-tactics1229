@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import type { TacticPhase, Battle, PlayerPosition, GlossaryTerm } from '../types';
 import { InfoIcon, PlayerIcon } from './icons';
 import { GLOSSARY } from '../constants';
@@ -13,28 +13,30 @@ interface AnalysisPanelProps {
 const Tooltip: React.FC<{ termObj: GlossaryTerm; children: React.ReactNode }> = ({ termObj, children }) => {
     const [show, setShow] = useState(false);
     return (
-        <span className="relative inline-block">
+        <span className="relative inline-block align-baseline">
             <span 
                 onMouseEnter={() => setShow(true)}
                 onMouseLeave={() => setShow(false)}
-                className="text-blue-400 font-bold border-b-2 border-blue-500/30 cursor-help hover:bg-blue-500/10 transition-colors px-1 rounded-sm"
+                className="text-blue-400 font-bold border-b-2 border-blue-500/30 cursor-help hover:bg-blue-500/10 transition-all px-1 rounded-sm relative z-10"
             >
                 {children}
             </span>
             {show && (
-                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-72 bg-gray-900 border-2 border-blue-500/40 p-4 rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.6)] z-[150] animate-fade-in pointer-events-none">
-                    <div className="flex items-center gap-2 mb-2">
-                        <span className="px-1.5 py-0.5 bg-blue-500/20 text-blue-400 text-[10px] font-black uppercase tracking-widest rounded border border-blue-500/30">
+                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-80 bg-[#0f172a] border border-blue-500/30 p-5 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] z-[200] animate-fade-in pointer-events-none backdrop-blur-xl">
+                    <div className="flex items-center gap-2 mb-3">
+                        <span className="px-2 py-0.5 bg-blue-500/20 text-blue-400 text-[10px] font-black uppercase tracking-[0.1em] rounded-full border border-blue-500/30">
                             {termObj.category}
                         </span>
-                        <div className="h-px flex-grow bg-blue-500/20"></div>
+                        <div className="h-[1px] flex-grow bg-gradient-to-r from-blue-500/40 to-transparent"></div>
                     </div>
-                    <p className="text-sm font-bold text-white mb-1">{termObj.term}</p>
-                    <p className="text-xs text-gray-200 leading-relaxed font-medium">
+                    <p className="text-base font-black text-white mb-2 tracking-tight">{termObj.term}</p>
+                    <p className="text-sm text-gray-300 leading-relaxed font-medium">
                         {termObj.definition}
                     </p>
-                    <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-[2px] border-x-[8px] border-x-transparent border-t-[8px] border-t-blue-500/40"></div>
-                    <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-[4px] border-x-[8px] border-x-transparent border-t-[8px] border-t-gray-900"></div>
+                    
+                    {/* Tail */}
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-[1px] border-x-[10px] border-x-transparent border-t-[10px] border-t-blue-500/30"></div>
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-[2px] border-x-[10px] border-x-transparent border-t-[10px] border-t-[#0f172a]"></div>
                 </div>
             )}
         </span>
@@ -42,29 +44,41 @@ const Tooltip: React.FC<{ termObj: GlossaryTerm; children: React.ReactNode }> = 
 };
 
 const SmartText: React.FC<{ text: string }> = ({ text }) => {
-    // This is a simple implementation that looks for common tactical terms.
-    // In a production environment, this would use a more robust regex or NLP-based mapping.
-    const termsToMatch = GLOSSARY.map(g => {
-        // Handle terms that might have translations in parentheses like "伪九号 (False 9)"
-        const cleanTerm = g.term.split(' (')[0];
-        const englishTerm = g.term.includes('(') ? g.term.match(/\(([^)]+)\)/)?.[1] : null;
-        return { original: g.term, matches: [cleanTerm, englishTerm, g.term].filter(Boolean) as string[], data: g };
-    });
+    const termsToMatch = useMemo(() => {
+        const matches = GLOSSARY.flatMap(g => {
+            const cleanTerm = g.term.split(' (')[0];
+            const englishTerm = g.term.includes('(') ? g.term.match(/\(([^)]+)\)/)?.[1] : null;
+            
+            return [
+                { match: cleanTerm, data: g },
+                { match: englishTerm, data: g },
+                { match: g.term, data: g }
+            ].filter(item => item.match && item.match.length > 1);
+        });
+        
+        // Sort by length descending to ensure longer phrases (e.g. "Tiki-taka") are matched 
+        // before shorter components if any overlap existed.
+        return matches.sort((a, b) => (b.match?.length || 0) - (a.match?.length || 0));
+    }, []);
 
     let parts: (string | React.ReactNode)[] = [text];
 
-    termsToMatch.forEach(({ matches, data }) => {
-        matches.forEach(matchStr => {
-            parts = parts.flatMap(part => {
-                if (typeof part !== 'string') return part;
-                const regex = new RegExp(`(${matchStr})`, 'gi');
-                const subParts = part.split(regex);
-                return subParts.map((subPart, i) => 
-                    subPart.toLowerCase() === matchStr.toLowerCase() 
-                        ? <Tooltip key={`${matchStr}-${i}`} termObj={data}>{subPart}</Tooltip>
-                        : subPart
-                );
-            });
+    termsToMatch.forEach(({ match, data }) => {
+        if (!match) return;
+        const escapedMatch = match.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        
+        // Use word boundaries for English terms, but keep it open for CJK terms
+        const isEnglish = /^[A-Za-z0-9\s-]+$/.test(match);
+        const regex = new RegExp(isEnglish ? `(\\b${escapedMatch}\\b)` : `(${escapedMatch})`, 'gi');
+
+        parts = parts.flatMap(part => {
+            if (typeof part !== 'string') return part;
+            const subParts = part.split(regex);
+            return subParts.map((subPart, i) => 
+                subPart.toLowerCase() === match.toLowerCase() 
+                    ? <Tooltip key={`${match}-${i}`} termObj={data}>{subPart}</Tooltip>
+                    : subPart
+            );
         });
     });
 
@@ -79,13 +93,13 @@ const GlossaryItem: React.FC<{ termObj: GlossaryTerm }> = ({ termObj }) => {
             <button 
                 onMouseEnter={() => setShowTooltip(true)}
                 onMouseLeave={() => setShowTooltip(false)}
-                className="px-4 py-2 bg-white/5 rounded-lg text-sm text-gray-300 border border-white/5 hover:border-blue-500/50 hover:bg-blue-500/5 cursor-help transition-all flex items-center gap-2 group"
+                className="px-4 py-2 bg-white/5 rounded-xl text-sm text-gray-300 border border-white/5 hover:border-blue-500/50 hover:bg-blue-500/5 cursor-help transition-all flex items-center gap-2 group"
             >
                 {termObj.term}
                 <InfoIcon className="w-4 h-4 opacity-30 group-hover:opacity-100 transition-opacity" />
             </button>
             {showTooltip && (
-                <div className="absolute bottom-full left-0 mb-3 w-80 bg-gray-900 border-2 border-blue-500/40 p-5 rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-[100] animate-fade-in pointer-events-none">
+                <div className="absolute bottom-full left-0 mb-3 w-80 bg-gray-900 border-2 border-blue-500/40 p-5 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-[100] animate-fade-in pointer-events-none">
                     <div className="flex items-center gap-2 mb-3">
                         <span className="px-2 py-0.5 bg-blue-500/20 text-blue-400 text-xs font-black uppercase tracking-widest rounded border border-blue-500/30">
                             {termObj.category}
@@ -116,9 +130,9 @@ export const AnalysisPanel: React.FC<AnalysisPanelProps> = ({ phase, battle, hov
         {/* Battle Summary with SmartText */}
         <div className="mb-4 bg-white/5 p-4 rounded-xl border border-white/5 border-l-4 border-l-blue-500">
             <p className="text-sm font-bold text-blue-400 uppercase tracking-tighter mb-1">Battle Context</p>
-            <p className="text-sm text-gray-300 leading-relaxed font-medium italic">
+            <div className="text-sm text-gray-300 leading-relaxed font-medium italic">
                 <SmartText text={battle.description} />
-            </p>
+            </div>
         </div>
 
         <h3 className="text-2xl font-bold text-white mb-2">{phase.title}</h3>
@@ -136,7 +150,7 @@ export const AnalysisPanel: React.FC<AnalysisPanelProps> = ({ phase, battle, hov
             <div className="animate-fade-in relative z-10">
               <div className="flex justify-between items-start">
                 <div>
-                  <p className="text-3xl font-black text-white">{hoveredPlayer.name}</p>
+                  <p className="text-3xl font-black text-white tracking-tight">{hoveredPlayer.name}</p>
                   <p className="text-sm font-bold text-blue-500 uppercase tracking-tighter">{hoveredPlayer.role}</p>
                 </div>
                 <div className="text-4xl font-black text-white/10 italic">#{hoveredPlayer.number}</div>

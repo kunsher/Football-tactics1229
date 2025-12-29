@@ -5,6 +5,28 @@ import type { GlossaryTerm } from '../types';
 import { ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Tooltip } from 'recharts';
 import { InfoIcon, CoachIcon } from './icons';
 
+const CustomRadarTooltip = ({ active, payload }: any) => {
+  if (active && payload && payload.length) {
+    const data = payload[0].payload;
+    return (
+      <div className="bg-[#0a0f14] border border-blue-500/40 p-3 rounded-xl shadow-[0_10px_30px_rgba(0,0,0,0.8)] backdrop-blur-md animate-fade-in">
+        <p className="text-[10px] text-gray-500 font-black uppercase tracking-widest mb-1">Tactical Dimension</p>
+        <div className="flex items-center justify-between gap-8">
+          <span className="text-sm font-bold text-white">{data.subject}</span>
+          <span className="text-sm font-black text-blue-400">{data.A}%</span>
+        </div>
+        <div className="w-full h-1 bg-gray-800 rounded-full mt-2 overflow-hidden">
+          <div 
+            className="h-full bg-blue-500 transition-all duration-500" 
+            style={{ width: `${data.A}%` }}
+          ></div>
+        </div>
+      </div>
+    );
+  }
+  return null;
+};
+
 export const TacticalKnowledgeBase: React.FC = () => {
   const systems = GLOSSARY.filter(g => g.category === 'System');
   const [selectedSystem, setSelectedSystem] = useState<GlossaryTerm>(systems[0]);
@@ -96,11 +118,14 @@ export const TacticalKnowledgeBase: React.FC = () => {
                     {/* 右侧：雷达图展示 */}
                     <div className="bg-white/5 rounded-3xl p-6 border border-white/5 flex flex-col items-center">
                         <p className="text-[11px] text-center text-gray-500 font-black uppercase tracking-widest mb-6">理论战术指纹 / Tactical DNA Profile</p>
-                        <div className="h-72 w-full">
+                        <div className="h-72 w-full cursor-crosshair">
                             <ResponsiveContainer width="100%" height="100%">
                                 <RadarChart cx="50%" cy="50%" outerRadius="80%" data={selectedSystem.radarProfile}>
                                     <PolarGrid stroke="rgba(255,255,255,0.1)" />
-                                    <PolarAngleAxis dataKey="subject" tick={{fill: '#9ca3af', fontSize: 11, fontWeight: 'bold'}} />
+                                    <PolarAngleAxis 
+                                        dataKey="subject" 
+                                        tick={{fill: '#9ca3af', fontSize: 11, fontWeight: 'bold'}} 
+                                    />
                                     <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
                                     <Radar
                                         name={selectedSystem.term}
@@ -109,15 +134,18 @@ export const TacticalKnowledgeBase: React.FC = () => {
                                         strokeWidth={3}
                                         fill="#3b82f6"
                                         fillOpacity={0.4}
+                                        activeDot={{ r: 6, fill: '#fff', stroke: '#3b82f6', strokeWidth: 2 }}
+                                        isAnimationActive={true}
+                                        animationDuration={1000}
                                     />
                                     <Tooltip 
-                                        contentStyle={{backgroundColor: '#0a0f14', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px'}}
-                                        itemStyle={{fontSize: '12px', fontWeight: 'bold', color: '#60a5fa'}}
+                                        content={<CustomRadarTooltip />}
+                                        cursor={{ stroke: 'rgba(59, 130, 246, 0.2)', strokeWidth: 1 }}
                                     />
                                 </RadarChart>
                             </ResponsiveContainer>
                         </div>
-                        <p className="text-[10px] text-gray-600 italic mt-4">数据基于该体系巅峰时期的平均表现转录</p>
+                        <p className="text-[10px] text-gray-600 italic mt-4">悬停节点以解码具体战术参数</p>
                     </div>
                 </div>
 
