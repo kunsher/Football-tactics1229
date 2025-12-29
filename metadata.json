@@ -1,0 +1,5 @@
+{
+  "name": "Football Tactics Visualizer",
+  "description": "An interactive 2D tactical board to visualize football formations, passing networks, and match statistics. Users can toggle different visual layers to analyze team strategies and player interactions.",
+  "requestFramePermissions": []
+}
