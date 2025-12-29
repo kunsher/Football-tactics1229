@@ -6,19 +6,33 @@ import { StatsDashboard } from './components/StatsDashboard';
 import { BattleSelector } from './components/BattleSelector';
 import { ProjectMission } from './components/ProjectMission';
 import { TacticalKnowledgeBase } from './components/TacticalKnowledgeBase';
-import { PlayerModal } from './components/PlayerModal'; // 新增
-import type { PlayerPosition, Battle } from './types';
+import { PlayerModal } from './components/PlayerModal';
+import { UserSpaceModal } from './components/UserSpaceModal';
+import type { PlayerPosition, Battle, UserProfile } from './types';
 import { BATTLES } from './constants';
-import { GithubIcon } from './components/icons';
+import { GithubIcon, UserIcon } from './components/icons';
 
 type ActiveTab = 'simulation' | 'knowledge' | 'about';
+
+// Mock User Data
+const MOCK_USER: UserProfile = {
+    name: '分析师零号',
+    rank: '高级战术研究员',
+    avatar: '',
+    tacticsMastered: 12,
+    battlesAnalyzed: 45,
+    learningProgress: 75,
+    joinDate: '2023-10-12'
+};
 
 const App: React.FC = () => {
   const [selectedBattle, setSelectedBattle] = useState<Battle>(BATTLES[0]);
   const [currentPhaseIndex, setCurrentPhaseIndex] = useState(0);
   const [hoveredPlayer, setHoveredPlayer] = useState<PlayerPosition | null>(null);
-  const [selectedPlayerForModal, setSelectedPlayerForModal] = useState<PlayerPosition | null>(null); // 新增
+  const [selectedPlayerForModal, setSelectedPlayerForModal] = useState<PlayerPosition | null>(null);
+  const [isUserModalOpen, setIsUserModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<ActiveTab>('simulation');
+  const [animationSpeed, setAnimationSpeed] = useState(1.0);
 
   const currentPhase = selectedBattle.phases[currentPhaseIndex];
 
@@ -46,15 +60,26 @@ const App: React.FC = () => {
         />
       )}
 
+      {/* 个人战术空间模态框 */}
+      {isUserModalOpen && (
+          <UserSpaceModal 
+            user={MOCK_USER} 
+            onClose={() => setIsUserModalOpen(false)} 
+          />
+      )}
+
       <header className="flex flex-col md:flex-row justify-between items-start md:items-center pb-6 border-b border-white/10 gap-4">
-        <div>
-          <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-black text-white tracking-tighter uppercase">Soccer Tactic <span className="text-blue-500">Lab</span></h1>
-            <span className="px-2 py-0.5 rounded bg-blue-500/10 border border-blue-500/30 text-blue-400 text-[10px] font-bold uppercase tracking-widest">Graduation Project</span>
-          </div>
-          <p className="text-sm text-gray-400 mt-1 italic opacity-80">足球战术可视化科普系统 - 将复杂的专业战术转化为直观的可视化内容</p>
+        <div className="flex items-center gap-4">
+            <div>
+              <div className="flex items-center gap-3">
+                <h1 className="text-3xl font-black text-white tracking-tighter uppercase">Soccer Tactic <span className="text-blue-500">Lab</span></h1>
+                <span className="px-2 py-0.5 rounded bg-blue-500/10 border border-blue-500/30 text-blue-400 text-[10px] font-bold uppercase tracking-widest">版本 v1.2</span>
+              </div>
+              <p className="text-sm text-gray-400 mt-1 italic opacity-80">足球战术实验室 - 将复杂的专业战术转化为直观的可视化内容</p>
+            </div>
         </div>
-        <div className="flex items-center gap-6">
+
+        <div className="flex items-center gap-6 w-full md:w-auto justify-between md:justify-end">
             <nav className="flex bg-white/5 p-1 rounded-xl border border-white/5">
                 {[
                     { id: 'simulation', label: '实战模拟' },
@@ -66,7 +91,7 @@ const App: React.FC = () => {
                         onClick={() => setActiveTab(tab.id as ActiveTab)}
                         className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${
                             activeTab === tab.id 
-                            ? 'bg-blue-600 text-white shadow-lg' 
+                            ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30' 
                             : 'text-gray-400 hover:text-white'
                         }`}
                     >
@@ -74,17 +99,31 @@ const App: React.FC = () => {
                     </button>
                 ))}
             </nav>
-            <BattleSelector 
-                battles={BATTLES} 
-                selectedId={selectedBattle.id} 
-                onSelect={(battle) => {
-                    setSelectedBattle(battle);
-                    setCurrentPhaseIndex(0);
-                }} 
-            />
-            <a href="#" className="hidden md:block text-gray-400 hover:text-white transition-all transform hover:scale-110">
-                <GithubIcon className="w-6 h-6" />
-            </a>
+            
+            <div className="flex items-center gap-4">
+                <BattleSelector 
+                    battles={BATTLES} 
+                    selectedId={selectedBattle.id} 
+                    onSelect={(battle) => {
+                        setSelectedBattle(battle);
+                        setCurrentPhaseIndex(0);
+                    }} 
+                />
+                
+                {/* 个人空间触发器 */}
+                <button 
+                    onClick={() => setIsUserModalOpen(true)}
+                    className="flex items-center gap-3 bg-white/5 hover:bg-white/10 p-1.5 pr-4 rounded-full border border-white/10 transition-all group"
+                >
+                    <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center border-2 border-blue-400/50 shadow-[0_0_10px_rgba(59,130,246,0.5)] group-hover:scale-110 transition-transform">
+                        <UserIcon className="w-5 h-5 text-white" />
+                    </div>
+                    <div className="hidden md:block text-left">
+                        <p className="text-[10px] font-black text-white uppercase tracking-tighter leading-none">{MOCK_USER.name}</p>
+                        <p className="text-[8px] font-bold text-blue-500 uppercase tracking-widest mt-1">高级分析师</p>
+                    </div>
+                </button>
+            </div>
         </div>
       </header>
       
@@ -102,15 +141,16 @@ const App: React.FC = () => {
                         passingNetwork={{ connections: currentPhase.connections }}
                         hoveredPlayer={hoveredPlayer}
                         onPlayerHover={setHoveredPlayer}
-                        onPlayerClick={setSelectedPlayerForModal} // 新增
+                        onPlayerClick={setSelectedPlayerForModal}
                         homeColor={selectedBattle.teams.home.color}
                         awayColor={selectedBattle.teams.away.color}
+                        animationSpeed={animationSpeed}
                       />
                     </div>
 
                     {activeTab === 'simulation' && (
-                        <div className="bg-gray-900/40 rounded-xl p-4 border border-white/5 flex items-center justify-between gap-4 animate-fade-in">
-                            <div className="flex-grow flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+                        <div className="bg-gray-900/40 rounded-xl p-4 border border-white/5 flex flex-col md:flex-row items-center justify-between gap-6 animate-fade-in">
+                            <div className="flex-grow flex gap-2 overflow-x-auto pb-1 scrollbar-hide w-full md:w-auto">
                                 {selectedBattle.phases.map((phase, idx) => (
                                     <button
                                         key={phase.id}
@@ -125,18 +165,29 @@ const App: React.FC = () => {
                                     </button>
                                 ))}
                             </div>
+                            
+                            <div className="flex items-center gap-1 bg-black/40 p-1.5 rounded-xl border border-white/10 self-end md:self-auto shrink-0">
+                                <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest px-2">动画倍速</span>
+                                {[0.5, 1.0, 1.5, 2.0].map((speed) => (
+                                    <button
+                                        key={speed}
+                                        onClick={() => setAnimationSpeed(speed)}
+                                        className={`w-10 py-1 rounded-lg text-[10px] font-black transition-all ${
+                                            animationSpeed === speed 
+                                            ? 'bg-blue-500 text-white' 
+                                            : 'text-gray-500 hover:text-white hover:bg-white/5'
+                                        }`}
+                                    >
+                                        {speed.toFixed(1)}x
+                                    </button>
+                                ))}
+                            </div>
                         </div>
                     )}
                 </>
             ) : (
                 <div className="w-full">
                     <TacticalKnowledgeBase onNavigateToBattle={handleNavigateToBattle} />
-                </div>
-            )}
-            
-            {activeTab !== 'knowledge' && (
-                <div className="hidden lg:block text-[10px] text-gray-600 uppercase font-bold tracking-widest text-center mt-2 opacity-50">
-                    Interactive Tactical Simulation v1.0 | Click a player for scouting report
                 </div>
             )}
         </div>
@@ -166,21 +217,14 @@ const App: React.FC = () => {
                     <ProjectMission />
                 </div>
               )}
-              
-              <footer className="mt-4 pb-8 text-center text-[10px] text-gray-600 uppercase tracking-widest border-t border-white/5 pt-6">
-                <p>© 2024 Soccer Tactic Lab - Graduation Project</p>
-                <p className="mt-1">Dedicated to football tactical education</p>
-              </footer>
             </aside>
         )}
       </main>
       
-      {activeTab === 'knowledge' && (
-          <footer className="mt-12 pb-12 text-center text-[10px] text-gray-600 uppercase tracking-widest border-t border-white/5 pt-8 max-w-6xl mx-auto w-full">
-            <p>© 2024 Soccer Tactic Lab - Graduation Project</p>
-            <p className="mt-1">Dedicated to football tactical education</p>
-          </footer>
-      )}
+      <footer className="mt-12 pb-12 text-center text-[10px] text-gray-600 uppercase tracking-widest border-t border-white/5 pt-8 w-full">
+        <p>© 2024 足球战术实验室 - 战术智能平台</p>
+        <p className="mt-1">致力于足球战术的可视化与教育</p>
+      </footer>
     </div>
   );
 };

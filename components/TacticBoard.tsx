@@ -8,9 +8,10 @@ interface TacticBoardProps {
   passingNetwork: { connections: Connection[] };
   hoveredPlayer: PlayerPosition | null;
   onPlayerHover: (player: PlayerPosition | null) => void;
-  onPlayerClick: (player: PlayerPosition) => void; // 新增
+  onPlayerClick: (player: PlayerPosition) => void;
   homeColor: string;
   awayColor: string;
+  animationSpeed?: number; // 倍速 prop
 }
 
 const FootballPitch: React.FC = () => (
@@ -50,13 +51,14 @@ const Player: React.FC<{
     color: string;
     onHover: (player: PlayerPosition | null) => void; 
     onClick: (player: PlayerPosition) => void;
-    isHovered: boolean 
-}> = ({ player, color, onHover, onClick, isHovered }) => {
+    isHovered: boolean;
+    duration: number; // 动态时长
+}> = ({ player, color, onHover, onClick, isHovered, duration }) => {
   return (
     <g
       style={{
         transform: `translate(${player.x * 10}px, ${player.y * 6.7 + 5}px)`,
-        transition: 'transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)'
+        transition: `transform ${duration}s cubic-bezier(0.4, 0, 0.2, 1)`
       }}
       onMouseEnter={() => onHover(player)}
       onMouseLeave={() => onHover(null)}
@@ -96,8 +98,14 @@ const Player: React.FC<{
       </text>
       
       {isHovered && (
-          <g transform="translate(0, -48)" className="animate-fade-in pointer-events-none">
-              <rect x="-65" y="-16" width="130" height="36" rx="8" fill="rgba(10, 15, 20, 0.98)" stroke="rgba(255,255,255,0.15)" strokeWidth="1.5" />
+          <g transform="translate(0, -55)" className="animate-fade-in pointer-events-none">
+              {/* 标签背景框 */}
+              <rect x="-65" y="-18" width="130" height="38" rx="8" fill="rgba(10, 15, 20, 0.98)" stroke="rgba(255,255,255,0.15)" strokeWidth="1.5" />
+              {/* 指向球员的小箭头 */}
+              <path d="M-6 20 L0 26 L6 20 Z" fill="rgba(10, 15, 20, 0.98)" stroke="rgba(255,255,255,0.15)" strokeWidth="1.5" strokeLinejoin="round" />
+              {/* 遮挡箭头根部线条 */}
+              <rect x="-7" y="19" width="14" height="2" fill="rgba(10, 15, 20, 0.98)" />
+              
               <text y="-2" textAnchor="middle" fill="#fff" fontSize="11" fontWeight="900" className="font-sans tracking-tight">{player.name}</text>
               <text y="11" textAnchor="middle" fill="#3b82f6" fontSize="8" fontWeight="900" className="font-sans tracking-widest uppercase opacity-90">{player.role}</text>
           </g>
@@ -114,8 +122,12 @@ export const TacticBoard: React.FC<TacticBoardProps> = ({
     onPlayerHover,
     onPlayerClick,
     homeColor,
-    awayColor
+    awayColor,
+    animationSpeed = 1.0
 }) => {
+    // 基础时长为 0.8s，除以倍速
+    const dynamicDuration = 0.8 / animationSpeed;
+
     return (
         <div className="w-full aspect-[105/68] max-w-5xl mx-auto relative select-none">
             <div className="absolute inset-0 bg-[#1e3a1e] rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10">
@@ -140,17 +152,19 @@ export const TacticBoard: React.FC<TacticBoardProps> = ({
                                 strokeWidth={isActive ? 4 : 2 + conn.weight / 12}
                                 strokeOpacity={opacity}
                                 strokeLinecap="round"
-                                className="transition-all duration-700 ease-in-out"
+                                style={{
+                                    transition: `all ${dynamicDuration}s cubic-bezier(0.4, 0, 0.2, 1)`
+                                }}
                             />
                         );
                     })}
                 </g>
 
                 {awayPlayers.map(p => (
-                    <Player key={p.id} player={p} color="#111827" onHover={onPlayerHover} onClick={onPlayerClick} isHovered={hoveredPlayer?.id === p.id} />
+                    <Player key={p.id} player={p} color="#111827" onHover={onPlayerHover} onClick={onPlayerClick} isHovered={hoveredPlayer?.id === p.id} duration={dynamicDuration} />
                 ))}
                 {homePlayers.map(p => (
-                    <Player key={p.id} player={p} color={homeColor} onHover={onPlayerHover} onClick={onPlayerClick} isHovered={hoveredPlayer?.id === p.id} />
+                    <Player key={p.id} player={p} color={homeColor} onHover={onPlayerHover} onClick={onPlayerClick} isHovered={hoveredPlayer?.id === p.id} duration={dynamicDuration} />
                 ))}
             </svg>
         </div>

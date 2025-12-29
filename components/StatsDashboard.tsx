@@ -22,20 +22,20 @@ const CoachCard: React.FC<{ team: TeamInfo; isHome: boolean }> = ({ team, isHome
             <CoachIcon className="w-6 h-6 text-white" />
         </div>
         <div>
-            <p className="text-xs text-gray-500 uppercase font-black tracking-widest">{isHome ? 'Home' : 'Away'} Gaffer</p>
+            <p className="text-xs text-gray-500 uppercase font-black tracking-widest">{isHome ? '主队' : '客队'} 教练</p>
             <p className="text-base font-bold text-white leading-tight">{team.coach}</p>
         </div>
     </div>
     
     <div className="space-y-4">
         <div>
-            <span className="text-xs text-gray-400 uppercase font-bold tracking-tighter mr-2">Formation:</span>
+            <span className="text-xs text-gray-400 uppercase font-bold tracking-tighter mr-2">阵型:</span>
             <span className="text-sm text-blue-400 font-black tracking-wider">{team.formation}</span>
         </div>
         
         {team.philosophy && (
             <div>
-                <p className="text-xs text-gray-500 uppercase font-bold mb-1.5">Philosophy</p>
+                <p className="text-xs text-gray-500 uppercase font-bold mb-1.5">战术哲学</p>
                 <p className="text-sm text-gray-200 leading-snug italic font-medium">{team.philosophy}</p>
             </div>
         )}
@@ -45,8 +45,8 @@ const CoachCard: React.FC<{ team: TeamInfo; isHome: boolean }> = ({ team, isHome
 
 export const StatsDashboard: React.FC<StatsDashboardProps> = ({ stats, teamNames, colors, teams, radarData }) => {
   const shotsData = [
-    { name: 'Shots', [teamNames.home]: stats.shots.home, [teamNames.away]: stats.shots.away },
-    { name: 'Target', [teamNames.home]: stats.shots.onTargetHome, [teamNames.away]: stats.shots.onTargetAway },
+    { name: '射门', [teamNames.home]: stats.shots.home, [teamNames.away]: stats.shots.away },
+    { name: '射正', [teamNames.home]: stats.shots.onTargetHome, [teamNames.away]: stats.shots.onTargetAway },
   ];
 
   return (
@@ -57,7 +57,7 @@ export const StatsDashboard: React.FC<StatsDashboardProps> = ({ stats, teamNames
         <div className="animate-fade-in">
           <div className="flex items-center gap-2 mb-4">
             <span className="w-1.5 h-4 bg-blue-500 rounded-full"></span>
-            <h2 className="text-base font-bold text-blue-400 uppercase tracking-widest">Tactical DNA Profile</h2>
+            <h2 className="text-base font-bold text-blue-400 uppercase tracking-widest">战术 DNA 画像</h2>
           </div>
           <div className="h-64 w-full bg-[#0a0f14]/50 rounded-xl border border-white/5 pt-4">
             <ResponsiveContainer width="100%" height="100%">
@@ -104,7 +104,7 @@ export const StatsDashboard: React.FC<StatsDashboardProps> = ({ stats, teamNames
         <div className="animate-fade-in">
           <div className="flex items-center gap-2 mb-5">
             <CoachIcon className="w-5 h-5 text-blue-500" />
-            <h2 className="text-base font-bold text-blue-400 uppercase tracking-widest">Managerial Influence</h2>
+            <h2 className="text-base font-bold text-blue-400 uppercase tracking-widest">主帅影响力</h2>
           </div>
           <div className="grid grid-cols-1 gap-4">
             <CoachCard team={teams.home} isHome={true} />
@@ -116,7 +116,7 @@ export const StatsDashboard: React.FC<StatsDashboardProps> = ({ stats, teamNames
       {/* Section: Match Intelligence */}
       <div className="space-y-10">
         <div>
-            <h2 className="text-base font-bold text-blue-400 uppercase tracking-widest mb-8">Match Intelligence</h2>
+            <h2 className="text-base font-bold text-blue-400 uppercase tracking-widest mb-8">比赛智能统计</h2>
             
             {/* Possession */}
             <div className="relative mb-10">

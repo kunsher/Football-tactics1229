@@ -2,79 +2,126 @@
 import React from 'react';
 import type { PlayerPosition } from '../types';
 import { PlayerIcon } from './icons';
-import { ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, Radar } from 'recharts';
+import { ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, Radar, Tooltip } from 'recharts';
 
 interface PlayerModalProps {
   player: PlayerPosition;
   onClose: () => void;
 }
 
+const CustomTooltip = ({ active, payload }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-[#0f172a] border border-blue-500/50 p-2 rounded-lg shadow-xl backdrop-blur-md">
+        <p className="text-[10px] font-black text-white uppercase tracking-widest">
+          {payload[0].payload.subject}: <span className="text-blue-400">{payload[0].value}</span>
+        </p>
+      </div>
+    );
+  }
+  return null;
+};
+
 export const PlayerModal: React.FC<PlayerModalProps> = ({ player, onClose }) => {
   return (
-    <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 md:p-8 animate-fade-in backdrop-blur-md bg-black/60">
+    <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 md:p-8 animate-fade-in backdrop-blur-md bg-black/60" onClick={onClose}>
       <div 
-        className="relative w-full max-w-4xl bg-[#0a0f14] border border-white/10 rounded-3xl shadow-[0_30px_100px_rgba(0,0,0,0.8)] overflow-hidden flex flex-col md:flex-row"
+        className="relative w-full max-w-5xl bg-[#0a0f14] border border-white/10 rounded-3xl shadow-[0_30px_100px_rgba(0,0,0,0.8)] overflow-hidden flex flex-col md:row max-h-[90vh] overflow-y-auto md:overflow-visible md:flex-row"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* 背景光效 */}
+        {/* Top Accent Line */}
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-50"></div>
         <div className="absolute -top-24 -left-24 w-64 h-64 bg-blue-600/10 rounded-full blur-[80px]"></div>
 
-        {/* 左侧：基本信息与大头像占位 */}
-        <div className="w-full md:w-1/3 bg-white/5 p-8 flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-white/5 relative">
+        {/* Left Sidebar: Profile Summary */}
+        <div className="w-full md:w-1/3 bg-white/5 p-8 flex flex-col items-center border-b md:border-b-0 md:border-r border-white/5 relative">
           <div className="w-40 h-40 rounded-3xl bg-gradient-to-br from-blue-600/20 to-blue-900/40 border border-blue-500/30 flex items-center justify-center mb-6 relative group overflow-hidden">
             <PlayerIcon className="w-24 h-24 text-blue-400 opacity-80 group-hover:scale-110 transition-transform duration-500" />
             <div className="absolute bottom-2 right-2 text-4xl font-black text-white/10 italic">#{player.number}</div>
           </div>
           
-          <h2 className="text-3xl font-black text-white tracking-tighter mb-1">{player.name}</h2>
-          <p className="text-sm font-bold text-blue-500 uppercase tracking-[0.2em] mb-8">{player.role}</p>
+          <div className="text-center">
+            <h2 className="text-3xl font-black text-white tracking-tighter mb-1">{player.name}</h2>
+            <p className="text-sm font-bold text-blue-500 uppercase tracking-[0.2em] mb-8">{player.role}</p>
+          </div>
 
-          <div className="w-full grid grid-cols-2 gap-3">
+          <div className="w-full grid grid-cols-2 gap-3 mb-8">
             {[
               { label: '年龄', val: player.physical?.age || 'N/A' },
               { label: '身高', val: player.physical?.height || 'N/A' },
               { label: '体重', val: player.physical?.weight || 'N/A' },
-              { label: '惯用脚', val: player.physical?.foot || 'N/A' },
+              { label: '惯用脚', val: player.physical?.foot === 'Left' ? '左脚' : player.physical?.foot === 'Right' ? '右脚' : '左右开弓' },
             ].map((item, idx) => (
               <div key={idx} className="bg-black/40 rounded-xl p-3 border border-white/5">
-                <p className="text-[10px] text-gray-500 uppercase font-black mb-0.5">{item.label}</p>
+                <p className="text-[9px] text-gray-500 uppercase font-black mb-0.5">{item.label}</p>
                 <p className="text-sm text-gray-200 font-bold">{item.val}</p>
               </div>
             ))}
           </div>
+
+          {/* Detailed Stats List (Sidebar Version) */}
+          <div className="w-full space-y-4 pt-6 border-t border-white/5">
+            <p className="text-[10px] text-gray-500 font-black uppercase tracking-[0.2em]">详细性能数据</p>
+            <div className="space-y-3">
+              {player.scoutingStats?.map((stat, i) => (
+                <div key={i} className="group">
+                  <div className="flex justify-between items-center mb-1.5">
+                    <span className="text-xs font-bold text-gray-400 group-hover:text-white transition-colors">{stat.label}</span>
+                    <span className="text-xs font-black text-blue-400">{stat.value}</span>
+                  </div>
+                  <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-blue-600 transition-all duration-1000 ease-out group-hover:bg-blue-400" 
+                      style={{ width: `${stat.value}%` }}
+                    ></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
-        {/* 右侧：深度球探数据 */}
-        <div className="flex-grow p-8 md:p-12 space-y-8">
+        {/* Right Content: Advanced Visuals */}
+        <div className="flex-grow p-8 md:p-12 space-y-10 bg-[#0a0f14]">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-black text-gray-500 uppercase tracking-[0.3em]">Player Scouting Report</h3>
+            <div className="flex items-center gap-3">
+               <div className="w-1.5 h-6 bg-blue-500 rounded-full"></div>
+               <h3 className="text-sm font-black text-white uppercase tracking-[0.3em]">球员球探报告</h3>
+            </div>
             <button 
               onClick={onClose}
-              className="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center transition-all group"
+              className="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center transition-all group active:scale-90"
             >
-              <span className="text-xl text-gray-400 group-hover:text-white">×</span>
+              <span className="text-xl text-gray-500 group-hover:text-white">×</span>
             </button>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-            {/* 雷达图：核心技能 */}
-            <div className="space-y-4">
-              <p className="text-xs font-bold text-blue-400 uppercase tracking-widest">核心技术指标 / Core Attributes</p>
-              <div className="h-64 bg-white/5 rounded-2xl border border-white/5 p-4 flex items-center justify-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+            {/* Visual: Ability Radar */}
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <p className="text-xs font-bold text-blue-400 uppercase tracking-widest">能力雷达图</p>
+                <span className="text-[10px] text-gray-500 italic">基于实战表现的数据拟合</span>
+              </div>
+              <div className="h-72 bg-white/5 rounded-3xl border border-white/5 p-6 flex items-center justify-center relative overflow-hidden group/radar">
+                <div className="absolute inset-0 bg-blue-500/5 opacity-0 group-hover/radar:opacity-100 transition-opacity"></div>
                 {player.scoutingStats ? (
                   <ResponsiveContainer width="100%" height="100%">
                     <RadarChart cx="50%" cy="50%" outerRadius="75%" data={player.scoutingStats.map(s => ({ subject: s.label, A: s.value }))}>
-                      <PolarGrid stroke="rgba(255,255,255,0.05)" />
-                      <PolarAngleAxis dataKey="subject" tick={{fill: '#4b5563', fontSize: 10, fontWeight: '900'}} />
+                      <PolarGrid stroke="rgba(255,255,255,0.08)" />
+                      <PolarAngleAxis dataKey="subject" tick={{fill: '#64748b', fontSize: 11, fontWeight: '900'}} />
                       <Radar
                         name={player.name}
                         dataKey="A"
                         stroke="#3b82f6"
+                        strokeWidth={3}
                         fill="#3b82f6"
                         fillOpacity={0.4}
                         animationDuration={1500}
+                        animationEasing="ease-out"
+                        dot={{ r: 4, fill: '#3b82f6', strokeWidth: 2, stroke: '#fff' }}
                       />
+                      <Tooltip content={<CustomTooltip />} cursor={false} />
                     </RadarChart>
                   </ResponsiveContainer>
                 ) : (
@@ -83,14 +130,16 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({ player, onClose }) => 
               </div>
             </div>
 
-            {/* 战术指令与表现 */}
-            <div className="space-y-6">
+            {/* Tactical Intelligence */}
+            <div className="space-y-10">
               <div>
-                <p className="text-xs font-bold text-blue-400 uppercase tracking-widest mb-4">战术指令 / Tactical Brief</p>
-                <div className="space-y-3">
+                <p className="text-xs font-bold text-blue-400 uppercase tracking-widest mb-6">战术指令集</p>
+                <div className="space-y-4">
                   {player.tacticalBrief ? player.tacticalBrief.map((brief, i) => (
-                    <div key={i} className="flex items-start gap-3 group">
-                      <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5 group-hover:scale-125 transition-transform"></div>
+                    <div key={i} className="flex items-start gap-4 p-4 rounded-2xl bg-white/5 border border-white/5 hover:border-blue-500/20 transition-all group">
+                      <div className="w-6 h-6 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center text-[10px] font-black group-hover:bg-blue-500 group-hover:text-white transition-all">
+                        {i + 1}
+                      </div>
                       <p className="text-sm text-gray-300 font-medium leading-relaxed italic">{brief}</p>
                     </div>
                   )) : (
@@ -99,19 +148,25 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({ player, onClose }) => 
                 </div>
               </div>
 
-              <div className="pt-6 border-t border-white/5">
-                <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">球员定位 / Tactical Role</p>
-                <div className="px-4 py-3 bg-blue-600/10 border border-blue-500/20 rounded-xl">
-                  <p className="text-sm text-blue-300 font-bold leading-relaxed">
-                    在当前战术体系中担任 <span className="text-white underline decoration-blue-500 underline-offset-4">{player.role}</span>，负责串联球队的进攻脉络并压迫对方防线。
+              <div className="pt-8 border-t border-white/5">
+                <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">角色定义</p>
+                <div className="p-6 bg-gradient-to-br from-blue-600/10 to-transparent border border-blue-500/20 rounded-2xl">
+                  <p className="text-sm text-blue-200 font-medium leading-relaxed">
+                    在当前战役中，<span className="text-white font-black">{player.name}</span> 作为核心 <span className="text-blue-400 font-black">{player.role}</span>，
+                    其主要任务是利用其卓越的 <span className="text-white">空间感知</span> 与 <span className="text-white">传球能力</span> 彻底撕裂对方防线。
                   </p>
                 </div>
               </div>
             </div>
           </div>
           
-          <div className="text-center text-[10px] text-gray-700 uppercase tracking-widest font-black">
-            Generated by Soccer Tactic Lab Engine v1.0
+          {/* Footer Branding */}
+          <div className="flex items-center justify-center gap-4 opacity-50 pt-4">
+            <div className="h-px w-20 bg-gradient-to-r from-transparent to-gray-700"></div>
+            <div className="text-[10px] text-gray-600 uppercase tracking-widest font-black">
+              足球战术实验室 球探引擎
+            </div>
+            <div className="h-px w-20 bg-gradient-to-l from-transparent to-gray-700"></div>
           </div>
         </div>
       </div>

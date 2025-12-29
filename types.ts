@@ -1,4 +1,14 @@
 
+export interface UserProfile {
+  name: string;
+  rank: string;
+  avatar: string;
+  tacticsMastered: number;
+  battlesAnalyzed: number;
+  learningProgress: number; // 0-100
+  joinDate: string;
+}
+
 export interface ScoutingStat {
   label: string;
   value: number; // 0-100
@@ -21,7 +31,6 @@ export interface PlayerPosition {
   name: string;
   role: string;
   team: 'home' | 'away';
-  // 新增字段
   physical?: PlayerPhysicalInfo;
   scoutingStats?: ScoutingStat[];
   tacticalBrief?: string[];
