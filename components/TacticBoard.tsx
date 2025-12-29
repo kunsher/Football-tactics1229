@@ -13,9 +13,11 @@ interface TacticBoardProps {
   awayColor: string;
   animationSpeed?: number;
   isPlaying?: boolean;
+  showZones?: boolean;
+  highlightedZone?: string | null;
 }
 
-const FootballPitch: React.FC = () => (
+const FootballPitch: React.FC<{ showZones?: boolean; highlightedZone?: string | null }> = ({ showZones, highlightedZone }) => (
   <svg viewBox="0 0 1050 680" className="w-full h-full opacity-95">
     <defs>
       <pattern id="stripes" width="105" height="680" patternUnits="userSpaceOnUse">
@@ -30,6 +32,38 @@ const FootballPitch: React.FC = () => (
     
     <rect width="1050" height="680" fill="url(#stripes)" rx="12" />
     <rect width="1050" height="680" fill="url(#pitchGradient)" rx="12" pointerEvents="none" />
+
+    {/* 战术防区图层 - 科普核心 */}
+    {showZones && (
+      <g stroke="rgba(255,255,255,0.08)" strokeWidth="1" strokeDasharray="4,4" fill="none">
+        {/* 纵向五通道 */}
+        <line x1="210" y1="10" x2="210" y2="670" />
+        <line x1="420" y1="10" x2="420" y2="670" />
+        <line x1="630" y1="10" x2="630" y2="670" />
+        <line x1="840" y1="10" x2="840" y2="670" />
+        
+        {/* 横向分界线 */}
+        <line x1="10" y1="226" x2="1040" y2="226" />
+        <line x1="10" y1="454" x2="1040" y2="454" />
+        
+        {/* 14号位高亮 (进攻端核心区域) */}
+        <rect 
+          x="630" y="226" width="210" height="228" 
+          fill={highlightedZone === 'zone14' ? 'rgba(59, 130, 246, 0.1)' : 'transparent'} 
+          className="transition-all duration-500"
+        />
+        
+        {/* 肋部 (Half-spaces) 高亮 */}
+        <rect 
+          x="630" y="10" width="210" height="216" 
+          fill={highlightedZone === 'half-space' ? 'rgba(59, 130, 246, 0.05)' : 'transparent'}
+        />
+        <rect 
+          x="630" y="454" width="210" height="216" 
+          fill={highlightedZone === 'half-space' ? 'rgba(59, 130, 246, 0.05)' : 'transparent'}
+        />
+      </g>
+    )}
 
     <g stroke="rgba(255,255,255,0.4)" strokeWidth="2" fill="none">
       <rect x="10" y="10" width="1030" height="660" />
@@ -107,7 +141,6 @@ const Player: React.FC<{
               <rect x="-65" y="-14" width="130" height="28" rx="14" fill="rgba(10, 15, 20, 0.98)" stroke="rgba(255,255,255,0.2)" strokeWidth="1" />
               <path d="M-5 14 L0 19 L5 14 Z" fill="rgba(10, 15, 20, 0.98)" />
               
-              {/* Role Pulse Icon */}
               <g transform="translate(-50, 0)">
                 <circle r="4" fill={color} className="animate-role-pulse" />
                 <circle r="6" fill="none" stroke={color} strokeWidth="1" className="animate-role-ping" />
@@ -132,9 +165,10 @@ export const TacticBoard: React.FC<TacticBoardProps> = ({
     homeColor,
     awayColor,
     animationSpeed = 1.0,
-    isPlaying = false
+    isPlaying = false,
+    showZones = false,
+    highlightedZone = null
 }) => {
-    // 动画时长由父组件控制步进，此处定义平滑移动时长
     const movementDuration = 0.8 / animationSpeed;
 
     const ballPath = useMemo(() => {
@@ -152,7 +186,7 @@ export const TacticBoard: React.FC<TacticBoardProps> = ({
     return (
         <div className="w-full aspect-[105/68] max-w-5xl mx-auto relative select-none">
             <div className="absolute inset-0 bg-[#1e3a1e] rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10">
-                <FootballPitch />
+                <FootballPitch showZones={showZones} highlightedZone={highlightedZone} />
             </div>
             
             <svg viewBox="0 0 1050 680" className="w-full h-full relative z-10">
@@ -161,14 +195,8 @@ export const TacticBoard: React.FC<TacticBoardProps> = ({
                         <feGaussianBlur stdDeviation="3" result="blur" />
                         <feComposite in="SourceGraphic" in2="blur" operator="over" />
                     </filter>
-                    {/* 皮球轨迹流光遮罩 */}
-                    <linearGradient id="trailGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stopColor="white" stopOpacity="0" />
-                        <stop offset="100%" stopColor="white" stopOpacity="0.6" />
-                    </linearGradient>
                 </defs>
 
-                {/* 传球路径绘制 */}
                 <g>
                     {passingNetwork.connections.map((conn, i) => {
                         const from = homePlayers.find(p => p.id === conn.from) || awayPlayers.find(p => p.id === conn.from);
@@ -191,38 +219,14 @@ export const TacticBoard: React.FC<TacticBoardProps> = ({
                                     strokeLinecap="round"
                                     className="transition-all duration-700"
                                 />
-                                {isMain && isPlaying && (
-                                    <line
-                                        x1={from.x * 10} y1={from.y * 6.7 + 5}
-                                        x2={to.x * 10} y2={to.y * 6.7 + 5}
-                                        stroke="white"
-                                        strokeWidth={strokeWidth}
-                                        strokeOpacity="0.4"
-                                        strokeDasharray="1, 10"
-                                        className="animate-[dash_1s_linear_infinite]"
-                                    />
-                                )}
                             </g>
                         );
                     })}
                 </g>
 
-                {/* 模拟皮球：核心连贯动力学 */}
                 {ballPath && (
                     <g>
-                        {/* 移动轨迹残影 */}
-                        {isPlaying && (
-                            <line
-                                x1={ballPath.from.x * 10} y1={ballPath.from.y * 6.7 + 5}
-                                x2={ballPath.to.x * 10} y2={ballPath.to.y * 6.7 + 5}
-                                stroke="white"
-                                strokeWidth="2"
-                                strokeOpacity="0.15"
-                                strokeLinecap="round"
-                            />
-                        )}
-                        
-                        <circle r="6" fill="#fff" filter="url(#ballGlow)" className="shadow-2xl">
+                        <circle r="6" fill="#fff" filter="url(#ballGlow)">
                             <animateMotion 
                                 dur={`${(isPlaying ? 2.2 : 2) / animationSpeed}s`}
                                 repeatCount={isPlaying ? "1" : "indefinite"}
@@ -236,14 +240,10 @@ export const TacticBoard: React.FC<TacticBoardProps> = ({
                     </g>
                 )}
 
-                {/* 球员渲染 */}
                 {awayPlayers.map(p => (
                     <Player 
-                        key={p.id} 
-                        player={p} 
-                        color={awayColor} 
-                        onHover={onPlayerHover} 
-                        onClick={onPlayerClick} 
+                        key={p.id} player={p} color={awayColor} 
+                        onHover={onPlayerHover} onClick={onPlayerClick} 
                         isHovered={hoveredPlayer?.id === p.id} 
                         duration={movementDuration} 
                         isInPossession={ballPossessorId === p.id}
@@ -252,11 +252,8 @@ export const TacticBoard: React.FC<TacticBoardProps> = ({
                 ))}
                 {homePlayers.map(p => (
                     <Player 
-                        key={p.id} 
-                        player={p} 
-                        color={homeColor} 
-                        onHover={onPlayerHover} 
-                        onClick={onPlayerClick} 
+                        key={p.id} player={p} color={homeColor} 
+                        onHover={onPlayerHover} onClick={onPlayerClick} 
                         isHovered={hoveredPlayer?.id === p.id} 
                         duration={movementDuration} 
                         isInPossession={ballPossessorId === p.id}
@@ -264,32 +261,6 @@ export const TacticBoard: React.FC<TacticBoardProps> = ({
                     />
                 ))}
             </svg>
-
-            <style>{`
-                @keyframes dash {
-                    to {
-                        stroke-dashoffset: -50;
-                    }
-                }
-                @keyframes role-pulse {
-                    0%, 100% { transform: scale(1); opacity: 0.8; }
-                    50% { transform: scale(1.3); opacity: 1; }
-                }
-                @keyframes role-ping {
-                    0% { transform: scale(1); opacity: 0.5; }
-                    100% { transform: scale(2.5); opacity: 0; }
-                }
-                .animate-role-pulse {
-                    animation: role-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-                    transform-box: fill-box;
-                    transform-origin: center;
-                }
-                .animate-role-ping {
-                    animation: role-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
-                    transform-box: fill-box;
-                    transform-origin: center;
-                }
-            `}</style>
         </div>
     );
 };
