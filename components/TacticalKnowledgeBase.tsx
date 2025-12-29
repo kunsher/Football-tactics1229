@@ -5,6 +5,10 @@ import type { GlossaryTerm } from '../types';
 import { ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Tooltip } from 'recharts';
 import { InfoIcon, CoachIcon } from './icons';
 
+interface TacticalKnowledgeBaseProps {
+  onNavigateToBattle?: (battleId: string) => void;
+}
+
 const CustomRadarTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
@@ -27,7 +31,7 @@ const CustomRadarTooltip = ({ active, payload }: any) => {
   return null;
 };
 
-export const TacticalKnowledgeBase: React.FC = () => {
+export const TacticalKnowledgeBase: React.FC<TacticalKnowledgeBaseProps> = ({ onNavigateToBattle }) => {
   const systems = GLOSSARY.filter(g => g.category === 'System');
   const [selectedSystem, setSelectedSystem] = useState<GlossaryTerm>(systems[0]);
 
@@ -80,10 +84,18 @@ export const TacticalKnowledgeBase: React.FC = () => {
             <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-600/5 rounded-full blur-[80px] -ml-32 -mb-32"></div>
             
             <div className="relative z-10">
-                <div className="flex items-center gap-3 mb-8">
+                <div className="flex items-center justify-between mb-8">
                     <span className="px-4 py-1.5 bg-blue-500/20 text-blue-400 text-[11px] font-black uppercase tracking-widest rounded-full border border-blue-500/30">
                         战术系统 / {selectedSystem.category}
                     </span>
+                    {selectedSystem.relatedBattleId && onNavigateToBattle && (
+                        <button 
+                            onClick={() => onNavigateToBattle(selectedSystem.relatedBattleId!)}
+                            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-black uppercase px-4 py-1.5 rounded-lg shadow-lg shadow-blue-600/20 transition-all transform hover:scale-105"
+                        >
+                            进入实战复盘 <span className="text-sm">→</span>
+                        </button>
+                    )}
                 </div>
                 
                 <h3 className="text-5xl font-black text-white mb-6 tracking-tighter leading-none">{selectedSystem.term}</h3>
@@ -156,7 +168,11 @@ export const TacticalKnowledgeBase: React.FC = () => {
                     </h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                         {selectedSystem.famousTeams?.map(team => (
-                            <div key={team} className="p-5 bg-white/5 rounded-2xl border border-white/5 flex items-center justify-between group hover:bg-white/10 hover:border-blue-500/20 transition-all cursor-pointer">
+                            <div 
+                                key={team} 
+                                onClick={() => selectedSystem.relatedBattleId && onNavigateToBattle?.(selectedSystem.relatedBattleId)}
+                                className="p-5 bg-white/5 rounded-2xl border border-white/5 flex items-center justify-between group hover:bg-white/10 hover:border-blue-500/20 transition-all cursor-pointer"
+                            >
                                 <span className="text-base font-bold text-white group-hover:text-blue-400 transition-colors">{team}</span>
                                 <div className="flex items-center gap-2 text-[11px] text-blue-500 font-black uppercase opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
                                     进入实战复盘

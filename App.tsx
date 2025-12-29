@@ -24,6 +24,16 @@ const App: React.FC = () => {
     setCurrentPhaseIndex(index);
   };
 
+  const handleNavigateToBattle = (battleId: string) => {
+    const battle = BATTLES.find(b => b.id === battleId);
+    if (battle) {
+      setSelectedBattle(battle);
+      setCurrentPhaseIndex(0);
+      setActiveTab('simulation');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#0a0f14] text-gray-200 flex flex-col p-4 md:p-6 font-sans selection:bg-blue-500/30">
       <header className="flex flex-col md:flex-row justify-between items-start md:items-center pb-6 border-b border-white/10 gap-4">
@@ -109,7 +119,7 @@ const App: React.FC = () => {
                 </>
             ) : (
                 <div className="w-full">
-                    <TacticalKnowledgeBase />
+                    <TacticalKnowledgeBase onNavigateToBattle={handleNavigateToBattle} />
                 </div>
             )}
             

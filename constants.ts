@@ -6,9 +6,10 @@ export const GLOSSARY: GlossaryTerm[] = [
     term: 'Tiki-taka', 
     definition: '一种通过极短的传球和频繁的跑位来掌控球权的战术体系，强调空间的动态利用。', 
     category: 'System',
-    historicalContext: '由克鲁伊夫奠基，在瓜迪奥拉时代的巴萨达到巅峰。',
+    historicalContext: '由克鲁英夫奠基，在瓜迪奥拉时代的巴萨达到巅峰。',
     keyTraits: ['极致控球', '三角形接应', '高位压迫', '位置感'],
     famousTeams: ['巴塞罗那 (2008-2012)', '西班牙国家队 (2008-2012)'],
+    relatedBattleId: 'tiki-taka-2011',
     radarProfile: [
       { subject: '控球', A: 100, B: 0, fullMark: 100 },
       { subject: '压迫', A: 90, B: 0, fullMark: 100 },

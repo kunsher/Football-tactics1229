@@ -26,6 +26,7 @@ export interface GlossaryTerm {
   keyTraits?: string[];
   radarProfile?: RadarPoint[];
   famousTeams?: string[];
+  relatedBattleId?: string;
 }
 
 export interface TacticPhase {
