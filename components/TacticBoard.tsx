@@ -58,7 +58,8 @@ const Player: React.FC<{
     <g
       style={{
         transform: `translate(${player.x * 10}px, ${player.y * 6.7 + 5}px)`,
-        transition: `transform ${duration}s cubic-bezier(0.25, 1, 0.5, 1)`
+        transition: `transform ${duration}s cubic-bezier(0.4, 0, 0.2, 1)`,
+        willChange: 'transform',
       }}
       onMouseEnter={() => onHover(player)}
       onMouseLeave={() => onHover(null)}
@@ -133,8 +134,7 @@ export const TacticBoard: React.FC<TacticBoardProps> = ({
     animationSpeed = 1.0,
     isPlaying = false
 }) => {
-    // 动画时长与App.tsx中的步进时长同步
-    const phaseStepDuration = 3.0 / animationSpeed; 
+    // 动画时长由父组件控制步进，此处定义平滑移动时长
     const movementDuration = 0.8 / animationSpeed;
 
     const ballPath = useMemo(() => {
@@ -241,7 +241,7 @@ export const TacticBoard: React.FC<TacticBoardProps> = ({
                     <Player 
                         key={p.id} 
                         player={p} 
-                        color="#111827" 
+                        color={awayColor} 
                         onHover={onPlayerHover} 
                         onClick={onPlayerClick} 
                         isHovered={hoveredPlayer?.id === p.id} 

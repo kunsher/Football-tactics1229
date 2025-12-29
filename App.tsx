@@ -36,12 +36,22 @@ const App: React.FC = () => {
   const [animationSpeed, setAnimationSpeed] = useState(1.0);
   const [isLoaded, setIsLoaded] = useState(false);
   
+  // 色彩自定义状态
+  const [homeColor, setHomeColor] = useState(selectedBattle.teams.home.color);
+  const [awayColor, setAwayColor] = useState(selectedBattle.teams.away.color);
+
   const [isPlaying, setIsPlaying] = useState(false);
   const playbackTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
     setIsLoaded(true);
   }, []);
+
+  // 切换战役时重置颜色
+  useEffect(() => {
+    setHomeColor(selectedBattle.teams.home.color);
+    setAwayColor(selectedBattle.teams.away.color);
+  }, [selectedBattle]);
 
   useEffect(() => {
     if (isPlaying) {
@@ -138,15 +148,40 @@ const App: React.FC = () => {
             
             <div className="flex items-center gap-4">
                 {activeTab === 'simulation' && (
-                    <BattleSelector 
-                        battles={BATTLES} 
-                        selectedId={selectedBattle.id} 
-                        onSelect={(battle) => {
-                            setSelectedBattle(battle);
-                            setCurrentPhaseIndex(0);
-                            setIsPlaying(false);
-                        }} 
-                    />
+                    <div className="flex items-center gap-2">
+                        <BattleSelector 
+                            battles={BATTLES} 
+                            selectedId={selectedBattle.id} 
+                            onSelect={(battle) => {
+                                setSelectedBattle(battle);
+                                setCurrentPhaseIndex(0);
+                                setIsPlaying(false);
+                            }} 
+                        />
+                        
+                        {/* 球队颜色调节器 */}
+                        <div className="flex items-center gap-1.5 bg-white/5 p-1.5 rounded-lg border border-white/10">
+                            <div className="relative group/color">
+                                <input 
+                                    type="color" 
+                                    value={homeColor} 
+                                    onChange={(e) => setHomeColor(e.target.value)}
+                                    className="w-5 h-5 rounded-full border-none cursor-pointer bg-transparent appearance-none [&::-webkit-color-swatch-wrapper]:p-0 [&::-webkit-color-swatch]:rounded-full [&::-webkit-color-swatch]:border-none"
+                                />
+                                <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 bg-black text-[9px] font-black text-white px-2 py-1 rounded opacity-0 group-hover/color:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">主队颜色</div>
+                            </div>
+                            <div className="w-px h-3 bg-white/10 mx-0.5"></div>
+                            <div className="relative group/color">
+                                <input 
+                                    type="color" 
+                                    value={awayColor} 
+                                    onChange={(e) => setAwayColor(e.target.value)}
+                                    className="w-5 h-5 rounded-full border-none cursor-pointer bg-transparent appearance-none [&::-webkit-color-swatch-wrapper]:p-0 [&::-webkit-color-swatch]:rounded-full [&::-webkit-color-swatch]:border-none"
+                                />
+                                <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 bg-black text-[9px] font-black text-white px-2 py-1 rounded opacity-0 group-hover/color:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">客队颜色</div>
+                            </div>
+                        </div>
+                    </div>
                 )}
                 
                 <button 
@@ -182,8 +217,8 @@ const App: React.FC = () => {
                         hoveredPlayer={hoveredPlayer}
                         onPlayerHover={setHoveredPlayer}
                         onPlayerClick={setSelectedPlayerForModal}
-                        homeColor={selectedBattle.teams.home.color}
-                        awayColor={selectedBattle.teams.away.color}
+                        homeColor={homeColor}
+                        awayColor={awayColor}
                         animationSpeed={animationSpeed}
                         isPlaying={isPlaying}
                       />
@@ -191,7 +226,7 @@ const App: React.FC = () => {
                       <div className="absolute bottom-3 left-1/2 -translate-x-1/2 w-1/3 h-1.5 bg-white/5 rounded-full overflow-hidden border border-white/10 backdrop-blur-md">
                          <div 
                             className="h-full bg-gradient-to-r from-blue-600 to-blue-400 transition-all duration-500 ease-out" 
-                            style={{ width: `${((currentPhaseIndex + 1) / selectedBattle.phases.length) * 100}%` }}
+                            style={{ width: `${((currentPhaseIndex + 1) / selectedBattle.phases.length) * 100}%`, backgroundColor: homeColor }}
                          ></div>
                       </div>
                     </div>
@@ -203,6 +238,7 @@ const App: React.FC = () => {
                                 className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all ${
                                     isPlaying ? 'bg-red-500 text-white shadow-[0_0_20px_rgba(239,68,68,0.3)]' : 'bg-blue-600 text-white shadow-[0_0_20px_rgba(59,130,246,0.4)]'
                                 } group relative overflow-hidden`}
+                                style={!isPlaying ? { backgroundColor: homeColor, boxShadow: `0 0 20px ${homeColor}44` } : {}}
                                 title={isPlaying ? "暂停" : "播放进攻全过程"}
                             >
                                 <div className="absolute inset-0 bg-white/10 scale-0 group-hover:scale-100 transition-transform duration-500 rounded-full"></div>
@@ -220,9 +256,10 @@ const App: React.FC = () => {
                                         onClick={() => handlePhaseChange(idx)}
                                         className={`px-5 py-2.5 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${
                                             idx === currentPhaseIndex 
-                                            ? 'bg-blue-600 text-white shadow-lg' 
+                                            ? 'text-white shadow-lg' 
                                             : 'bg-white/5 text-gray-500 hover:bg-white/10 hover:text-gray-300'
                                         }`}
+                                        style={idx === currentPhaseIndex ? { backgroundColor: homeColor } : {}}
                                     >
                                         {phase.title.includes('：') ? phase.title.split('：')[0] : phase.title}
                                     </button>
@@ -241,6 +278,7 @@ const App: React.FC = () => {
                                         ? 'bg-blue-500 text-white' 
                                         : 'text-gray-600 hover:text-white hover:bg-white/5'
                                     }`}
+                                    style={animationSpeed === speed ? { backgroundColor: homeColor } : {}}
                                 >
                                     {speed % 1 === 0 ? speed.toFixed(1) : speed}x
                                 </button>
@@ -265,7 +303,7 @@ const App: React.FC = () => {
                 <StatsDashboard 
                     stats={selectedBattle.stats} 
                     teamNames={{ home: selectedBattle.teams.home.name, away: selectedBattle.teams.away.name }}
-                    colors={{ home: selectedBattle.teams.home.color, away: selectedBattle.teams.away.color }}
+                    colors={{ home: homeColor, away: awayColor }}
                     teams={selectedBattle.teams}
                     radarData={selectedBattle.radarData}
                 />
