@@ -5,6 +5,7 @@ import { AnalysisPanel } from './components/AnalysisPanel';
 import { StatsDashboard } from './components/StatsDashboard';
 import { BattleSelector } from './components/BattleSelector';
 import { ProjectMission } from './components/ProjectMission';
+import { TacticalKnowledgeBase } from './components/TacticalKnowledgeBase';
 import type { PlayerPosition, Battle } from './types';
 import { BATTLES } from './constants';
 import { GithubIcon } from './components/icons';
@@ -69,100 +70,96 @@ const App: React.FC = () => {
       
       <main className="flex-grow flex flex-col lg:grid lg:grid-cols-12 gap-8 mt-6 items-start">
         
-        {/* 左侧：球场区域 - 始终显示或作为主舞台 */}
-        <div className="lg:col-span-8 flex flex-col gap-4 w-full lg:sticky lg:top-6">
-            <div className="bg-gray-800/20 rounded-2xl p-4 md:p-8 border border-white/5 backdrop-blur-sm relative overflow-hidden group shadow-2xl">
-               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-blue-500/50 to-transparent opacity-30"></div>
-               <TacticBoard 
-                homePlayers={currentPhase.homePlayers}
-                awayPlayers={currentPhase.awayPlayers}
-                passingNetwork={{ connections: currentPhase.connections }}
-                hoveredPlayer={hoveredPlayer}
-                onPlayerHover={setHoveredPlayer}
-                homeColor={selectedBattle.teams.home.color}
-                awayColor={selectedBattle.teams.away.color}
-              />
-            </div>
-
-            {activeTab === 'simulation' && (
-                <div className="bg-gray-900/40 rounded-xl p-4 border border-white/5 flex items-center justify-between gap-4 animate-fade-in">
-                    <div className="flex-grow flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-                        {selectedBattle.phases.map((phase, idx) => (
-                            <button
-                                key={phase.id}
-                                onClick={() => handlePhaseChange(idx)}
-                                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
-                                    idx === currentPhaseIndex 
-                                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' 
-                                    : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-gray-200'
-                                }`}
-                            >
-                                {idx + 1}. {phase.title}
-                            </button>
-                        ))}
+        {/* 内容区域 */}
+        <div className={`${activeTab === 'knowledge' ? 'lg:col-span-12' : 'lg:col-span-8'} flex flex-col gap-4 w-full lg:sticky lg:top-6 transition-all duration-500`}>
+            {activeTab !== 'knowledge' ? (
+                <>
+                    <div className="bg-gray-800/20 rounded-2xl p-4 md:p-8 border border-white/5 backdrop-blur-sm relative overflow-hidden group shadow-2xl">
+                       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-blue-500/50 to-transparent opacity-30"></div>
+                       <TacticBoard 
+                        homePlayers={currentPhase.homePlayers}
+                        awayPlayers={currentPhase.awayPlayers}
+                        passingNetwork={{ connections: currentPhase.connections }}
+                        hoveredPlayer={hoveredPlayer}
+                        onPlayerHover={setHoveredPlayer}
+                        homeColor={selectedBattle.teams.home.color}
+                        awayColor={selectedBattle.teams.away.color}
+                      />
                     </div>
+
+                    {activeTab === 'simulation' && (
+                        <div className="bg-gray-900/40 rounded-xl p-4 border border-white/5 flex items-center justify-between gap-4 animate-fade-in">
+                            <div className="flex-grow flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+                                {selectedBattle.phases.map((phase, idx) => (
+                                    <button
+                                        key={phase.id}
+                                        onClick={() => handlePhaseChange(idx)}
+                                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
+                                            idx === currentPhaseIndex 
+                                            ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' 
+                                            : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-gray-200'
+                                        }`}
+                                    >
+                                        {idx + 1}. {phase.title}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                </>
+            ) : (
+                <div className="w-full">
+                    <TacticalKnowledgeBase />
                 </div>
             )}
             
-            <div className="hidden lg:block text-[10px] text-gray-600 uppercase font-bold tracking-widest text-center mt-2 opacity-50">
-                Interactive Tactical Simulation v1.0
-            </div>
+            {activeTab !== 'knowledge' && (
+                <div className="hidden lg:block text-[10px] text-gray-600 uppercase font-bold tracking-widest text-center mt-2 opacity-50">
+                    Interactive Tactical Simulation v1.0
+                </div>
+            )}
         </div>
 
-        {/* 右侧：动态内容区域 */}
-        <aside className="lg:col-span-4 flex flex-col gap-6 w-full">
-          {activeTab === 'simulation' && (
-            <div className="space-y-6 animate-fade-in">
-                <AnalysisPanel 
-                    phase={currentPhase}
-                    battle={selectedBattle}
-                    hoveredPlayer={hoveredPlayer}
-                />
-                <StatsDashboard 
-                    stats={selectedBattle.stats} 
-                    teamNames={{ home: selectedBattle.teams.home.name, away: selectedBattle.teams.away.name }}
-                    colors={{ home: selectedBattle.teams.home.color, away: selectedBattle.teams.away.color }}
-                    teams={selectedBattle.teams}
-                    radarData={selectedBattle.radarData}
-                />
-            </div>
-          )}
-
-          {activeTab === 'knowledge' && (
-            <div className="space-y-6 animate-fade-in">
-                <div className="bg-blue-600/10 border border-blue-500/30 rounded-2xl p-6">
-                    <h2 className="text-xl font-black text-white mb-2">战术体系百科</h2>
-                    <p className="text-sm text-blue-300 mb-6">点击下方卡片，解锁深度战术演变历史。</p>
-                    <div className="grid grid-cols-1 gap-4">
-                        {['Tiki-Taka', '全攻全守', '高位逼抢', '链式防守'].map(concept => (
-                            <div key={concept} className="p-4 bg-white/5 border border-white/5 rounded-xl hover:border-blue-500/50 cursor-pointer transition-all">
-                                <p className="font-bold text-white">{concept}</p>
-                                <p className="text-xs text-gray-400 mt-1">相关战役：{selectedBattle.title}</p>
-                            </div>
-                        ))}
-                    </div>
+        {/* 右侧侧边栏：在百科模式下隐藏以实现剧中效果 */}
+        {activeTab !== 'knowledge' && (
+            <aside className="lg:col-span-4 flex flex-col gap-6 w-full animate-fade-in">
+              {activeTab === 'simulation' && (
+                <div className="space-y-6">
+                    <AnalysisPanel 
+                        phase={currentPhase}
+                        battle={selectedBattle}
+                        hoveredPlayer={hoveredPlayer}
+                    />
+                    <StatsDashboard 
+                        stats={selectedBattle.stats} 
+                        teamNames={{ home: selectedBattle.teams.home.name, away: selectedBattle.teams.away.name }}
+                        colors={{ home: selectedBattle.teams.home.color, away: selectedBattle.teams.away.color }}
+                        teams={selectedBattle.teams}
+                        radarData={selectedBattle.radarData}
+                    />
                 </div>
-                <StatsDashboard 
-                    stats={selectedBattle.stats} 
-                    teamNames={{ home: selectedBattle.teams.home.name, away: selectedBattle.teams.away.name }}
-                    colors={{ home: selectedBattle.teams.home.color, away: selectedBattle.teams.away.color }}
-                    radarData={selectedBattle.radarData}
-                />
-            </div>
-          )}
+              )}
 
-          {activeTab === 'about' && (
-            <div className="animate-fade-in">
-                <ProjectMission />
-            </div>
-          )}
-          
-          <footer className="mt-4 pb-8 text-center text-[10px] text-gray-600 uppercase tracking-widest border-t border-white/5 pt-6">
+              {activeTab === 'about' && (
+                <div className="animate-fade-in">
+                    <ProjectMission />
+                </div>
+              )}
+              
+              <footer className="mt-4 pb-8 text-center text-[10px] text-gray-600 uppercase tracking-widest border-t border-white/5 pt-6">
+                <p>© 2024 Soccer Tactic Lab - Graduation Project</p>
+                <p className="mt-1">Dedicated to football tactical education</p>
+              </footer>
+            </aside>
+        )}
+      </main>
+      
+      {activeTab === 'knowledge' && (
+          <footer className="mt-12 pb-12 text-center text-[10px] text-gray-600 uppercase tracking-widest border-t border-white/5 pt-8 max-w-6xl mx-auto w-full">
             <p>© 2024 Soccer Tactic Lab - Graduation Project</p>
             <p className="mt-1">Dedicated to football tactical education</p>
           </footer>
-        </aside>
-      </main>
+      )}
     </div>
   );
 };

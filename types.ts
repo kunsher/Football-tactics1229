@@ -11,10 +11,21 @@ export interface PlayerPosition {
   team: 'home' | 'away';
 }
 
+export interface RadarPoint {
+  subject: string;
+  A: number;
+  B: number;
+  fullMark: number;
+}
+
 export interface GlossaryTerm {
   term: string;
   definition: string;
-  category: 'Position' | 'Phase' | 'Action';
+  category: 'Position' | 'Phase' | 'Action' | 'System';
+  historicalContext?: string;
+  keyTraits?: string[];
+  radarProfile?: RadarPoint[];
+  famousTeams?: string[];
 }
 
 export interface TacticPhase {
@@ -24,13 +35,6 @@ export interface TacticPhase {
   homePlayers: PlayerPosition[];
   awayPlayers: PlayerPosition[];
   connections: Connection[];
-}
-
-export interface RadarPoint {
-  subject: string;
-  A: number;
-  B: number;
-  fullMark: number;
 }
 
 export interface TeamInfo {

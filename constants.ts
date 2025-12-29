@@ -2,9 +2,72 @@
 import type { Battle, GlossaryTerm } from './types';
 
 export const GLOSSARY: GlossaryTerm[] = [
+  { 
+    term: 'Tiki-taka', 
+    definition: '一种通过极短的传球和频繁的跑位来掌控球权的战术体系，强调空间的动态利用。', 
+    category: 'System',
+    historicalContext: '由克鲁伊夫奠基，在瓜迪奥拉时代的巴萨达到巅峰。',
+    keyTraits: ['极致控球', '三角形接应', '高位压迫', '位置感'],
+    famousTeams: ['巴塞罗那 (2008-2012)', '西班牙国家队 (2008-2012)'],
+    radarProfile: [
+      { subject: '控球', A: 100, B: 0, fullMark: 100 },
+      { subject: '压迫', A: 90, B: 0, fullMark: 100 },
+      { subject: '速度', A: 40, B: 0, fullMark: 100 },
+      { subject: '创造力', A: 95, B: 0, fullMark: 100 },
+      { subject: '防守', A: 70, B: 0, fullMark: 100 },
+      { subject: '纪律', A: 90, B: 0, fullMark: 100 },
+    ]
+  },
+  { 
+    term: '全攻全守 (Total Football)', 
+    definition: '任何球员都可以根据比赛需要出现在场上任何位置的流动战术体系。', 
+    category: 'System',
+    historicalContext: '20世纪70年代由里努斯·米歇尔斯在阿贾克斯和荷兰队推广。',
+    keyTraits: ['位置轮换', '造越位陷阱', '全员进攻', '全员防守'],
+    famousTeams: ['荷兰国家队 (1974)', '阿贾克斯 (1970s)'],
+    radarProfile: [
+      { subject: '控球', A: 85, B: 0, fullMark: 100 },
+      { subject: '压迫', A: 95, B: 0, fullMark: 100 },
+      { subject: '速度', A: 70, B: 0, fullMark: 100 },
+      { subject: '创造力', A: 100, B: 0, fullMark: 100 },
+      { subject: '防守', A: 65, B: 0, fullMark: 100 },
+      { subject: '纪律', A: 80, B: 0, fullMark: 100 },
+    ]
+  },
+  { 
+    term: '高位逼抢 (Gegenpressing)', 
+    definition: '在丢球后的瞬间立即组织多人就地反抢，利用对方转换时的混乱重新夺回球权。', 
+    category: 'System',
+    historicalContext: '德国足球的现代精髓，由拉尔夫·朗尼克奠基，克洛普发扬光大。',
+    keyTraits: ['疯狂跑动', '围抢陷阱', '垂直进攻', '高防线'],
+    famousTeams: ['多特蒙德 (2010-2013)', '利物浦 (2018-2022)'],
+    radarProfile: [
+      { subject: '控球', A: 60, B: 0, fullMark: 100 },
+      { subject: '压迫', A: 100, B: 0, fullMark: 100 },
+      { subject: '速度', A: 95, B: 0, fullMark: 100 },
+      { subject: '创造力', A: 75, B: 0, fullMark: 100 },
+      { subject: '防守', A: 80, B: 0, fullMark: 100 },
+      { subject: '纪律', A: 85, B: 0, fullMark: 100 },
+    ]
+  },
+  { 
+    term: '链式防守 (Catenaccio)', 
+    definition: '高度战术化的防御系统，强调坚固的人盯人和一名灵活的“自由人”。', 
+    category: 'System',
+    historicalContext: '20世纪60年代海伦尼奥·埃雷拉带领的大国际时代。',
+    keyTraits: ['坚韧防线', '自由人角色', '高效反击', '心理战术'],
+    famousTeams: ['国际米兰 (1960s)', '意大利国家队 (1982/2006)'],
+    radarProfile: [
+      { subject: '控球', A: 40, B: 0, fullMark: 100 },
+      { subject: '压迫', A: 50, B: 0, fullMark: 100 },
+      { subject: '速度', A: 90, B: 0, fullMark: 100 },
+      { subject: '创造力', A: 60, B: 0, fullMark: 100 },
+      { subject: '防守', A: 100, B: 0, fullMark: 100 },
+      { subject: '纪律', A: 95, B: 0, fullMark: 100 },
+    ]
+  },
   { term: '伪九号 (False 9)', definition: '前锋回撤至中场接球，吸引对方中卫前移，从而为队友在身后创造插上空间。', category: 'Position' },
   { term: '肋部插上 (Underlap)', definition: '指边路球员不沿边线套外，而是从防守方边后卫与中卫之间的缝隙（肋部）进行内切跑位。', category: 'Action' },
-  { term: '高位压迫 (Gegenpressing)', definition: '在丢球后的瞬间立即组织多人就地反抢，利用对方转换时的混乱重新夺回球权。', category: 'Phase' },
   { term: '低位防守 (Low Block)', definition: '防守方将防线整体退缩至本方禁区前沿，压缩纵向空间，使对方难以通过传球打透。', category: 'Phase' },
   { term: '节拍器 (Regista)', definition: '拖后组织核心，通常位于防线身前，负责全队的传球节奏掌控和长传调度。', category: 'Position' }
 ];
