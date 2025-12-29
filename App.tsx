@@ -8,37 +8,32 @@ import { ProjectMission } from './components/ProjectMission';
 import { TacticalKnowledgeBase } from './components/TacticalKnowledgeBase';
 import { PlayerModal } from './components/PlayerModal';
 import { UserSpaceModal } from './components/UserSpaceModal';
+import { LoginModal } from './components/LoginModal';
 import { DailyChallenge } from './components/DailyChallenge';
 import { TacticalSandbox } from './components/TacticalSandbox';
 import type { PlayerPosition, Battle, UserProfile } from './types';
-import { BATTLES } from './constants';
 import { UserIcon } from './components/icons';
 import { GoogleGenAI } from "@google/genai";
+import { mockApi } from './services/mockApi';
 
 type ActiveTab = 'simulation' | 'knowledge' | 'sandbox' | 'about';
 
-const MOCK_USER: UserProfile = {
-    name: '分析师零号',
-    rank: '高级战术研究员',
-    avatar: '',
-    tacticsMastered: 12,
-    battlesAnalyzed: 45,
-    learningProgress: 75,
-    joinDate: '2023-10-12'
-};
-
 const App: React.FC = () => {
-  const [selectedBattle, setSelectedBattle] = useState<Battle>(BATTLES[0]);
+  const [battles, setBattles] = useState<Battle[]>([]);
+  const [selectedBattle, setSelectedBattle] = useState<Battle | null>(null);
+  const [user, setUser] = useState<UserProfile | null>(null);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
+  
   const [currentPhaseIndex, setCurrentPhaseIndex] = useState(0);
   const [hoveredPlayer, setHoveredPlayer] = useState<PlayerPosition | null>(null);
   const [selectedPlayerForModal, setSelectedPlayerForModal] = useState<PlayerPosition | null>(null);
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<ActiveTab>('simulation');
   const [animationSpeed, setAnimationSpeed] = useState(1.0);
-  const [isLoaded, setIsLoaded] = useState(false);
   
-  const [homeColor, setHomeColor] = useState(selectedBattle.teams.home.color);
-  const [awayColor, setAwayColor] = useState(selectedBattle.teams.away.color);
+  const [homeColor, setHomeColor] = useState('#ffffff');
+  const [awayColor, setAwayColor] = useState('#000000');
   const [showZones, setShowZones] = useState(false);
   const [aiInsight, setAiInsight] = useState<string | null>(null);
   const [isDecoding, setIsDecoding] = useState(false);
@@ -46,23 +41,46 @@ const App: React.FC = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const playbackTimerRef = useRef<number | null>(null);
 
+  // 初始化 App
   useEffect(() => {
-    setIsLoaded(true);
+    const initApp = async () => {
+        try {
+            const [fetchedBattles, fetchedUser] = await Promise.all([
+                mockApi.fetchBattles(),
+                mockApi.fetchUserProfile()
+            ]);
+            setBattles(fetchedBattles);
+            setSelectedBattle(fetchedBattles[0]);
+            setUser(fetchedUser);
+            setHomeColor(fetchedBattles[0].teams.home.color);
+            setAwayColor(fetchedBattles[0].teams.away.color);
+        } catch (e) {
+            console.error("Failed to connect to tactical server");
+        } finally {
+            setIsInitialLoading(false);
+        }
+    };
+    initApp();
   }, []);
 
   useEffect(() => {
-    setHomeColor(selectedBattle.teams.home.color);
-    setAwayColor(selectedBattle.teams.away.color);
-    setAiInsight(null);
+    if (selectedBattle) {
+        setHomeColor(selectedBattle.teams.home.color);
+        setAwayColor(selectedBattle.teams.away.color);
+        setAiInsight(null);
+    }
   }, [selectedBattle]);
 
   useEffect(() => {
-    if (isPlaying) {
+    if (isPlaying && selectedBattle) {
       const stepDuration = 3200 / animationSpeed; 
       playbackTimerRef.current = window.setInterval(() => {
         setCurrentPhaseIndex((prev) => {
           if (prev >= selectedBattle.phases.length - 1) {
             setIsPlaying(false);
+            mockApi.updateUserProgress(selectedBattle.id).then(newProgress => {
+                setUser(prevUser => prevUser ? { ...prevUser, battlesAnalyzed: newProgress.battlesAnalyzed } : null);
+            });
             return prev;
           }
           return prev + 1;
@@ -74,7 +92,37 @@ const App: React.FC = () => {
     return () => {
       if (playbackTimerRef.current) clearInterval(playbackTimerRef.current);
     };
-  }, [isPlaying, selectedBattle.phases.length, animationSpeed]);
+  }, [isPlaying, selectedBattle?.phases.length, animationSpeed]);
+
+  const handleLogin = async () => {
+    const loggedUser = await mockApi.login();
+    setUser(loggedUser);
+    setIsLoginModalOpen(false);
+  };
+
+  const handleLogout = async () => {
+    await mockApi.logout();
+    const guestUser = await mockApi.fetchUserProfile();
+    setUser(guestUser);
+    setIsUserModalOpen(false);
+  };
+
+  if (isInitialLoading) {
+    return (
+        <div className="min-h-screen bg-[#0a0f14] flex flex-col items-center justify-center">
+            <div className="relative">
+                <div className="w-24 h-24 border-4 border-blue-500/20 border-t-blue-500 rounded-full animate-spin"></div>
+                <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-[10px] font-black text-blue-500 uppercase tracking-tighter">Syncing</span>
+                </div>
+            </div>
+            <h2 className="mt-8 text-xl font-black text-white uppercase tracking-widest animate-pulse">正在连接战术数据库...</h2>
+            <p className="mt-2 text-gray-500 text-xs font-bold uppercase tracking-widest opacity-50 underline decoration-blue-500/30">Decrypting Strategy DNA</p>
+        </div>
+    );
+  }
+
+  if (!selectedBattle || !user) return null;
 
   const currentPhase = selectedBattle.phases[currentPhaseIndex];
 
@@ -93,7 +141,6 @@ const App: React.FC = () => {
       当前比赛：${selectedBattle.title} (${selectedBattle.subtitle})
       当前阶段：${currentPhase.title}
       描述：${currentPhase.description}
-      
       请用通俗易懂但专业的方式，为普通球迷解码这一瞬间的战术核心。重点解释球员位置的变化（如为何进入肋部或Zone 14）以及背后的博弈原理。字数在150字以内。`;
 
       const response = await ai.models.generateContent({
@@ -116,7 +163,7 @@ const App: React.FC = () => {
   };
 
   const handleNavigateToBattle = (battleId: string) => {
-    const battle = BATTLES.find(b => b.id === battleId);
+    const battle = battles.find(b => b.id === battleId);
     if (battle) {
       setSelectedBattle(battle);
       setCurrentPhaseIndex(0);
@@ -126,13 +173,22 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className={`min-h-screen bg-[#0a0f14] text-gray-200 flex flex-col p-4 md:p-6 font-sans selection:bg-blue-500/30 transition-opacity duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
+    <div className={`min-h-screen bg-[#0a0f14] text-gray-200 flex flex-col p-4 md:p-6 font-sans selection:bg-blue-500/30 transition-opacity duration-1000 opacity-100`}>
       {selectedPlayerForModal && (
         <PlayerModal player={selectedPlayerForModal} onClose={() => setSelectedPlayerForModal(null)} />
       )}
 
       {isUserModalOpen && (
-          <UserSpaceModal user={MOCK_USER} onClose={() => setIsUserModalOpen(false)} />
+          <UserSpaceModal 
+            user={user} 
+            onClose={() => setIsUserModalOpen(false)} 
+            onLogout={handleLogout}
+            onOpenLogin={() => { setIsUserModalOpen(false); setIsLoginModalOpen(true); }}
+          />
+      )}
+
+      {isLoginModalOpen && (
+          <LoginModal onLogin={handleLogin} onClose={() => setIsLoginModalOpen(false)} />
       )}
 
       <header className="flex flex-col md:flex-row justify-between items-start md:items-center pb-6 border-b border-white/10 gap-4">
@@ -140,7 +196,7 @@ const App: React.FC = () => {
             <div className="animate-fade-in">
               <div className="flex items-center gap-3">
                 <h1 className="text-3xl font-black text-white tracking-tighter uppercase">Soccer Tactic <span className="text-blue-500">Lab</span></h1>
-                <span className="px-2 py-0.5 rounded bg-blue-500/10 border border-blue-500/30 text-blue-400 text-[10px] font-bold uppercase tracking-widest">v1.4 AI+</span>
+                <span className="px-2 py-0.5 rounded bg-blue-500/10 border border-blue-500/30 text-blue-400 text-[10px] font-bold uppercase tracking-widest">v1.6 DUAL-MODE</span>
               </div>
               <p className="text-sm text-gray-400 mt-1 italic opacity-80">战术转译、模拟与创作一站式平台</p>
             </div>
@@ -172,7 +228,7 @@ const App: React.FC = () => {
                 {activeTab === 'simulation' && (
                     <div className="flex items-center gap-2">
                         <BattleSelector 
-                            battles={BATTLES} 
+                            battles={battles} 
                             selectedId={selectedBattle.id} 
                             onSelect={(battle) => {
                                 setSelectedBattle(battle);
@@ -207,9 +263,18 @@ const App: React.FC = () => {
                     </div>
                 )}
                 
-                <button onClick={() => setIsUserModalOpen(true)} className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-blue-700 to-blue-400 flex items-center justify-center border-2 border-white/10">
-                        <UserIcon className="w-5 h-5 text-white" />
+                <button 
+                    onClick={() => setIsUserModalOpen(true)} 
+                    className="flex items-center gap-3 bg-white/5 p-1 rounded-full border border-white/10 hover:border-blue-500/50 transition-all pr-4 group"
+                >
+                    <div className={`w-9 h-9 rounded-full flex items-center justify-center border-2 border-white/10 ${user.isGuest ? 'bg-gray-800' : 'bg-gradient-to-tr from-blue-700 to-blue-400'}`}>
+                        <UserIcon className={`w-5 h-5 ${user.isGuest ? 'text-gray-500' : 'text-white'}`} />
+                    </div>
+                    <div className="text-left hidden md:block">
+                        <p className={`text-[10px] font-black uppercase tracking-tight ${user.isGuest ? 'text-gray-500' : 'text-white'}`}>{user.name}</p>
+                        <p className={`text-[8px] font-bold uppercase tracking-widest ${user.isGuest ? 'text-gray-600' : 'text-blue-500'}`}>
+                            {user.isGuest ? '访客模式' : '已验证分析师'}
+                        </p>
                     </div>
                 </button>
             </div>
@@ -235,7 +300,6 @@ const App: React.FC = () => {
                         showZones={showZones}
                       />
                       
-                      {/* AI 解码面板 */}
                       {aiInsight !== null && (
                         <div className="absolute top-8 left-8 right-8 bg-blue-900/80 backdrop-blur-xl p-6 rounded-2xl border border-blue-500/30 shadow-2xl animate-fade-in z-[50]">
                             <div className="flex items-center justify-between mb-2">
@@ -246,7 +310,7 @@ const App: React.FC = () => {
                                 <button onClick={() => setAiInsight(null)} className="text-blue-300 hover:text-white">×</button>
                             </div>
                             <p className="text-sm text-white font-medium leading-relaxed italic">
-                                {isDecoding ? "正在解析战术基因..." : aiInsight}
+                                {isDecoding ? "正在从云端调取专家级解析..." : aiInsight}
                             </p>
                         </div>
                       )}

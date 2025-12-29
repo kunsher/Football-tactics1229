@@ -7,6 +7,7 @@ export interface UserProfile {
   battlesAnalyzed: number;
   learningProgress: number; // 0-100
   joinDate: string;
+  isGuest?: boolean;
 }
 
 export interface ScoutingStat {
