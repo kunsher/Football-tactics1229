@@ -26,6 +26,13 @@ export interface TacticPhase {
   connections: Connection[];
 }
 
+export interface RadarPoint {
+  subject: string;
+  A: number;
+  B: number;
+  fullMark: number;
+}
+
 export interface TeamInfo {
   name: string;
   color: string;
@@ -46,6 +53,7 @@ export interface Battle {
   };
   phases: TacticPhase[];
   stats: MatchStatistics;
+  radarData: RadarPoint[];
 }
 
 export interface Connection {

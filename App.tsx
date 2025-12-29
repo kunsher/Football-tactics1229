@@ -9,10 +9,13 @@ import type { PlayerPosition, Battle } from './types';
 import { BATTLES } from './constants';
 import { GithubIcon } from './components/icons';
 
+type ActiveTab = 'simulation' | 'knowledge' | 'about';
+
 const App: React.FC = () => {
   const [selectedBattle, setSelectedBattle] = useState<Battle>(BATTLES[0]);
   const [currentPhaseIndex, setCurrentPhaseIndex] = useState(0);
   const [hoveredPlayer, setHoveredPlayer] = useState<PlayerPosition | null>(null);
+  const [activeTab, setActiveTab] = useState<ActiveTab>('simulation');
 
   const currentPhase = selectedBattle.phases[currentPhaseIndex];
 
@@ -30,7 +33,26 @@ const App: React.FC = () => {
           </div>
           <p className="text-sm text-gray-400 mt-1 italic opacity-80">足球战术可视化科普系统 - 将复杂的专业战术转化为直观的可视化内容</p>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-6">
+            <nav className="flex bg-white/5 p-1 rounded-xl border border-white/5">
+                {[
+                    { id: 'simulation', label: '实战模拟' },
+                    { id: 'knowledge', label: '战术百科' },
+                    { id: 'about', label: '关于项目' }
+                ].map(tab => (
+                    <button
+                        key={tab.id}
+                        onClick={() => setActiveTab(tab.id as ActiveTab)}
+                        className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                            activeTab === tab.id 
+                            ? 'bg-blue-600 text-white shadow-lg' 
+                            : 'text-gray-400 hover:text-white'
+                        }`}
+                    >
+                        {tab.label}
+                    </button>
+                ))}
+            </nav>
             <BattleSelector 
                 battles={BATTLES} 
                 selectedId={selectedBattle.id} 
@@ -39,7 +61,7 @@ const App: React.FC = () => {
                     setCurrentPhaseIndex(0);
                 }} 
             />
-            <a href="#" className="text-gray-400 hover:text-white transition-all transform hover:scale-110">
+            <a href="#" className="hidden md:block text-gray-400 hover:text-white transition-all transform hover:scale-110">
                 <GithubIcon className="w-6 h-6" />
             </a>
         </div>
@@ -47,7 +69,7 @@ const App: React.FC = () => {
       
       <main className="flex-grow flex flex-col lg:grid lg:grid-cols-12 gap-8 mt-6 items-start">
         
-        {/* 左侧：球场区域 - 在 lg 屏幕上固定 */}
+        {/* 左侧：球场区域 - 始终显示或作为主舞台 */}
         <div className="lg:col-span-8 flex flex-col gap-4 w-full lg:sticky lg:top-6">
             <div className="bg-gray-800/20 rounded-2xl p-4 md:p-8 border border-white/5 backdrop-blur-sm relative overflow-hidden group shadow-2xl">
                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-blue-500/50 to-transparent opacity-30"></div>
@@ -62,46 +84,78 @@ const App: React.FC = () => {
               />
             </div>
 
-            {/* 阶段导航 */}
-            <div className="bg-gray-900/40 rounded-xl p-4 border border-white/5 flex items-center justify-between gap-4">
-                <div className="flex-grow flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-                    {selectedBattle.phases.map((phase, idx) => (
-                        <button
-                            key={phase.id}
-                            onClick={() => handlePhaseChange(idx)}
-                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
-                                idx === currentPhaseIndex 
-                                ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' 
-                                : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-gray-200'
-                            }`}
-                        >
-                            {idx + 1}. {phase.title}
-                        </button>
-                    ))}
+            {activeTab === 'simulation' && (
+                <div className="bg-gray-900/40 rounded-xl p-4 border border-white/5 flex items-center justify-between gap-4 animate-fade-in">
+                    <div className="flex-grow flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+                        {selectedBattle.phases.map((phase, idx) => (
+                            <button
+                                key={phase.id}
+                                onClick={() => handlePhaseChange(idx)}
+                                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
+                                    idx === currentPhaseIndex 
+                                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' 
+                                    : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-gray-200'
+                                }`}
+                            >
+                                {idx + 1}. {phase.title}
+                            </button>
+                        ))}
+                    </div>
                 </div>
-            </div>
+            )}
             
             <div className="hidden lg:block text-[10px] text-gray-600 uppercase font-bold tracking-widest text-center mt-2 opacity-50">
                 Interactive Tactical Simulation v1.0
             </div>
         </div>
 
-        {/* 右侧：分析与数据 - 正常随页面滚动 */}
+        {/* 右侧：动态内容区域 */}
         <aside className="lg:col-span-4 flex flex-col gap-6 w-full">
-          <AnalysisPanel 
-            phase={currentPhase}
-            battle={selectedBattle}
-            hoveredPlayer={hoveredPlayer}
-          />
-          <StatsDashboard 
-            stats={selectedBattle.stats} 
-            teamNames={{ home: selectedBattle.teams.home.name, away: selectedBattle.teams.away.name }}
-            colors={{ home: selectedBattle.teams.home.color, away: selectedBattle.teams.away.color }}
-            teams={selectedBattle.teams}
-          />
-          
-          {/* 这里加入了您提供的图片中的项目内容 */}
-          <ProjectMission />
+          {activeTab === 'simulation' && (
+            <div className="space-y-6 animate-fade-in">
+                <AnalysisPanel 
+                    phase={currentPhase}
+                    battle={selectedBattle}
+                    hoveredPlayer={hoveredPlayer}
+                />
+                <StatsDashboard 
+                    stats={selectedBattle.stats} 
+                    teamNames={{ home: selectedBattle.teams.home.name, away: selectedBattle.teams.away.name }}
+                    colors={{ home: selectedBattle.teams.home.color, away: selectedBattle.teams.away.color }}
+                    teams={selectedBattle.teams}
+                    radarData={selectedBattle.radarData}
+                />
+            </div>
+          )}
+
+          {activeTab === 'knowledge' && (
+            <div className="space-y-6 animate-fade-in">
+                <div className="bg-blue-600/10 border border-blue-500/30 rounded-2xl p-6">
+                    <h2 className="text-xl font-black text-white mb-2">战术体系百科</h2>
+                    <p className="text-sm text-blue-300 mb-6">点击下方卡片，解锁深度战术演变历史。</p>
+                    <div className="grid grid-cols-1 gap-4">
+                        {['Tiki-Taka', '全攻全守', '高位逼抢', '链式防守'].map(concept => (
+                            <div key={concept} className="p-4 bg-white/5 border border-white/5 rounded-xl hover:border-blue-500/50 cursor-pointer transition-all">
+                                <p className="font-bold text-white">{concept}</p>
+                                <p className="text-xs text-gray-400 mt-1">相关战役：{selectedBattle.title}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                <StatsDashboard 
+                    stats={selectedBattle.stats} 
+                    teamNames={{ home: selectedBattle.teams.home.name, away: selectedBattle.teams.away.name }}
+                    colors={{ home: selectedBattle.teams.home.color, away: selectedBattle.teams.away.color }}
+                    radarData={selectedBattle.radarData}
+                />
+            </div>
+          )}
+
+          {activeTab === 'about' && (
+            <div className="animate-fade-in">
+                <ProjectMission />
+            </div>
+          )}
           
           <footer className="mt-4 pb-8 text-center text-[10px] text-gray-600 uppercase tracking-widest border-t border-white/5 pt-6">
             <p>© 2024 Soccer Tactic Lab - Graduation Project</p>

@@ -33,6 +33,14 @@ export const BATTLES: Battle[] = [
         keyInstructions: ['反击寻找鲁尼', '限制哈维传球', '边路深度协防']
       }
     },
+    radarData: [
+      { subject: '控球率', A: 95, B: 40, fullMark: 100 },
+      { subject: '压迫强度', A: 90, B: 60, fullMark: 100 },
+      { subject: '转换速度', A: 50, B: 95, fullMark: 100 },
+      { subject: '创造力', A: 98, B: 70, fullMark: 100 },
+      { subject: '防守硬度', A: 70, B: 85, fullMark: 100 },
+      { subject: '纪律性', A: 90, B: 92, fullMark: 100 },
+    ],
     phases: [
       {
         id: 'build-up',
@@ -114,8 +122,3 @@ export const BATTLES: Battle[] = [
     }
   }
 ];
-
-export const TEAM_COLORS = {
-  home: { primary: '#a50044', secondary: '#edbb00', text: '#ffffff' },
-  away: { primary: '#da291c', secondary: '#000000', text: '#ffffff' },
-};

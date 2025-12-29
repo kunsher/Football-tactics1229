@@ -1,14 +1,15 @@
 
 import React from 'react';
-import { ResponsiveContainer, BarChart, Bar, XAxis, Tooltip } from 'recharts';
-import type { MatchStatistics, TeamInfo } from '../types';
+import { ResponsiveContainer, BarChart, Bar, XAxis, Tooltip, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from 'recharts';
+import type { MatchStatistics, TeamInfo, RadarPoint } from '../types';
 import { CoachIcon } from './icons';
 
 interface StatsDashboardProps {
   stats: MatchStatistics;
   teamNames: { home: string; away: string };
   colors: { home: string; away: string };
-  teams?: { home: TeamInfo; away: TeamInfo }; // Optional teams data
+  teams?: { home: TeamInfo; away: TeamInfo };
+  radarData?: RadarPoint[];
 }
 
 const CoachCard: React.FC<{ team: TeamInfo; isHome: boolean }> = ({ team, isHome }) => (
@@ -38,24 +39,11 @@ const CoachCard: React.FC<{ team: TeamInfo; isHome: boolean }> = ({ team, isHome
                 <p className="text-sm text-gray-200 leading-snug italic font-medium">{team.philosophy}</p>
             </div>
         )}
-
-        {team.keyInstructions && team.keyInstructions.length > 0 && (
-            <div className="pt-3 border-t border-white/5">
-                <p className="text-xs text-gray-500 uppercase font-bold mb-2.5">Tactical Directives</p>
-                <div className="flex flex-wrap gap-2">
-                    {team.keyInstructions.map((instr, idx) => (
-                        <span key={idx} className="text-[10px] bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-1 rounded leading-none">
-                            {instr}
-                        </span>
-                    ))}
-                </div>
-            </div>
-        )}
     </div>
   </div>
 );
 
-export const StatsDashboard: React.FC<StatsDashboardProps> = ({ stats, teamNames, colors, teams }) => {
+export const StatsDashboard: React.FC<StatsDashboardProps> = ({ stats, teamNames, colors, teams, radarData }) => {
   const shotsData = [
     { name: 'Shots', [teamNames.home]: stats.shots.home, [teamNames.away]: stats.shots.away },
     { name: 'Target', [teamNames.home]: stats.shots.onTargetHome, [teamNames.away]: stats.shots.onTargetAway },
@@ -63,7 +51,55 @@ export const StatsDashboard: React.FC<StatsDashboardProps> = ({ stats, teamNames
 
   return (
     <div className="bg-gray-900/50 rounded-2xl p-6 border border-white/10 backdrop-blur-md flex flex-col gap-8">
-      {/* Section: Coach DNA */}
+      
+      {/* Section: Tactical DNA Radar (New Highlight) */}
+      {radarData && (
+        <div className="animate-fade-in">
+          <div className="flex items-center gap-2 mb-4">
+            <span className="w-1.5 h-4 bg-blue-500 rounded-full"></span>
+            <h2 className="text-base font-bold text-blue-400 uppercase tracking-widest">Tactical DNA Profile</h2>
+          </div>
+          <div className="h-64 w-full bg-[#0a0f14]/50 rounded-xl border border-white/5 pt-4">
+            <ResponsiveContainer width="100%" height="100%">
+              <RadarChart cx="50%" cy="50%" outerRadius="70%" data={radarData}>
+                <PolarGrid stroke="rgba(255,255,255,0.1)" />
+                <PolarAngleAxis dataKey="subject" tick={{fill: '#9ca3af', fontSize: 11, fontWeight: 'bold'}} />
+                <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
+                <Radar
+                  name={teamNames.home}
+                  dataKey="A"
+                  stroke={colors.home}
+                  fill={colors.home}
+                  fillOpacity={0.4}
+                />
+                <Radar
+                  name={teamNames.away}
+                  dataKey="B"
+                  stroke="#9ca3af"
+                  fill="#9ca3af"
+                  fillOpacity={0.2}
+                />
+                <Tooltip 
+                   contentStyle={{backgroundColor: '#0a0f14', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px'}}
+                   itemStyle={{fontSize: '12px', fontWeight: 'bold'}}
+                />
+              </RadarChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="flex justify-center gap-6 mt-4">
+             <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full" style={{backgroundColor: colors.home}}></div>
+                <span className="text-[10px] text-gray-400 font-bold uppercase">{teamNames.home}</span>
+             </div>
+             <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-gray-600"></div>
+                <span className="text-[10px] text-gray-400 font-bold uppercase">{teamNames.away}</span>
+             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Section: Coach Influence */}
       {teams && (
         <div className="animate-fade-in">
           <div className="flex items-center gap-2 mb-5">
@@ -98,7 +134,6 @@ export const StatsDashboard: React.FC<StatsDashboardProps> = ({ stats, teamNames
                     <div style={{ width: `${stats.possession.home}%`, backgroundColor: colors.home }} className="h-full transition-all duration-1000"></div>
                     <div style={{ width: `${stats.possession.away}%`, backgroundColor: colors.away }} className="h-full transition-all duration-1000"></div>
                 </div>
-                <p className="text-center text-xs text-gray-600 mt-3 uppercase font-bold tracking-tighter">Possession Control</p>
             </div>
 
             {/* Shots Bar Chart */}
@@ -114,23 +149,6 @@ export const StatsDashboard: React.FC<StatsDashboardProps> = ({ stats, teamNames
                         <Bar dataKey={teamNames.away} fill={colors.away} radius={[4, 4, 0, 0]} barSize={40} />
                     </BarChart>
                 </ResponsiveContainer>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-                <div className="bg-white/5 rounded-xl p-4 border border-white/5">
-                    <p className="text-xs text-gray-500 uppercase font-bold mb-2">Pass Accuracy</p>
-                    <div className="flex items-baseline gap-3">
-                        <span className="text-xl font-black text-white">{stats.passes.accuracyHome}%</span>
-                        <span className="text-xs text-gray-600">vs {stats.passes.accuracyAway}%</span>
-                    </div>
-                </div>
-                <div className="bg-white/5 rounded-xl p-4 border border-white/5">
-                    <p className="text-xs text-gray-500 uppercase font-bold mb-2">Total Passes</p>
-                    <div className="flex items-baseline gap-3">
-                        <span className="text-xl font-black text-white">{stats.passes.home}</span>
-                        <span className="text-xs text-gray-600">vs {stats.passes.away}</span>
-                    </div>
-                </div>
             </div>
         </div>
       </div>
