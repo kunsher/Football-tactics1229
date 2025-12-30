@@ -3,7 +3,7 @@ import React, { useState, useMemo } from 'react';
 import { GLOSSARY } from '../constants';
 import type { GlossaryTerm } from '../types';
 import { ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Tooltip, Legend } from 'recharts';
-import { InfoIcon, CoachIcon } from './icons';
+import { InfoIcon, CoachIcon, TrophyIcon } from './icons';
 import { TacticalVisualizer } from './TacticalVisualizer';
 
 interface TacticalKnowledgeBaseProps {
@@ -34,6 +34,17 @@ const CustomRadarTooltip = ({ active, payload }: any) => {
   }
   return null;
 };
+
+const ComplexityMeter: React.FC<{ value: number }> = ({ value }) => (
+    <div className="flex gap-1">
+        {[1, 2, 3, 4, 5].map(i => (
+            <div 
+                key={i} 
+                className={`h-1.5 w-4 rounded-full ${i <= value ? 'bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.6)]' : 'bg-white/10'}`}
+            />
+        ))}
+    </div>
+);
 
 export const TacticalKnowledgeBase: React.FC<TacticalKnowledgeBaseProps> = ({ onNavigateToBattle }) => {
   const categories = ['All', 'System', 'Position', 'Action', 'Phase'];
@@ -115,27 +126,27 @@ export const TacticalKnowledgeBase: React.FC<TacticalKnowledgeBaseProps> = ({ on
           <button 
             onClick={handleToggleCompare}
             className={`px-6 py-3 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all flex items-center gap-2 border whitespace-nowrap ${
-              compareMode ? 'bg-orange-600 border-orange-400 text-white' : 'bg-white/5 border-white/10 text-gray-400 hover:text-white'
+              compareMode ? 'bg-orange-600 border-orange-400 text-white shadow-[0_0_20px_rgba(234,88,12,0.3)]' : 'bg-white/5 border-white/10 text-gray-400 hover:text-white'
             }`}
           >
-            {compareMode ? '取消对比' : '对比模式'}
+            {compareMode ? '取消对比' : '开启对比'}
           </button>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
         {/* Navigation Sidebar */}
-        <div className="lg:col-span-4 space-y-4 max-h-[70vh] overflow-y-auto pr-4 scrollbar-thin scrollbar-thumb-white/10">
+        <div className="lg:col-span-4 space-y-4 max-h-[75vh] overflow-y-auto pr-4 scrollbar-thin scrollbar-thumb-white/10">
           {filteredTerms.length > 0 ? (
             filteredTerms.map((term) => (
               <button
                 key={term.term}
                 disabled={compareMode && comparisonTarget?.term === term.term}
-                onClick={() => setSelectedTerm(term)}
+                onClick={() => { setSelectedTerm(term); if(!compareMode) window.scrollTo({ top: 0, behavior: 'smooth' }); }}
                 className={`w-full text-left p-5 rounded-2xl border transition-all flex items-center gap-4 group relative overflow-hidden ${
                   selectedTerm.term === term.term
                     ? 'bg-blue-600 border-blue-400 shadow-xl shadow-blue-600/30'
-                    : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-blue-500/30'
+                    : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-blue-500/30 disabled:opacity-20'
                 }`}
               >
                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-xl shrink-0 ${
@@ -146,7 +157,7 @@ export const TacticalKnowledgeBase: React.FC<TacticalKnowledgeBaseProps> = ({ on
                 <div className="relative z-10 flex-grow">
                   <p className={`font-black text-sm uppercase tracking-tight ${selectedTerm.term === term.term ? 'text-white' : 'text-gray-300'}`}>{term.term}</p>
                   <p className={`text-[9px] font-bold mt-1 opacity-60 ${selectedTerm.term === term.term ? 'text-white' : 'text-gray-500'}`}>
-                    CATEGORY: {term.category}
+                    {term.category.toUpperCase()} • LVL {term.complexity || 3}
                   </p>
                 </div>
                 {selectedTerm.term === term.term && (
@@ -162,8 +173,8 @@ export const TacticalKnowledgeBase: React.FC<TacticalKnowledgeBaseProps> = ({ on
 
           {compareMode && (
             <div className="pt-6 border-t border-white/10 space-y-4">
-              <p className="text-[10px] text-orange-500 font-black uppercase tracking-[0.3em] pl-1">对比目标选择</p>
-              {filteredTerms.filter(t => t.term !== selectedTerm.term).slice(0, 3).map((term) => (
+              <p className="text-[10px] text-orange-500 font-black uppercase tracking-[0.3em] pl-1">对比项选择 / COMPARE TO</p>
+              {filteredTerms.filter(t => t.term !== selectedTerm.term).map((term) => (
                 <button
                   key={`comp-${term.term}`}
                   onClick={() => setComparisonTarget(term)}
@@ -189,58 +200,97 @@ export const TacticalKnowledgeBase: React.FC<TacticalKnowledgeBaseProps> = ({ on
 
         {/* Content detail view */}
         <div className="lg:col-span-8 space-y-8">
-          <div className="bg-[#0a0f14] border border-white/10 rounded-[3rem] p-10 relative overflow-hidden shadow-2xl">
-            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-600/5 rounded-full blur-[100px] -mr-40 -mt-40"></div>
+          <div className="bg-[#0a0f14] border border-white/10 rounded-[3rem] p-10 md:p-14 relative overflow-hidden shadow-2xl">
+            <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-600/5 rounded-full blur-[120px] -mr-40 -mt-40"></div>
             
             <div className="relative z-10">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start mb-12">
-                <div className="space-y-6">
-                  <div className="flex items-center gap-3">
-                    <div className="w-1.5 h-6 bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,1)]"></div>
-                    <span className="text-[10px] text-gray-500 font-black uppercase tracking-[0.4em]">实战逻辑解析 / {selectedTerm.category}</span>
+              {/* Top Banner with Stats & Brief */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start mb-16">
+                <div className="space-y-8">
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-4">
+                        <div className="w-1.5 h-8 bg-blue-500 rounded-full shadow-[0_0_15px_rgba(59,130,246,0.6)]"></div>
+                        <div>
+                            <span className="text-[10px] text-gray-500 font-black uppercase tracking-[0.4em]">术语详情解码 / {selectedTerm.category}</span>
+                            <h3 className="text-5xl font-black text-white tracking-tighter mt-1 leading-none">
+                                {compareMode && comparisonTarget ? (
+                                    <span className="flex flex-col gap-2">
+                                        <span className="text-blue-500">{selectedTerm.term}</span>
+                                        <span className="text-gray-600 text-2xl uppercase tracking-widest font-bold">VS</span>
+                                        <span className="text-orange-500">{comparisonTarget.term}</span>
+                                    </span>
+                                ) : selectedTerm.term}
+                            </h3>
+                        </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-8 py-2">
+                        <div className="space-y-1">
+                            <p className="text-[9px] text-gray-600 font-black uppercase tracking-widest">战术复杂度</p>
+                            <ComplexityMeter value={selectedTerm.complexity || 3} />
+                        </div>
+                        <div className="w-px h-6 bg-white/5"></div>
+                        <div className="flex gap-2">
+                            {selectedTerm.strategicFocus?.map(f => (
+                                <span key={f} className="text-[9px] font-black text-blue-400/80 uppercase border border-blue-500/20 px-2 py-0.5 rounded bg-blue-500/5">#{f}</span>
+                            ))}
+                        </div>
+                    </div>
+
+                    <p className="text-xl text-gray-300 leading-relaxed font-medium italic border-l-2 border-blue-500/30 pl-8 bg-white/[0.01] py-4 rounded-r-2xl shadow-inner">
+                        {selectedTerm.definition}
+                    </p>
                   </div>
-                  <h3 className="text-4xl font-black text-white tracking-tighter">
-                    {compareMode && comparisonTarget ? `${selectedTerm.term} VS ${comparisonTarget.term}` : selectedTerm.term}
-                  </h3>
-                  <p className="text-lg text-gray-300 leading-relaxed font-medium italic border-l-2 border-blue-500/30 pl-6">
-                    {selectedTerm.definition}
-                  </p>
                   
-                  {/* Animation Preview */}
+                  {/* Animation Preview - SINGLE VIEW */}
                   {selectedTerm.visualEffect && !compareMode && (
-                    <div className="mt-8">
-                       <p className="text-[10px] text-blue-500 font-black uppercase tracking-widest mb-4">动态战术演示 / VISUAL PREVIEW</p>
-                       {/* Unnecessary 'as any' removed as visualEffect is now part of the narrowed union. */}
+                    <div className="mt-12 group">
+                       <div className="flex items-center justify-between mb-4">
+                            <p className="text-[10px] text-blue-500 font-black uppercase tracking-widest flex items-center gap-2">
+                                <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span>
+                                动态战术演示 / VISUAL SIMULATION
+                            </p>
+                            <span className="text-[9px] text-gray-600 font-black uppercase">FPS: 60 • ENGINE: SVG-TAC</span>
+                       </div>
                        <TacticalVisualizer type={selectedTerm.visualEffect} size="large" />
                     </div>
                   )}
 
+                  {/* Animation Preview - COMPARE VIEW */}
                   {compareMode && comparisonTarget && (
-                    <div className="space-y-4 mt-8 animate-fade-in">
-                        <div className="p-6 bg-orange-600/10 border border-orange-500/20 rounded-3xl">
-                           <p className="text-xs text-orange-400 font-black mb-2 uppercase tracking-widest">对比洞察 / INSIGHT</p>
-                           <p className="text-sm text-gray-400 leading-relaxed italic">
-                             通过多维雷达图对比分析，{selectedTerm.term} 在核心指标上与 {comparisonTarget.term} 表现出明显的差异化分布。
+                    <div className="space-y-6 mt-12 animate-fade-in">
+                        <div className="p-8 bg-orange-600/10 border border-orange-500/20 rounded-[2.5rem] relative overflow-hidden">
+                           <div className="absolute top-0 right-0 p-4 opacity-5"><InfoIcon className="w-16 h-16" /></div>
+                           <p className="text-xs text-orange-400 font-black mb-3 uppercase tracking-widest">博弈对冲分析 / INSIGHT</p>
+                           <p className="text-sm text-gray-400 leading-relaxed italic font-medium">
+                             对比雷达图显示，{selectedTerm.term} 在核心性能上的极致追求与 {comparisonTarget.term} 的平衡策略形成了鲜明的结构性对冲。
                            </p>
                         </div>
-                        {comparisonTarget.visualEffect && (
-                           <div className="p-4 bg-white/5 border border-white/10 rounded-3xl">
-                             <p className="text-[9px] text-gray-500 font-black uppercase tracking-widest mb-2">对比项动态演示 / {comparisonTarget.term}</p>
-                             {/* Unnecessary 'as any' removed as visualEffect is now part of the narrowed union. */}
-                             <TacticalVisualizer type={comparisonTarget.visualEffect} size="small" />
-                           </div>
-                        )}
+                        
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <p className="text-[9px] text-blue-500 font-black uppercase text-center">{selectedTerm.term} 动态</p>
+                                {selectedTerm.visualEffect ? <TacticalVisualizer type={selectedTerm.visualEffect} size="small" /> : <div className="h-[180px] bg-white/5 rounded-xl border border-white/5 flex items-center justify-center text-[10px] text-gray-700">无动画记录</div>}
+                            </div>
+                            <div className="space-y-2">
+                                <p className="text-[9px] text-orange-500 font-black uppercase text-center">{comparisonTarget.term} 动态</p>
+                                {comparisonTarget.visualEffect ? <TacticalVisualizer type={comparisonTarget.visualEffect} size="small" /> : <div className="h-[180px] bg-white/5 rounded-xl border border-white/5 flex items-center justify-center text-[10px] text-gray-700">无动画记录</div>}
+                            </div>
+                        </div>
                     </div>
                   )}
                 </div>
 
-                <div className="space-y-8">
-                   <div className="bg-white/[0.03] rounded-[3rem] p-8 border border-white/5 aspect-square relative group">
+                {/* Radar Chart Section */}
+                <div className="space-y-8 flex flex-col items-center">
+                   <div className="w-full bg-white/[0.03] rounded-[4rem] p-12 border border-white/5 aspect-square relative group shadow-inner">
                       <div className="absolute inset-0 bg-blue-600/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                      <div className="absolute top-8 left-1/2 -translate-x-1/2 text-[10px] font-black text-gray-700 uppercase tracking-widest">DNA PERFORMANCE MAP</div>
+                      
                       <ResponsiveContainer width="100%" height="100%">
                          <RadarChart cx="50%" cy="50%" outerRadius="80%" data={radarData}>
                            <PolarGrid stroke="rgba(255,255,255,0.08)" />
-                           <PolarAngleAxis dataKey="subject" tick={{fill: '#64748b', fontSize: 11, fontWeight: '900'}} />
+                           <PolarAngleAxis dataKey="subject" tick={{fill: '#64748b', fontSize: 12, fontWeight: '900'}} />
                            <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
                            <Radar
                              name={selectedTerm.term}
@@ -249,6 +299,7 @@ export const TacticalKnowledgeBase: React.FC<TacticalKnowledgeBaseProps> = ({ on
                              strokeWidth={3}
                              fill="#3b82f6"
                              fillOpacity={0.4}
+                             animationDuration={1500}
                            />
                            {compareMode && comparisonTarget && (
                              <Radar
@@ -258,10 +309,11 @@ export const TacticalKnowledgeBase: React.FC<TacticalKnowledgeBaseProps> = ({ on
                                strokeWidth={2}
                                fill="#f97316"
                                fillOpacity={0.2}
+                               animationDuration={1500}
                              />
                            )}
                            <Tooltip content={<CustomRadarTooltip />} cursor={false} />
-                           {compareMode && <Legend verticalAlign="bottom" wrapperStyle={{ fontSize: '10px', fontWeight: '900', textTransform: 'uppercase', paddingTop: '10px' }} />}
+                           {compareMode && <Legend verticalAlign="bottom" wrapperStyle={{ fontSize: '10px', fontWeight: '900', textTransform: 'uppercase', paddingTop: '30px' }} />}
                          </RadarChart>
                        </ResponsiveContainer>
                    </div>
@@ -269,63 +321,68 @@ export const TacticalKnowledgeBase: React.FC<TacticalKnowledgeBaseProps> = ({ on
                    {selectedTerm.relatedBattleId && !compareMode && (
                     <button 
                       onClick={() => onNavigateToBattle?.(selectedTerm.relatedBattleId!)}
-                      className="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-black uppercase tracking-[0.2em] rounded-2xl shadow-lg transition-all transform hover:scale-105"
+                      className="group w-full max-w-sm py-5 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white text-[12px] font-black uppercase tracking-[0.3em] rounded-2xl shadow-2xl shadow-blue-600/20 transition-all transform hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-4"
                     >
-                      加载关联战役同步复盘 →
+                      加载关联战役同步复盘 
+                      <span className="text-xl group-hover:translate-x-2 transition-transform">→</span>
                     </button>
                   )}
                 </div>
               </div>
 
-              {/* Extra Details Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-12 pt-10 border-t border-white/5">
-                <div className="space-y-8">
+              {/* Encyclopedia Grid - Details */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-16 pt-16 border-t border-white/5">
+                <div className="space-y-10">
                   {selectedTerm.historicalContext && (
                     <div className="space-y-4">
-                      <h4 className="text-[11px] text-blue-500 font-black uppercase tracking-widest flex items-center gap-2">
-                         <div className="w-1.5 h-4 bg-blue-500 rounded-full"></div> 战术源起与演化
+                      <h4 className="text-[12px] text-blue-500 font-black uppercase tracking-widest flex items-center gap-3">
+                         <div className="w-1.5 h-5 bg-blue-500 rounded-full"></div> 战术缘起与演化历程
                       </h4>
-                      <p className="text-sm text-gray-400 leading-relaxed font-medium">
+                      <p className="text-base text-gray-400 leading-relaxed font-medium pl-6 border-l border-white/5">
                          {selectedTerm.historicalContext}
                       </p>
                     </div>
                   )}
 
                   {selectedTerm.keyTraits && (
-                    <div className="space-y-4">
-                      <h4 className="text-[11px] text-blue-500 font-black uppercase tracking-widest">核心技术特征 / KEY TRAITS</h4>
-                      <div className="flex flex-wrap gap-2">
+                    <div className="space-y-5">
+                      <h4 className="text-[12px] text-blue-400 font-black uppercase tracking-widest pl-2">核心技术指纹 / KEY TRAITS</h4>
+                      <div className="flex flex-wrap gap-3">
                         {selectedTerm.keyTraits.map(trait => (
-                          <span key={trait} className="px-3 py-1.5 bg-blue-600/10 border border-blue-500/20 rounded-xl text-[10px] text-blue-400 font-black tracking-tight">
+                          <div key={trait} className="px-5 py-2.5 bg-blue-600/10 border border-blue-500/20 rounded-2xl text-[11px] text-blue-300 font-black tracking-tighter hover:bg-blue-600/20 transition-colors flex items-center gap-2">
+                            <span className="w-1 h-1 rounded-full bg-blue-500"></span>
                             {trait}
-                          </span>
+                          </div>
                         ))}
                       </div>
                     </div>
                   )}
                 </div>
 
-                <div className="space-y-8">
+                <div className="space-y-10">
                   {selectedTerm.famousTeams && (
-                    <div className="space-y-4">
-                      <h4 className="text-[11px] text-gray-500 font-black uppercase tracking-widest flex items-center gap-2">
-                         <CoachIcon className="w-4 h-4" /> 经典实战样板 / ICONIC EXAMPLES
+                    <div className="space-y-5">
+                      <h4 className="text-[12px] text-gray-500 font-black uppercase tracking-widest flex items-center gap-3">
+                         <CoachIcon className="w-5 h-5" /> 经典实战样板
                       </h4>
-                      <div className="space-y-3">
+                      <div className="space-y-4">
                         {selectedTerm.famousTeams.map(team => (
-                          <div key={team} className="p-4 bg-white/[0.03] border border-white/5 rounded-2xl flex items-center justify-between group hover:bg-white/5 transition-all">
-                            <span className="text-sm font-bold text-gray-200 group-hover:text-blue-400">{team}</span>
-                            <span className="text-[9px] text-gray-600 font-black uppercase opacity-0 group-hover:opacity-100">MATCH DECODED</span>
+                          <div key={team} className="p-6 bg-white/[0.03] border border-white/5 rounded-3xl flex items-center justify-between group hover:bg-white/5 hover:border-blue-500/30 transition-all shadow-lg">
+                            <div className="flex items-center gap-4">
+                                <TrophyIcon className="w-4 h-4 text-orange-500/50" />
+                                <span className="text-base font-black text-gray-200 group-hover:text-white">{team}</span>
+                            </div>
+                            <span className="text-[10px] text-gray-600 font-black uppercase opacity-0 group-hover:opacity-100 transition-all bg-white/5 px-2 py-1 rounded">MATCH DECODED</span>
                           </div>
                         ))}
                       </div>
                     </div>
                   )}
                   
-                  <div className="p-6 bg-gradient-to-br from-blue-600/10 to-transparent border border-blue-500/20 rounded-3xl relative group overflow-hidden">
-                     <div className="absolute top-0 right-0 p-4 text-6xl font-black text-white/[0.02] italic tracking-tighter">MASTER</div>
-                     <p className="text-base text-blue-100/80 font-medium italic leading-relaxed relative z-10">
-                        “ 足球战术的迷人之处不在于规则的死守，而在于对规则的动态偏移。掌握 {selectedTerm.term} 意味着你开始理解空间的生命力。”
+                  <div className="p-10 bg-gradient-to-br from-blue-600/10 to-transparent border border-blue-500/20 rounded-[3rem] relative group overflow-hidden shadow-2xl">
+                     <div className="absolute top-0 right-0 p-6 text-7xl font-black text-white/[0.02] italic tracking-tighter select-none pointer-events-none group-hover:scale-110 transition-transform duration-1000">MASTER</div>
+                     <p className="text-lg text-blue-100/90 font-medium italic leading-relaxed relative z-10">
+                        “ 足球战术的进化，本质上是关于如何在规则的边界内‘创造偏移’。掌握 {selectedTerm.term} 只是第一步，真正的挑战在于如何在激烈的实战博弈中维持这套逻辑的稳定性。”
                      </p>
                   </div>
                 </div>

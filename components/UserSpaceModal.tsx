@@ -83,6 +83,27 @@ export const UserSpaceModal: React.FC<UserSpaceModalProps> = ({ user, onClose, o
             <button onClick={onClose} className="text-gray-500 hover:text-white transition-colors text-2xl">×</button>
           </div>
 
+          {/* Learning Progress Bar Section */}
+          <div className="space-y-4 animate-fade-in">
+             <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                    <div className="w-1.5 h-4 bg-blue-500 rounded-full"></div>
+                    <p className="text-[10px] text-gray-400 font-black uppercase tracking-[0.2em]">分析师成长进度 / CAREER PROGRESS</p>
+                </div>
+                <p className="text-xl font-black text-white tracking-tighter">{user.learningProgress}%</p>
+             </div>
+             <div className="h-4 w-full bg-white/5 rounded-full p-1 border border-white/5 overflow-hidden shadow-inner">
+                <div 
+                    className="h-full bg-gradient-to-r from-blue-700 via-blue-500 to-blue-400 rounded-full shadow-[0_0_15px_rgba(59,130,246,0.4)] transition-all duration-1000 ease-out relative group"
+                    style={{ width: `${user.learningProgress}%` }}
+                >
+                    <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div className="absolute top-0 right-0 h-full w-4 bg-gradient-to-l from-white/20 to-transparent"></div>
+                </div>
+             </div>
+             <p className="text-[9px] text-gray-600 font-medium italic">离下一等级“战术导师 (Tactical Master)”还需完成 8 个核心模块复盘。</p>
+          </div>
+
           {/* Stats Grid */}
           <div className="grid grid-cols-2 gap-6">
             <div className={`p-6 bg-white/5 rounded-3xl border border-white/5 relative overflow-hidden group ${user.isGuest ? 'opacity-50 grayscale' : ''}`}>

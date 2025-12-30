@@ -147,28 +147,6 @@ const App: React.FC = () => {
     setAiInsight(null);
   };
 
-  const decodeTactic = async () => {
-    setIsDecoding(true);
-    setAiInsight("");
-    try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-      const prompt = `你是一位世界级的足球战术分析师。
-      当前阶段：${currentPhase.title}
-      描述：${currentPhase.description}
-      请用通俗易懂但专业的方式，为普通球迷解码这一瞬间的战术核心。字数在150字以内。`;
-
-      const response = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
-        contents: prompt,
-      });
-      setAiInsight(response.text);
-    } catch (e) {
-      setAiInsight("AI 解码暂时断开，请检查网络连接。");
-    } finally {
-      setIsDecoding(false);
-    }
-  };
-
   const togglePlayback = () => {
     if (currentPhaseIndex >= selectedBattle.phases.length - 1) {
         setCurrentPhaseIndex(0);
@@ -338,16 +316,38 @@ const App: React.FC = () => {
                       )}
                     </div>
 
-                    <div className="bg-gray-900/40 rounded-xl p-4 border border-white/5 flex flex-col items-center gap-6 animate-fade-in">
-                        <div className="flex flex-wrap items-center justify-center gap-2 w-full">
+                    {/* 整合后的单行控制栏 */}
+                    <div className="bg-gray-900/40 rounded-xl px-6 py-4 border border-white/5 flex flex-col md:flex-row items-center justify-between gap-6 animate-fade-in shadow-xl backdrop-blur-sm">
+                        {/* 左侧：播放控制与状态 */}
+                        <div className="flex items-center gap-5 shrink-0">
+                            <button 
+                                onClick={togglePlayback}
+                                className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all ${
+                                    isPlaying ? 'bg-red-500 shadow-red-500/20' : 'bg-blue-600 shadow-blue-600/20'
+                                } shadow-2xl border border-white/10 active:scale-95`}
+                            >
+                                {isPlaying ? (
+                                    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                                ) : (
+                                    <svg className="w-6 h-6 ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                )}
+                            </button>
+                            <div className="text-left hidden lg:block">
+                                <p className="text-[10px] text-gray-500 font-black uppercase tracking-widest">播放仿真</p>
+                                <p className="text-sm font-black text-white tracking-tighter uppercase">{isPlaying ? '正在同步渲染' : '等待指令'}</p>
+                            </div>
+                        </div>
+
+                        {/* 中间：阶段选择器 */}
+                        <div className="flex-grow flex flex-wrap items-center justify-center gap-3">
                             {selectedBattle.phases.map((phase, idx) => (
                                 <button
                                     key={phase.id}
                                     onClick={() => handlePhaseChange(idx)}
-                                    className={`px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap border ${
+                                    className={`px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap border ${
                                         idx === currentPhaseIndex 
-                                        ? 'text-white border-blue-500/50 shadow-lg bg-blue-600/20' 
-                                        : 'bg-white/5 text-gray-500 border-white/5 hover:border-white/20 hover:text-white'
+                                        ? 'text-white border-blue-500/50 shadow-lg bg-blue-600/30 ring-2 ring-blue-500/20' 
+                                        : 'bg-white/5 text-gray-500 border-white/5 hover:border-white/20 hover:text-white hover:bg-white/10'
                                     }`}
                                 >
                                     {phase.title}
@@ -355,36 +355,16 @@ const App: React.FC = () => {
                             ))}
                         </div>
                         
-                        <div className="flex items-center justify-between w-full border-t border-white/5 pt-4">
-                            <div className="flex items-center gap-4">
-                                <button 
-                                    onClick={togglePlayback}
-                                    className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${
-                                        isPlaying ? 'bg-red-500' : 'bg-blue-600'
-                                    } shadow-xl shadow-black/40`}
+                        {/* 右侧：速度调节 */}
+                        <div className="flex items-center gap-2 bg-black/30 p-1.5 rounded-xl border border-white/10 shrink-0">
+                            {[0.5, 1.0, 2.0].map((speed) => (
+                                <button
+                                    key={speed} onClick={() => setAnimationSpeed(speed)}
+                                    className={`w-12 py-2 rounded-lg text-[10px] font-black transition-all border ${animationSpeed === speed ? 'bg-blue-600 border-blue-400 text-white shadow-lg' : 'text-gray-600 border-transparent hover:text-white'}`}
                                 >
-                                    {isPlaying ? (
-                                        <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
-                                    ) : (
-                                        <svg className="w-6 h-6 ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                                    )}
+                                    {speed.toFixed(1)}x
                                 </button>
-                                <div className="text-left">
-                                    <p className="text-[10px] text-gray-500 font-black uppercase tracking-widest">播放仿真</p>
-                                    <p className="text-xs font-bold text-white tracking-tighter">{isPlaying ? '正在同步渲染' : '等待指令'}</p>
-                                </div>
-                            </div>
-                            
-                            <div className="flex items-center gap-1.5 bg-black/40 p-1.5 rounded-xl border border-white/10">
-                                {[0.5, 1.0, 2.0].map((speed) => (
-                                    <button
-                                        key={speed} onClick={() => setAnimationSpeed(speed)}
-                                        className={`w-10 py-1.5 rounded-lg text-[10px] font-black transition-all ${animationSpeed === speed ? 'bg-blue-500 text-white' : 'text-gray-600 hover:text-white'}`}
-                                    >
-                                        {speed.toFixed(1)}x
-                                    </button>
-                                ))}
-                            </div>
+                            ))}
                         </div>
                     </div>
                 </>
