@@ -84,7 +84,6 @@ const Player: React.FC<{
     <g
       style={{
         transform: `translate(${player.x * 10}px, ${player.y * 6.7 + 5}px)`,
-        // Updated movement transition to 0.8s with a more natural ease-in-out curve
         transition: `transform ${duration}s cubic-bezier(0.4, 0, 0.2, 1)`,
         willChange: 'transform',
       }}
@@ -96,48 +95,48 @@ const Player: React.FC<{
       {/* Target/Selection Ring - enhanced for hovered state */}
       {(isReceiver || isHovered) && (
           <circle 
-            r={isHovered ? "36" : "32"} 
+            r={isHovered ? "32" : "28"} 
             fill="none" 
             stroke={color} 
-            strokeWidth="2" 
-            strokeDasharray="6,4" 
-            className={`animate-[spin_6s_linear_infinite] transition-all duration-500 ${isHovered ? 'opacity-70 scale-110' : 'opacity-30'}`} 
+            strokeWidth="1.5" 
+            strokeDasharray="4,3" 
+            className={`animate-[spin_8s_linear_infinite] transition-all duration-500 ${isHovered ? 'opacity-60 scale-105' : 'opacity-20'}`} 
           />
       )}
       
-      {/* Subtle Glow/Aura around player */}
+      {/* Subtle Glow/Aura around player - Scaled down for better aesthetics */}
       <circle 
-        r="20" 
+        r="16" 
         fill={color} 
-        opacity={isHovered ? "0.3" : "0.05"} 
-        className="transition-all duration-500 ease-out group-hover:scale-[2.8]" 
+        opacity={isHovered ? "0.25" : "0.04"} 
+        className="transition-all duration-500 ease-out group-hover:scale-[1.5]" 
         style={{
-           filter: isHovered ? `blur(8px)` : 'none'
+           filter: isHovered ? `blur(6px)` : 'none'
         }}
       />
       
       {/* Possession Indicators */}
       {isInPossession && (
         <g>
-          <circle r="32" fill="none" stroke={color} strokeWidth="1" strokeDasharray="4,2" className="opacity-40">
-             <animateTransform attributeName="transform" type="rotate" from="0 0 0" to="360 0 0" dur="3s" repeatCount="indefinite" />
+          <circle r="28" fill="none" stroke={color} strokeWidth="1" strokeDasharray="3,3" className="opacity-30">
+             <animateTransform attributeName="transform" type="rotate" from="0 0 0" to="360 0 0" dur="4s" repeatCount="indefinite" />
           </circle>
-          <circle r="26" fill={color} opacity="0.2">
-             <animate attributeName="opacity" values="0.1;0.4;0.1" dur="1.2s" repeatCount="indefinite" />
-             <animate attributeName="r" values="18;28;18" dur="1.2s" repeatCount="indefinite" />
+          <circle r="22" fill={color} opacity="0.15">
+             <animate attributeName="opacity" values="0.1;0.3;0.1" dur="1.5s" repeatCount="indefinite" />
+             <animate attributeName="r" values="16;24;16" dur="1.5s" repeatCount="indefinite" />
           </circle>
         </g>
       )}
       
-      {/* Main Player Body - Slightly larger on hover with a smooth glow */}
+      {/* Main Player Body */}
       <circle 
-        r={isHovered ? "22" : "16"} 
+        r={isHovered ? "20" : "16"} 
         fill={color} 
         stroke="#fff" 
-        strokeWidth={isHovered ? "4" : "2"}
-        className="transition-all duration-500 shadow-2xl"
+        strokeWidth={isHovered ? "3" : "2"}
+        className="transition-all duration-500 shadow-xl"
         style={{
-            filter: (isHovered || isInPossession) ? `drop-shadow(0 0 15px ${color})` : 'none',
+            filter: (isHovered || isInPossession) ? `drop-shadow(0 0 10px ${color}88)` : 'none',
         }}
       />
       
@@ -146,7 +145,7 @@ const Player: React.FC<{
         y="1" 
         textAnchor="middle" 
         alignmentBaseline="middle"
-        fontSize={isHovered ? "15" : "12"} 
+        fontSize={isHovered ? "14" : "12"} 
         fontWeight="900" 
         fill={parseInt(color.replace('#',''), 16) > 0xaaaaaa ? '#000' : '#fff'}
         className="pointer-events-none select-none transition-all duration-500 font-sans tracking-tighter"
@@ -156,21 +155,21 @@ const Player: React.FC<{
       
       {/* Name Label */}
       <g 
-        transform={isHovered ? "translate(0, 42)" : "translate(0, 36)"} 
-        className={`transition-all duration-500 ${isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'}`}
+        transform={isHovered ? "translate(0, 38)" : "translate(0, 32)"} 
+        className={`transition-all duration-500 ${isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-1'}`}
       >
          <rect 
-            x="-45" y="-10" width="90" height="20" rx="6" 
-            fill="rgba(0,0,0,0.85)" 
-            stroke="rgba(255,255,255,0.1)"
-            className={isHovered ? 'block shadow-2xl' : 'hidden'} 
+            x="-40" y="-9" width="80" height="18" rx="5" 
+            fill="rgba(0,0,0,0.8)" 
+            stroke="rgba(255,255,255,0.08)"
+            className={isHovered ? 'block shadow-xl' : 'hidden'} 
          />
          <text 
             textAnchor="middle" 
             fill="#fff" 
-            fontSize="12" 
+            fontSize="11" 
             fontWeight="900" 
-            className="tracking-tighter uppercase drop-shadow-lg"
+            className="tracking-tighter uppercase"
          >
             {player.name}
          </text>
@@ -184,7 +183,6 @@ export const TacticBoard: React.FC<TacticBoardProps> = ({
     onPlayerHover, onPlayerClick, homeColor, awayColor,
     animationSpeed = 1.0, isPlaying = false, showZones = false, isScanning = false
 }) => {
-    // Players move over 0.8 seconds as requested, adjusted by animation speed
     const movementDuration = 0.8 / animationSpeed;
 
     const ballPath = useMemo(() => {
@@ -219,7 +217,7 @@ export const TacticBoard: React.FC<TacticBoardProps> = ({
 
                         const isMain = i === 0;
                         const isHovered = hoveredPlayer && (hoveredPlayer.id === conn.from || hoveredPlayer.id === conn.to);
-                        const opacity = isMain ? (isPlaying ? 0.15 : 0.5) : (isHovered ? 0.7 : 0.08);
+                        const opacity = isMain ? (isPlaying ? 0.15 : 0.5) : (isHovered ? 0.6 : 0.06);
                         const teamColor = homePlayers.some(p => p.id === from.id) ? homeColor : awayColor;
 
                         return (
@@ -228,9 +226,9 @@ export const TacticBoard: React.FC<TacticBoardProps> = ({
                                 x1={from.x * 10} y1={from.y * 6.7 + 5}
                                 x2={to.x * 10} y2={to.y * 6.7 + 5}
                                 stroke={teamColor}
-                                strokeWidth={isHovered ? 6 : (isMain ? 4 : 2)}
+                                strokeWidth={isHovered ? 5 : (isMain ? 3 : 1.5)}
                                 strokeOpacity={opacity}
-                                strokeDasharray={isMain ? "0" : "10,5"}
+                                strokeDasharray={isMain ? "0" : "8,4"}
                                 className="transition-all duration-700"
                             />
                         );
@@ -239,7 +237,7 @@ export const TacticBoard: React.FC<TacticBoardProps> = ({
 
                 {/* Ball Movement */}
                 {ballPath && (
-                    <circle r="7" fill="url(#ballGlow)" style={{ filter: 'drop-shadow(0 0 12px rgba(255,255,255,0.9))' }}>
+                    <circle r="6" fill="url(#ballGlow)" style={{ filter: 'drop-shadow(0 0 10px rgba(255,255,255,0.8))' }}>
                         <animateMotion 
                             dur={`${1.4 / animationSpeed}s`}
                             repeatCount={isPlaying ? "1" : "indefinite"}
