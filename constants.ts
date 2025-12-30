@@ -1,14 +1,14 @@
 
-import type { Battle, GlossaryTerm, PlayerPosition } from './types';
+import type { Battle, GlossaryTerm, PlayerPosition, LearningPath } from './types';
 
 export const GLOSSARY: GlossaryTerm[] = [
   { 
     term: 'Tiki-taka', 
-    definition: '一种通过极短的传球和频繁的跑位来掌控球权的战术体系，强调空间的动态利用。', 
+    definition: '一种通过极短的传球和频繁的跑位来掌控球权的战术体系，其核心逻辑在于通过不断的传导将防守方“催眠”，并在对方精神高度集中的防线出现裂缝时，通过致命直塞完成一击。', 
     category: 'System',
-    historicalContext: '由克鲁伊夫奠基，在瓜迪奥拉时代的巴萨达到巅峰。',
-    keyTraits: ['极致控球', '三角形接应', '高位压迫', '位置感'],
-    famousTeams: ['巴塞罗那 (2008-2012)', '西班牙国家队 (2008-2012)'],
+    historicalContext: '源于克鲁伊夫的“全攻全守”，经由里杰卡尔德改良，并在瓜迪奥拉时代的巴塞罗那（2008-2012）达到巅峰。它不仅是一种阵型，更是一种对“空间支配权”的极致追求。',
+    keyTraits: ['极致控球(>65%)', '高频短传', '三角形站位', '位置感优先', '高位逼抢回收'],
+    famousTeams: ['巴塞罗那 (2008-2012)', '西班牙国家队 (2008-2012)', '拜仁慕尼黑 (2013-2016)'],
     relatedBattleId: 'tiki-taka-2011',
     radarProfile: [
       { subject: '控球', A: 100, B: 0, fullMark: 100 },
@@ -20,12 +20,60 @@ export const GLOSSARY: GlossaryTerm[] = [
     ]
   },
   { 
-    term: '防守反击 (Counter-Attack)', 
-    definition: '在对方进攻组织中段断球，利用对方防线前移后的身后空档进行高速垂直打击。', 
+    term: '高位压迫 (Gegenpressing)', 
+    definition: '这是一种“以攻代守”的战术，其核心不在于抢断本身，而在于利用对手在夺回球权后的瞬时心理松懈，迅速形成包围网，将对手最危险的进攻转化成己方的反击起点。', 
     category: 'System',
-    historicalContext: '穆里尼奥时代的皇家马德里将这一战术发挥到了极致，强调极简的传球逻辑。',
-    keyTraits: ['垂直传递', '空间利用', '边路爆破', '极致效率'],
-    famousTeams: ['皇家马德里 (2011-2012)', '国际米兰 (2010)'],
+    historicalContext: '由朗尼克奠定理论，克洛普在多特蒙德时期发扬光大。它推翻了传统的“回防”概念，代之以“就地反抢”，极大地加快了比赛节奏。',
+    keyTraits: ['瞬时反抢', '高强度冲刺', '垂直攻击', '体力要求极高', '集体联动'],
+    famousTeams: ['多特蒙德 (2010-2013)', '利物浦 (2018-2022)', 'RB莱比锡'],
+    radarProfile: [
+      { subject: '控球', A: 65, B: 0, fullMark: 100 },
+      { subject: '压迫', A: 100, B: 0, fullMark: 100 },
+      { subject: '速度', A: 95, B: 0, fullMark: 100 },
+      { subject: '创造力', A: 80, B: 0, fullMark: 100 },
+      { subject: '防守', A: 85, B: 0, fullMark: 100 },
+      { subject: '纪律', A: 88, B: 0, fullMark: 100 },
+    ]
+  },
+  { 
+    term: '十字联防 (Catenaccio)', 
+    definition: '意大利足球的瑰宝，意为“链条”。它通过一名自由人（Libero）在防线后方的横向扫荡，与前方的人盯人体系交织成网。', 
+    category: 'System',
+    historicalContext: '由赫雷拉在大国际米兰时代推向世界。这是一种实用主义至上的哲学，强调“1-0主义”，先稳固防守，再寻求致命反击。',
+    keyTraits: ['自由人(Libero)', '铁血防守', '心理博弈', '防守层次感', '长传反击'],
+    famousTeams: ['大国际米兰 (1960s)', 'AC米兰 (1990s)', '意大利国家队 (1982/2006)'],
+    radarProfile: [
+      { subject: '控球', A: 30, B: 0, fullMark: 100 },
+      { subject: '压迫', A: 60, B: 0, fullMark: 100 },
+      { subject: '速度', A: 75, B: 0, fullMark: 100 },
+      { subject: '创造力', A: 60, B: 0, fullMark: 100 },
+      { subject: '防守', A: 100, B: 0, fullMark: 100 },
+      { subject: '纪律', A: 100, B: 0, fullMark: 100 },
+    ]
+  },
+  { 
+    term: '全能足球 (Total Football)', 
+    definition: '足球历史上最具革命性的体系。阵型只是数字，其精髓在于位置的流动性。除门将外，任何球员都可以承担进攻或防守的任何职责。', 
+    category: 'System',
+    historicalContext: '由里努斯·米歇尔斯在70年代创造，克鲁伊夫是这一哲学的场上大脑。它要求球员具备极高的战术素养和体能。',
+    keyTraits: ['位置轮换', '阵型扩张/收缩', '全员进攻', '制造越位', '全能素质'],
+    famousTeams: ['阿贾克斯 (1970s)', '荷兰国家队 (1974)'],
+    radarProfile: [
+      { subject: '控球', A: 85, B: 0, fullMark: 100 },
+      { subject: '压迫', A: 95, B: 0, fullMark: 100 },
+      { subject: '速度', A: 88, B: 0, fullMark: 100 },
+      { subject: '创造力', A: 95, B: 0, fullMark: 100 },
+      { subject: '防守', A: 80, B: 0, fullMark: 100 },
+      { subject: '纪律', A: 85, B: 0, fullMark: 100 },
+    ]
+  },
+  { 
+    term: '防守反击 (Counter-Attack)', 
+    definition: '利用对手大举压上后留下的后场空档，通过极少数球员的快速传切或个人突破，在3-5次传递内完成射门的极简策略。', 
+    category: 'System',
+    historicalContext: '现代足球中最经典的“以弱胜强”方案。穆里尼奥时代的皇马通过阿隆索的长传和C罗的速度将其发挥到了工业化的极致。',
+    keyTraits: ['垂直打击', '空间利用', '边路爆破', '极致效率', '双层防线'],
+    famousTeams: ['皇家马德里 (2011-2012)', '莱斯特城 (2016)', '切尔西 (2012)'],
     relatedBattleId: 'mourinho-cr7-2012',
     radarProfile: [
       { subject: '控球', A: 45, B: 0, fullMark: 100 },
@@ -39,6 +87,45 @@ export const GLOSSARY: GlossaryTerm[] = [
   { term: '伪九号 (False 9)', definition: '前锋回撤至中场接球，吸引对方中卫前移，从而为队友在身后创造插上空间。', category: 'Position' },
   { term: '肋部插上 (Underlap)', definition: '指边路球员不沿边线套外，而是从防守方边后卫与中卫之间的缝隙（肋部）进行内切跑位。', category: 'Action' },
   { term: '低位防守 (Low Block)', definition: '防守方将防线整体退缩至本方禁区前沿，压缩纵向空间，使对方难以通过传球打透。', category: 'Phase' },
+];
+
+export const LEARNING_PATHS: LearningPath[] = [
+  {
+    id: 'path-1',
+    title: "入门：阵型概论",
+    description: "从经典的 4-4-2 到现代的 3-2-4-1，理解足球阵型的骨架及其空间逻辑。",
+    level: 'Beginner',
+    icon: '📐',
+    modules: [
+      { id: 'm1-1', title: '球场坐标系：理解五道线', description: '学习如何将球场划分为纵向 and 横向的战术区域。', type: 'Theory' },
+      { id: 'm1-2', title: '4-3-3：控球者的避风港', description: '深入探讨 Tiki-taka 的基础阵型布局。', type: 'Theory', relatedKnowledgeId: 'Tiki-taka' },
+      { id: 'm1-3', title: '实战复现：2011 欧冠温布利之夜', description: '观察瓜氏巴萨如何利用阵型宽度撕裂曼联。', type: 'Simulation', relatedBattleId: 'tiki-taka-2011' },
+    ]
+  },
+  {
+    id: 'path-2',
+    title: "进阶：防守艺术",
+    description: "掌握从全场紧逼到低位防守的转换策略，学习如何建立不可逾越的屏障。",
+    level: 'Intermediate',
+    icon: '🛡️',
+    modules: [
+      { id: 'm2-1', title: '低位防守 (Low Block) 实录', description: '学习如何压缩三线距离，使对方陷入传球泥潭。', type: 'Theory', relatedKnowledgeId: '低位防守 (Low Block)' },
+      { id: 'm2-2', title: '攻防转换：穆氏反击的黄金 3 秒', description: '分析从拦截到进球的极简转换逻辑。', type: 'Simulation', relatedBattleId: 'mourinho-cr7-2012' },
+      { id: 'm2-3', title: '防守选位模拟练习', description: '在沙盒中尝试通过选位封锁传球线路。', type: 'Quiz' },
+    ]
+  },
+  {
+    id: 'path-3',
+    title: "精通：进攻准则",
+    description: "揭秘顶级豪门的破门公式：空间挤压、第三人跑位与伪九号。 ",
+    level: 'Advanced',
+    icon: '🔥',
+    modules: [
+      { id: 'm3-1', title: '伪九号：影子的威胁', description: '解析梅西如何通过回撤制造中卫选位难题。', type: 'Theory', relatedKnowledgeId: '伪九号 (False 9)' },
+      { id: 'm3-2', title: '肋部插上与空间重叠', description: '学习现代边路进攻中最具杀伤力的跑位方式。', type: 'Theory', relatedKnowledgeId: '肋部插上 (Underlap)' },
+      { id: 'm3-3', title: '战术大师终极考评', description: '在模拟复盘中找出对方防线的致命漏洞。', type: 'Simulation', relatedBattleId: 'tiki-taka-2011' },
+    ]
+  }
 ];
 
 // 标准能力维度模板

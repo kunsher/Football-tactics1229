@@ -10,6 +10,25 @@ export interface UserProfile {
   isGuest?: boolean;
 }
 
+export interface LearningModule {
+  id: string;
+  title: string;
+  description: string;
+  type: 'Theory' | 'Simulation' | 'Quiz';
+  relatedKnowledgeId?: string;
+  relatedBattleId?: string;
+  isCompleted?: boolean;
+}
+
+export interface LearningPath {
+  id: string;
+  title: string;
+  description: string;
+  level: 'Beginner' | 'Intermediate' | 'Advanced';
+  modules: LearningModule[];
+  icon: string;
+}
+
 export interface ScoutingStat {
   label: string;
   value: number; // 0-100
