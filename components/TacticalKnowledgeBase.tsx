@@ -4,6 +4,7 @@ import { GLOSSARY } from '../constants';
 import type { GlossaryTerm } from '../types';
 import { ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Tooltip, Legend } from 'recharts';
 import { InfoIcon, CoachIcon } from './icons';
+import { TacticalVisualizer } from './TacticalVisualizer';
 
 interface TacticalKnowledgeBaseProps {
   onNavigateToBattle?: (battleId: string) => void;
@@ -152,12 +153,12 @@ export const TacticalKnowledgeBase: React.FC<TacticalKnowledgeBaseProps> = ({ on
             <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-600/5 rounded-full blur-[120px] -mr-60 -mt-60"></div>
             
             <div className="relative z-10">
-              {/* Radar Section */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-16">
+              {/* Radar and Animation Section */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start mb-16">
                 <div className="space-y-6">
                   <div className="flex items-center gap-3">
                     <div className="w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,1)]"></div>
-                    <span className="text-[10px] text-gray-500 font-black uppercase tracking-[0.4em]">性能指标可视化 / RADAR DNA</span>
+                    <span className="text-[10px] text-gray-500 font-black uppercase tracking-[0.4em]">性能指标与动态演示 / ANALYTICS</span>
                   </div>
                   <h3 className="text-3xl font-black text-white tracking-tighter leading-tight">
                     {compareMode && comparisonTarget 
@@ -169,8 +170,16 @@ export const TacticalKnowledgeBase: React.FC<TacticalKnowledgeBaseProps> = ({ on
                     {selectedSystem.definition}
                   </p>
                   
+                  {/* Animation Preview in Detail View */}
+                  {selectedSystem.visualEffect && !compareMode && (
+                    <div className="mt-8 animate-fade-in">
+                       <p className="text-[10px] text-blue-500 font-black uppercase tracking-widest mb-4">动态战术逻辑演示 / VISUAL PREVIEW</p>
+                       <TacticalVisualizer type={selectedSystem.visualEffect} size="large" />
+                    </div>
+                  )}
+
                   {compareMode && comparisonTarget && (
-                    <div className="p-6 bg-orange-600/10 border border-orange-500/20 rounded-2xl animate-fade-in">
+                    <div className="p-6 bg-orange-600/10 border border-orange-500/20 rounded-2xl animate-fade-in mt-6">
                        <p className="text-xs text-orange-400 font-black mb-2 uppercase tracking-widest">对比洞察 / COMPARISON INSIGHT</p>
                        <p className="text-xs text-gray-400 leading-relaxed italic">
                          观察蓝色与灰色覆盖区域。重合部分代表共同的战术基石，偏移部分则揭示了两套哲学在进攻纵深与防守宽度上的根本分歧。

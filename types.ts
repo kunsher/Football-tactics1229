@@ -67,6 +67,8 @@ export interface GlossaryTerm {
   term: string;
   definition: string;
   category: 'Position' | 'Phase' | 'Action' | 'System';
+  icon?: string;
+  visualEffect?: 'tiki-taka' | 'pressing' | 'false-9' | 'low-block' | 'overlap';
   historicalContext?: string;
   keyTraits?: string[];
   radarProfile?: RadarPoint[];
@@ -92,11 +94,17 @@ export interface TeamInfo {
   keyInstructions?: string[];
 }
 
+export interface BattleScore {
+  home: number;
+  away: number;
+}
+
 export interface Battle {
   id: string;
   title: string;
   subtitle: string;
   description: string;
+  score: BattleScore;
   teams: {
     home: TeamInfo;
     away: TeamInfo;

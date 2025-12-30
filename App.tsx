@@ -118,7 +118,6 @@ const App: React.FC = () => {
   };
 
   const handleNavigateToKnowledge = (knowledgeId: string) => {
-    // 这里我们可以根据需要扩展百科的自动跳转逻辑，目前先切换 Tab
     setActiveTab('knowledge');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -180,7 +179,11 @@ const App: React.FC = () => {
   return (
     <div className={`min-h-screen bg-[#0a0f14] text-gray-200 flex flex-col p-4 md:p-6 font-sans selection:bg-blue-500/30 transition-opacity duration-1000 opacity-100`}>
       {selectedPlayerForModal && (
-        <PlayerModal player={selectedPlayerForModal} onClose={() => setSelectedPlayerForModal(null)} />
+        <PlayerModal 
+          player={selectedPlayerForModal} 
+          phaseTitle={currentPhase.title}
+          onClose={() => setSelectedPlayerForModal(null)} 
+        />
       )}
 
       {isUserModalOpen && (
@@ -291,6 +294,25 @@ const App: React.FC = () => {
         <div className={`${(activeTab === 'knowledge' || activeTab === 'sandbox' || activeTab === 'learning-paths') ? 'lg:col-span-12' : 'lg:col-span-8 lg:sticky lg:top-6 self-start'} flex flex-col gap-4 w-full transition-all duration-700`}>
             {activeTab === 'simulation' && (
                 <>
+                    {/* 新增：战役标题与比分展示区 */}
+                    <div className="flex items-center justify-between px-6 py-4 bg-white/5 rounded-2xl border border-white/10 mb-2 animate-fade-in shadow-lg">
+                        <div className="flex flex-col">
+                            <span className="text-[10px] text-blue-500 font-black uppercase tracking-widest">当前分析战役</span>
+                            <h2 className="text-xl font-black text-white tracking-tighter uppercase">{selectedBattle.title}</h2>
+                        </div>
+                        <div className="flex items-center gap-6">
+                            <div className="flex flex-col items-center">
+                                <span className="text-[10px] text-gray-500 font-black uppercase tracking-tighter mb-1">{selectedBattle.teams.home.name}</span>
+                                <span className="text-4xl font-black text-white leading-none">{selectedBattle.score.home}</span>
+                            </div>
+                            <div className="text-2xl font-black text-blue-500 pb-1">:</div>
+                            <div className="flex flex-col items-center">
+                                <span className="text-[10px] text-gray-500 font-black uppercase tracking-tighter mb-1">{selectedBattle.teams.away.name}</span>
+                                <span className="text-4xl font-black text-white leading-none">{selectedBattle.score.away}</span>
+                            </div>
+                        </div>
+                    </div>
+
                     <div className="bg-gray-800/10 rounded-2xl p-4 md:p-8 border border-white/5 backdrop-blur-md relative overflow-hidden group shadow-2xl animate-fade-in">
                        <TacticBoard 
                         homePlayers={currentPhase.homePlayers} awayPlayers={currentPhase.awayPlayers}
@@ -316,7 +338,6 @@ const App: React.FC = () => {
                       )}
                     </div>
 
-                    {/* 优化的阶段导航：显示战术内容标题 */}
                     <div className="bg-gray-900/40 rounded-xl p-4 border border-white/5 flex flex-col items-center gap-6 animate-fade-in">
                         <div className="flex flex-wrap items-center justify-center gap-2 w-full">
                             {selectedBattle.phases.map((phase, idx) => (

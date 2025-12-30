@@ -3,6 +3,7 @@ import React, { useState, useMemo } from 'react';
 import type { TacticPhase, Battle, PlayerPosition, GlossaryTerm } from '../types';
 import { InfoIcon, PlayerIcon } from './icons';
 import { GLOSSARY } from '../constants';
+import { TacticalVisualizer } from './TacticalVisualizer';
 
 interface AnalysisPanelProps {
   phase: TacticPhase;
@@ -22,14 +23,29 @@ const Tooltip: React.FC<{ termObj: GlossaryTerm; children: React.ReactNode }> = 
                 {children}
             </span>
             {show && (
-                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-80 bg-[#0f172a] border border-blue-500/30 p-5 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] z-[200] animate-fade-in pointer-events-none backdrop-blur-xl">
+                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-[320px] bg-[#0f172a] border border-blue-500/30 p-5 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] z-[200] animate-fade-in pointer-events-none backdrop-blur-xl">
                     <div className="flex items-center gap-2 mb-3">
                         <span className="px-2 py-0.5 bg-blue-500/20 text-blue-400 text-[10px] font-black uppercase tracking-[0.1em] rounded-full border border-blue-500/30">
                             {termObj.category === 'System' ? '战术体系' : termObj.category === 'Position' ? '场上位置' : termObj.category === 'Action' ? '技术动作' : '战术阶段'}
                         </span>
                         <div className="h-[1px] flex-grow bg-gradient-to-r from-blue-500/40 to-transparent"></div>
                     </div>
-                    <p className="text-base font-black text-white mb-2 tracking-tight">{termObj.term}</p>
+                    <div className="flex items-start gap-3 mb-4">
+                        {termObj.icon && (
+                            <div className="w-10 h-10 shrink-0 bg-blue-600/10 rounded-xl border border-blue-500/20 flex items-center justify-center text-xl shadow-inner">
+                                {termObj.icon}
+                            </div>
+                        )}
+                        <p className="text-base font-black text-white tracking-tight">{termObj.term}</p>
+                    </div>
+
+                    {termObj.visualEffect && (
+                        <div className="mb-4">
+                            <TacticalVisualizer type={termObj.visualEffect} />
+                            <p className="text-[9px] text-gray-500 font-black uppercase tracking-widest text-center mt-2 opacity-60">动态战术演示 / VISUAL PREVIEW</p>
+                        </div>
+                    )}
+
                     <p className="text-sm text-gray-300 leading-relaxed font-medium">
                         {termObj.definition}
                     </p>
@@ -55,7 +71,6 @@ const SmartText: React.FC<{ text: string }> = ({ text }) => {
         return matches.sort((a, b) => (b.match?.length || 0) - (a.match?.length || 0));
     }, []);
 
-    // 分句处理以实现 Staggered Animation
     const sentences = useMemo(() => text.split('。').filter(s => s.trim()), [text]);
 
     return (
@@ -82,7 +97,7 @@ const SmartText: React.FC<{ text: string }> = ({ text }) => {
           return (
             <p 
               key={sIdx} 
-              className="animate-fade-in fill-mode-forwards opacity-0"
+              className="animate-fade-in fill-mode-forwards opacity-0 text-gray-300 font-medium"
               style={{ animationDelay: `${sIdx * 0.15}s`, animationFillMode: 'forwards' }}
             >
               {parts}
@@ -102,18 +117,33 @@ const GlossaryItem: React.FC<{ termObj: GlossaryTerm }> = ({ termObj }) => {
                 onMouseLeave={() => setShowTooltip(false)}
                 className="px-4 py-2 bg-white/5 rounded-xl text-sm text-gray-300 border border-white/5 hover:border-blue-500/50 hover:bg-blue-500/5 cursor-help transition-all flex items-center gap-2 group"
             >
+                {termObj.icon && <span className="text-sm">{termObj.icon}</span>}
                 {termObj.term}
                 <InfoIcon className="w-4 h-4 opacity-30 group-hover:opacity-100 transition-opacity" />
             </button>
             {showTooltip && (
-                <div className="absolute bottom-full left-0 mb-3 w-80 bg-gray-900 border-2 border-blue-500/40 p-5 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-[100] animate-fade-in pointer-events-none">
+                <div className="absolute bottom-full left-0 mb-3 w-[320px] bg-gray-900 border-2 border-blue-500/40 p-5 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-[100] animate-fade-in pointer-events-none">
                     <div className="flex items-center gap-2 mb-3">
                         <span className="px-2 py-0.5 bg-blue-500/20 text-blue-400 text-xs font-black uppercase tracking-widest rounded border border-blue-500/30">
                             {termObj.category === 'System' ? '战术体系' : termObj.category === 'Position' ? '场上位置' : termObj.category === 'Action' ? '技术动作' : '战术阶段'}
                         </span>
                         <div className="h-px flex-grow bg-blue-500/20"></div>
                     </div>
-                    <p className="text-base font-bold text-white mb-2 tracking-tight underline decoration-blue-500/30 decoration-2 underline-offset-4">{termObj.term}</p>
+                    <div className="flex items-center gap-3 mb-4">
+                        {termObj.icon && (
+                            <div className="w-10 h-10 bg-blue-600/10 border border-blue-500/20 rounded-xl flex items-center justify-center text-xl shrink-0">
+                                {termObj.icon}
+                            </div>
+                        )}
+                        <p className="text-base font-bold text-white tracking-tight underline decoration-blue-500/30 decoration-2 underline-offset-4">{termObj.term}</p>
+                    </div>
+
+                    {termObj.visualEffect && (
+                        <div className="mb-4">
+                            <TacticalVisualizer type={termObj.visualEffect} />
+                        </div>
+                    )}
+
                     <p className="text-sm text-gray-200 leading-relaxed font-medium">{termObj.definition}</p>
                     <div className="absolute top-full left-6 -mt-[2px] border-x-[8px] border-x-transparent border-t-[8px] border-t-blue-500/40"></div>
                     <div className="absolute top-full left-6 -mt-[4px] border-x-[8px] border-x-transparent border-t-[8px] border-t-gray-900"></div>

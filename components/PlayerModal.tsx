@@ -6,6 +6,7 @@ import { ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, Radar, Tool
 
 interface PlayerModalProps {
   player: PlayerPosition;
+  phaseTitle?: string;
   onClose: () => void;
 }
 
@@ -38,8 +39,8 @@ const TacticalBriefItem: React.FC<{ text: string; delay: number }> = ({ text, de
   );
 };
 
-export const PlayerModal: React.FC<PlayerModalProps> = ({ player, onClose }) => {
-  // 备选模拟数据，确保“弄完整”
+export const PlayerModal: React.FC<PlayerModalProps> = ({ player, phaseTitle, onClose }) => {
+  // 备选模拟数据
   const displayBrief = useMemo(() => {
     return player.tacticalBrief && player.tacticalBrief.length > 0 
       ? player.tacticalBrief 
@@ -166,11 +167,14 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({ player, onClose }) => 
               </div>
             </div>
 
-            {/* 战术简报区 - 带动画显示 */}
+            {/* 战术简报区 (Tactical Brief) */}
             <div className="space-y-12 animate-fade-in">
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
-                    <p className="text-sm font-black text-blue-500 uppercase tracking-widest">战术简报 / Tactical Briefing</p>
+                    <div className="flex flex-col">
+                      <p className="text-sm font-black text-blue-500 uppercase tracking-widest">战术简报 / Tactical Briefing</p>
+                      {phaseTitle && <p className="text-[10px] text-gray-500 font-bold uppercase tracking-tighter mt-1">针对阶段：{phaseTitle}</p>}
+                    </div>
                     <div className="px-3 py-1 bg-blue-600/20 rounded border border-blue-500/30 text-[9px] font-black text-blue-400 uppercase">实战扫描解码中...</div>
                 </div>
                 
@@ -186,7 +190,7 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({ player, onClose }) => 
                 <div className="p-8 bg-gradient-to-br from-blue-600/10 to-transparent border border-blue-500/20 rounded-3xl relative overflow-hidden shadow-inner group">
                   <div className="absolute -top-4 -right-4 text-7xl font-black text-white/[0.03] italic uppercase select-none tracking-tighter group-hover:scale-110 transition-transform duration-1000">ROLE</div>
                   <p className="text-lg text-blue-100/90 font-medium leading-relaxed relative z-10 italic">
-                    “ 作为球队在这一阶段的 <span className="text-white font-black">{player.role}</span>，<span className="text-white font-black">{player.name}</span> 不仅承担着执行指令的义务，
+                    “ 作为球队在当前阶段的 <span className="text-white font-black">{player.role}</span>，<span className="text-white font-black">{player.name}</span> 不仅承担着执行指令的义务，
                     更是整个战术闭环中的 <span className="text-blue-400 font-black">关键触发器</span>。他的每次跑位都直接决定了对手防线的重心偏移方向。”
                   </p>
                 </div>
@@ -197,7 +201,7 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({ player, onClose }) => 
           <div className="flex items-center justify-center gap-6 opacity-30 pt-10 border-t border-white/5">
             <div className="h-px flex-grow bg-gradient-to-r from-transparent to-gray-700"></div>
             <div className="text-[10px] text-gray-600 uppercase tracking-[0.5em] font-black whitespace-nowrap">
-              Tactical Lab DB v2.0 / Intelligence Unit
+              Tactical Lab DB v2.1 / Intelligence Unit
             </div>
             <div className="h-px flex-grow bg-gradient-to-l from-transparent to-gray-700"></div>
           </div>
