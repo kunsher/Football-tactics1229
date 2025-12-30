@@ -68,7 +68,8 @@ export interface GlossaryTerm {
   definition: string;
   category: 'Position' | 'Phase' | 'Action' | 'System';
   icon?: string;
-  visualEffect?: 'tiki-taka' | 'pressing' | 'false-9' | 'low-block' | 'overlap';
+  // Fixed type mismatch in constants.ts by expanding the visualEffect union to include 'counter-press' and 'half-space'.
+  visualEffect?: 'tiki-taka' | 'pressing' | 'false-9' | 'low-block' | 'overlap' | 'counter-press' | 'half-space';
   historicalContext?: string;
   keyTraits?: string[];
   radarProfile?: RadarPoint[];
