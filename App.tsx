@@ -183,10 +183,10 @@ const App: React.FC = () => {
         <div className="flex items-center gap-4">
             <div className="animate-fade-in">
               <div className="flex items-center gap-3">
-                <h1 className="text-3xl font-black text-white tracking-tighter uppercase">Soccer Tactic <span className="text-blue-500">Lab</span></h1>
+                <h1 className="text-2xl font-black text-white tracking-tighter">足球科普系统 <span className="text-blue-500 text-lg font-bold">面向球迷的战术平台</span></h1>
                 <span className="px-2 py-0.5 rounded bg-blue-500/10 border border-blue-500/30 text-blue-400 text-[10px] font-bold uppercase tracking-widest">v2.1 EVOLVE</span>
               </div>
-              <p className="text-sm text-gray-400 mt-1 italic opacity-80">足球战术解码与仿真平台</p>
+              <p className="text-sm text-gray-400 mt-1 italic opacity-80">基于 Web 可视化技术的数字化足球战术研究</p>
             </div>
         </div>
 
