@@ -1,6 +1,15 @@
 
 import type { Battle, GlossaryTerm, PlayerPosition, LearningPath } from './types';
 
+const defaultRadar = [
+  { subject: '压迫', A: 70, B: 0, fullMark: 100 },
+  { subject: '控球', A: 60, B: 0, fullMark: 100 },
+  { subject: '速度', A: 80, B: 0, fullMark: 100 },
+  { subject: '对抗', A: 75, B: 0, fullMark: 100 },
+  { subject: '纪律', A: 85, B: 0, fullMark: 100 },
+  { subject: '创造力', A: 90, B: 0, fullMark: 100 },
+];
+
 export const GLOSSARY: GlossaryTerm[] = [
   { 
     term: 'Tiki-taka', 
@@ -30,7 +39,7 @@ export const GLOSSARY: GlossaryTerm[] = [
     icon: '⚡',
     visualEffect: 'pressing',
     complexity: 4,
-    strategicFocus: ['瞬时反抢', '垂直打击', '全员狂奔'],
+    strategicFocus: ['瞬时反反', '垂直打击', '全员狂奔'],
     historicalContext: '由朗尼克奠定理论，克洛普在多特蒙德时期发扬光大。',
     keyTraits: ['瞬时反抢', '高强度冲刺', '垂直攻击', '体力要求极高', '集体联动'],
     famousTeams: ['多特蒙德 (2010-2013)', '利物浦 (2018-2022)', 'RB莱比锡'],
@@ -43,11 +52,74 @@ export const GLOSSARY: GlossaryTerm[] = [
       { subject: '纪律', A: 88, B: 0, fullMark: 100 },
     ]
   },
-  { term: '肋部空间 (Half-Space)', icon: '🏟️', visualEffect: 'half-space', definition: '指球场纵向划分中，边路与中路之间的过渡区域。', category: 'Phase', complexity: 3 },
-  { term: '伪九号 (False 9)', icon: '👻', visualEffect: 'false-9', definition: '前锋回撤至中场接球，吸引对方中卫前移，从而为队友在身后创造插上空间。', category: 'Position', complexity: 5 },
-  { term: '肋部插上 (Underlap)', icon: '🗡️', visualEffect: 'overlap', definition: '边后卫向内切入中场，增加进攻维度。', category: 'Action', complexity: 3 },
-  { term: '低位防守 (Low Block)', icon: '🧱', visualEffect: 'low-block', definition: '防守方整体退缩至本方禁区前沿。', category: 'Phase', complexity: 2 },
-  { term: '瞬时反抢 (Counter-Press)', icon: '💥', visualEffect: 'counter-press', definition: '丢失球权的瞬间立即对持球人进行围抢。', category: 'Action', complexity: 4 },
+  { 
+    term: '肋部空间 (Half-Space)', 
+    icon: '🏟️', 
+    visualEffect: 'half-space', 
+    definition: '指球场纵向划分中，边路与中路之间的过渡区域。在这里接球可以迫使对方后卫陷入跟防还是内切的艰难抉择。', 
+    category: 'Phase', 
+    complexity: 3,
+    strategicFocus: ['战术死角', '防线错位'],
+    radarProfile: [
+      { subject: '控球', A: 40, B: 0, fullMark: 100 },
+      { subject: '压迫', A: 30, B: 0, fullMark: 100 },
+      { subject: '速度', A: 50, B: 0, fullMark: 100 },
+      { subject: '创造力', A: 100, B: 0, fullMark: 100 },
+      { subject: '防守', A: 20, B: 0, fullMark: 100 },
+      { subject: '纪律', A: 60, B: 0, fullMark: 100 },
+    ]
+  },
+  { 
+    term: '伪九号 (False 9)', 
+    icon: '👻', 
+    visualEffect: 'false-9', 
+    definition: '前锋回撤至中场接球，吸引对方中卫前移，从而为队友在身后创造插上空间。梅西在巴萨的巅峰期是该位置的终极演绎。', 
+    category: 'Position', 
+    complexity: 5,
+    strategicFocus: ['中卫引诱', '空间利用'],
+    radarProfile: [
+      { subject: '控球', A: 90, B: 0, fullMark: 100 },
+      { subject: '压迫', A: 50, B: 0, fullMark: 100 },
+      { subject: '速度', A: 75, B: 0, fullMark: 100 },
+      { subject: '创造力', A: 100, B: 0, fullMark: 100 },
+      { subject: '防守', A: 30, B: 0, fullMark: 100 },
+      { subject: '纪律', A: 70, B: 0, fullMark: 100 },
+    ]
+  },
+  { 
+    term: '肋部插上 (Underlap)', 
+    icon: '🗡️', 
+    visualEffect: 'overlap', 
+    definition: '边后卫向内切入中场，而不是传统的沿边路传中，这会增加中场的人数优势。', 
+    category: 'Action', 
+    complexity: 3,
+    radarProfile: defaultRadar
+  },
+  { 
+    term: '低位防守 (Low Block)', 
+    icon: '🧱', 
+    visualEffect: 'low-block', 
+    definition: '防守方整体退缩至本方禁区前沿。核心在于压缩对手在禁区内的处理球空间，极其考验对手的远射和定位球能力。', 
+    category: 'Phase', 
+    complexity: 2,
+    radarProfile: [
+      { subject: '控球', A: 20, B: 0, fullMark: 100 },
+      { subject: '压迫', A: 40, B: 0, fullMark: 100 },
+      { subject: '速度', A: 30, B: 0, fullMark: 100 },
+      { subject: '创造力', A: 40, B: 0, fullMark: 100 },
+      { subject: '防守', A: 100, B: 0, fullMark: 100 },
+      { subject: '纪律', A: 100, B: 0, fullMark: 100 },
+    ]
+  },
+  { 
+    term: '瞬时反抢 (Counter-Press)', 
+    icon: '💥', 
+    visualEffect: 'counter-press', 
+    definition: '丢失球权的瞬间立即对持球人进行围抢，利用对手由守转攻的思维转换间隙夺回球权。', 
+    category: 'Action', 
+    complexity: 4,
+    radarProfile: defaultRadar
+  },
 ];
 
 const getScoutingStats = (s: number, f: number, p: number, d: number, def: number, phy: number) => [
@@ -59,7 +131,7 @@ const getScoutingStats = (s: number, f: number, p: number, d: number, def: numbe
   { label: '身体', value: phy },
 ];
 
-// --- 球员阵容生成器逻辑 ---
+// ... (球员生成逻辑保持不变)
 const getBarcaSquad2011 = (overrides: Partial<PlayerPosition>[] = []): PlayerPosition[] => {
   const base: PlayerPosition[] = [
     { id: 'H1', number: 1, position: 'GK', line: 'GK', x: 5, y: 50, name: '巴尔德斯', role: '清道夫门将', team: 'home' },

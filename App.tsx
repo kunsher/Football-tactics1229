@@ -94,6 +94,42 @@ const App: React.FC = () => {
     };
   }, [isPlaying, selectedBattle?.phases.length, animationSpeed]);
 
+  const handleAnalyzeWithAI = async () => {
+    if (!selectedBattle) return;
+    setIsDecoding(true);
+    setAiInsight("正在接入 Google Gemini 3.0 战术解码引擎...");
+    
+    try {
+        const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+        const currentPhase = selectedBattle.phases[currentPhaseIndex];
+        
+        // 提取场上坐标数据
+        const tacticalData = {
+            phaseTitle: currentPhase.title,
+            homePositions: currentPhase.homePlayers.map(p => ({ n: p.name, x: p.x, y: p.y, r: p.role })),
+            awayPositions: currentPhase.awayPlayers.map(p => ({ n: p.name, x: p.x, y: p.y, r: p.role })),
+            context: currentPhase.description
+        };
+
+        const prompt = `你是一位世界级的足球战术分析专家。请根据以下场上球员实时坐标和战术背景，进行简短深刻的点评（100字以内）：
+        背景：${tacticalData.context}
+        主队关键球员分布：${JSON.stringify(tacticalData.homePositions.slice(0, 5))}
+        请分析此时阵型对空间的利用，以及潜在的进攻威胁点。`;
+
+        const response = await ai.models.generateContent({
+            model: 'gemini-3-flash-preview',
+            contents: prompt,
+        });
+
+        setAiInsight(response.text || "AI 引擎未能生成有效分析。");
+    } catch (error) {
+        setAiInsight("战术解码请求频率过高或 API 连接中断，请稍后重试。");
+        console.error(error);
+    } finally {
+        setIsDecoding(false);
+    }
+  };
+
   const handleNavigateToBattle = (battleId: string) => {
     const battle = battles.find(b => b.id === battleId);
     if (battle) {
@@ -305,13 +341,15 @@ const App: React.FC = () => {
                         <div className="absolute bottom-10 left-10 right-10 bg-black/80 backdrop-blur-xl p-6 rounded-2xl border border-blue-500/30 shadow-2xl animate-fade-in z-[50]">
                             <div className="flex items-center justify-between mb-3">
                                 <div className="flex items-center gap-2">
-                                    <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></div>
-                                    <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest">AI 解码专家结论</span>
+                                    <div className={`w-2 h-2 rounded-full ${isDecoding ? 'bg-orange-500 animate-ping' : 'bg-blue-500'}`}></div>
+                                    <span className={`text-[10px] font-black uppercase tracking-widest ${isDecoding ? 'text-orange-400' : 'text-blue-400'}`}>
+                                        {isDecoding ? 'DECODING TACTICAL STREAM...' : 'AI 解码专家结论'}
+                                    </span>
                                 </div>
-                                <button onClick={() => setAiInsight(null)} className="text-gray-500 hover:text-white transition-colors">×</button>
+                                <button onClick={() => setAiInsight(null)} className="text-gray-500 hover:text-white transition-colors text-xl">×</button>
                             </div>
                             <p className="text-sm text-gray-200 italic leading-relaxed">
-                                {isDecoding ? "正在解析战术博弈中的深层逻辑..." : aiInsight}
+                                {aiInsight}
                             </p>
                         </div>
                       )}
@@ -331,10 +369,15 @@ const App: React.FC = () => {
                                     <svg className="w-6 h-6 ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                                 )}
                             </button>
-                            <div className="text-left hidden lg:block">
-                                <p className="text-[10px] text-gray-500 font-black uppercase tracking-widest">播放仿真</p>
-                                <p className="text-sm font-black text-white tracking-tighter uppercase">{isPlaying ? '正在同步渲染' : '等待指令'}</p>
-                            </div>
+                            <button 
+                                onClick={handleAnalyzeWithAI}
+                                disabled={isDecoding}
+                                className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border flex items-center gap-2 ${
+                                    isDecoding ? 'bg-orange-600/20 border-orange-500/30 text-orange-400' : 'bg-blue-600/10 border-blue-500/30 text-blue-400 hover:bg-blue-600 hover:text-white'
+                                }`}
+                            >
+                                <span>{isDecoding ? '⏳ 正在解析' : '⚡ AI 深度解码'}</span>
+                            </button>
                         </div>
 
                         <div className="flex-grow flex flex-wrap items-center justify-center gap-3">

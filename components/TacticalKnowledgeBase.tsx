@@ -65,10 +65,12 @@ export const TacticalKnowledgeBase: React.FC<TacticalKnowledgeBaseProps> = ({ on
   const [comparisonTarget, setComparisonTarget] = useState<GlossaryTerm | null>(null);
 
   const radarData = useMemo(() => {
-    if (!selectedTerm.radarProfile) return [];
-    if (!compareMode || !comparisonTarget || !comparisonTarget.radarProfile) return selectedTerm.radarProfile;
+    const primary = selectedTerm.radarProfile || [];
+    if (!compareMode || !comparisonTarget || !comparisonTarget.radarProfile) {
+        return primary;
+    }
     
-    return selectedTerm.radarProfile.map((point, i) => ({
+    return primary.map((point, i) => ({
       ...point,
       A: point.A,
       B: comparisonTarget.radarProfile?.[i]?.A || 0
@@ -281,41 +283,47 @@ export const TacticalKnowledgeBase: React.FC<TacticalKnowledgeBaseProps> = ({ on
                   )}
                 </div>
 
-                {/* Radar Chart Section */}
+                {/* Radar Chart Section - 修复父容器高度问题 */}
                 <div className="space-y-8 flex flex-col items-center">
-                   <div className="w-full bg-white/[0.03] rounded-[4rem] p-12 border border-white/5 aspect-square relative group shadow-inner">
-                      <div className="absolute inset-0 bg-blue-600/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                   <div className="w-full bg-white/[0.03] rounded-[4rem] p-12 border border-white/5 aspect-square min-h-[300px] relative group shadow-inner flex items-center justify-center">
+                      <div className="absolute inset-0 bg-blue-600/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-[4rem]"></div>
                       <div className="absolute top-8 left-1/2 -translate-x-1/2 text-[10px] font-black text-gray-700 uppercase tracking-widest">DNA PERFORMANCE MAP</div>
                       
-                      <ResponsiveContainer width="100%" height="100%">
-                         <RadarChart cx="50%" cy="50%" outerRadius="80%" data={radarData}>
-                           <PolarGrid stroke="rgba(255,255,255,0.08)" />
-                           <PolarAngleAxis dataKey="subject" tick={{fill: '#64748b', fontSize: 12, fontWeight: '900'}} />
-                           <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
-                           <Radar
-                             name={selectedTerm.term}
-                             dataKey="A"
-                             stroke="#3b82f6"
-                             strokeWidth={3}
-                             fill="#3b82f6"
-                             fillOpacity={0.4}
-                             animationDuration={1500}
-                           />
-                           {compareMode && comparisonTarget && (
-                             <Radar
-                               name={comparisonTarget.term}
-                               dataKey="B"
-                               stroke="#f97316"
-                               strokeWidth={2}
-                               fill="#f97316"
-                               fillOpacity={0.2}
-                               animationDuration={1500}
-                             />
-                           )}
-                           <Tooltip content={<CustomRadarTooltip />} cursor={false} />
-                           {compareMode && <Legend verticalAlign="bottom" wrapperStyle={{ fontSize: '10px', fontWeight: '900', textTransform: 'uppercase', paddingTop: '30px' }} />}
-                         </RadarChart>
-                       </ResponsiveContainer>
+                      {radarData.length > 0 ? (
+                        <div className="w-full h-full">
+                          <ResponsiveContainer width="100%" height="100%" minHeight={200}>
+                             <RadarChart cx="50%" cy="50%" outerRadius="80%" data={radarData}>
+                               <PolarGrid stroke="rgba(255,255,255,0.08)" />
+                               <PolarAngleAxis dataKey="subject" tick={{fill: '#64748b', fontSize: 12, fontWeight: '900'}} />
+                               <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
+                               <Radar
+                                 name={selectedTerm.term}
+                                 dataKey="A"
+                                 stroke="#3b82f6"
+                                 strokeWidth={3}
+                                 fill="#3b82f6"
+                                 fillOpacity={0.4}
+                                 animationDuration={1500}
+                               />
+                               {compareMode && comparisonTarget && (
+                                 <Radar
+                                   name={comparisonTarget.term}
+                                   dataKey="B"
+                                   stroke="#f97316"
+                                   strokeWidth={2}
+                                   fill="#f97316"
+                                   fillOpacity={0.2}
+                                   animationDuration={1500}
+                                 />
+                               )}
+                               <Tooltip content={<CustomRadarTooltip />} cursor={false} />
+                               {compareMode && <Legend verticalAlign="bottom" wrapperStyle={{ fontSize: '10px', fontWeight: '900', textTransform: 'uppercase', paddingTop: '30px' }} />}
+                             </RadarChart>
+                           </ResponsiveContainer>
+                        </div>
+                      ) : (
+                        <div className="text-gray-600 text-[10px] font-bold uppercase tracking-widest opacity-40">解析中...</div>
+                      )}
                    </div>
                    
                    {selectedTerm.relatedBattleId && !compareMode && (
