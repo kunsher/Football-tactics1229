@@ -1,66 +1,133 @@
 
 import React, { useState } from 'react';
+import { mockApi } from '../services/mockApi';
+import { UserProfile } from '../types';
 
 interface LoginModalProps {
-    onLogin: () => void;
+    onLoginSuccess: (user: UserProfile) => void;
     onClose: () => void;
 }
 
-export const LoginModal: React.FC<LoginModalProps> = ({ onLogin, onClose }) => {
+export const LoginModal: React.FC<LoginModalProps> = ({ onLoginSuccess, onClose }) => {
+    const [isRegister, setIsRegister] = useState(false);
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [nickname, setNickname] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
-    const handleLoginAction = () => {
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError(null);
         setIsLoading(true);
-        setTimeout(() => {
-            onLogin();
+
+        try {
+            let user;
+            if (isRegister) {
+                if (!nickname) throw new Error('请输入昵称');
+                user = await mockApi.register(username, password, nickname);
+            } else {
+                user = await mockApi.login(username, password);
+            }
+            onLoginSuccess(user);
+        } catch (err: any) {
+            setError(err.message || '操作失败，请重试');
+        } finally {
             setIsLoading(false);
-        }, 1500);
+        }
     };
 
     return (
         <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md animate-fade-in">
-            <div className="relative w-full max-w-md bg-[#0a0f14] border border-blue-500/30 rounded-3xl p-10 shadow-[0_0_100px_rgba(59,130,246,0.2)] overflow-hidden">
-                {/* Background Decor */}
+            <div className="relative w-full max-w-md bg-[#0a0f14] border border-blue-500/30 rounded-[2.5rem] p-10 shadow-[0_0_100px_rgba(59,130,246,0.2)] overflow-hidden">
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent"></div>
-                <div className="absolute -top-20 -right-20 w-40 h-40 bg-blue-600/10 rounded-full blur-3xl"></div>
-
-                <div className="relative z-10 text-center">
-                    <div className="w-16 h-16 bg-blue-600/10 rounded-2xl flex items-center justify-center border border-blue-500/30 mx-auto mb-6">
-                        <span className="text-2xl">🔐</span>
-                    </div>
-                    
-                    <h2 className="text-2xl font-black text-white uppercase tracking-tighter mb-2">同步战术基因</h2>
-                    <p className="text-sm text-gray-500 font-medium leading-relaxed mb-10">
-                        登录以同步您的复盘进度、解锁高级战术勋章并加入分析师排名。
-                    </p>
-
-                    <div className="space-y-4">
-                        <button 
-                            onClick={handleLoginAction}
-                            disabled={isLoading}
-                            className="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-black uppercase tracking-widest rounded-xl shadow-lg shadow-blue-600/20 transition-all flex items-center justify-center gap-3 group disabled:opacity-50"
-                        >
-                            {isLoading ? (
-                                <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
-                            ) : (
-                                <>
-                                    一键同步身份
-                                    <span className="group-hover:translate-x-1 transition-transform">→</span>
-                                </>
-                            )}
-                        </button>
-                        
-                        <button 
-                            onClick={onClose}
-                            className="w-full py-4 bg-white/5 hover:bg-white/10 text-gray-400 font-black uppercase tracking-widest rounded-xl transition-all"
-                        >
-                            暂不登录，继续分析
-                        </button>
+                
+                <div className="relative z-10">
+                    <div className="flex flex-col items-center mb-8">
+                        <div className="w-16 h-16 bg-blue-600/10 rounded-2xl flex items-center justify-center border border-blue-500/30 mb-4">
+                            <span className="text-2xl">{isRegister ? '📝' : '🔐'}</span>
+                        </div>
+                        <h2 className="text-2xl font-black text-white uppercase tracking-tighter">
+                            {isRegister ? '创建分析师账号' : '同步战术基因'}
+                        </h2>
+                        <p className="text-[10px] text-gray-500 font-bold uppercase tracking-[0.2em] mt-2">
+                            {isRegister ? 'Join the Tactical Elite' : 'Access Tactical Intelligence'}
+                        </p>
                     </div>
 
-                    <p className="mt-8 text-[10px] text-gray-600 font-bold uppercase tracking-widest opacity-50 underline underline-offset-4 decoration-blue-500/30">
-                        Secure Tactical Channel 04-X
-                    </p>
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                        {error && (
+                            <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-xs font-bold animate-shake">
+                                ⚠️ {error}
+                            </div>
+                        )}
+
+                        <div className="space-y-1.5">
+                            <label className="text-[10px] text-gray-500 font-black uppercase tracking-widest pl-1">账号 / USERNAME</label>
+                            <input 
+                                type="text" 
+                                required
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
+                                className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-white text-sm focus:outline-none focus:border-blue-500/50 transition-all placeholder:text-gray-700"
+                                placeholder="输入通行证 ID"
+                            />
+                        </div>
+
+                        {isRegister && (
+                            <div className="space-y-1.5">
+                                <label className="text-[10px] text-gray-500 font-black uppercase tracking-widest pl-1">昵称 / NICKNAME</label>
+                                <input 
+                                    type="text" 
+                                    required
+                                    value={nickname}
+                                    onChange={(e) => setNickname(e.target.value)}
+                                    className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-white text-sm focus:outline-none focus:border-blue-500/50 transition-all placeholder:text-gray-700"
+                                    placeholder="你的公开代号"
+                                />
+                            </div>
+                        )}
+
+                        <div className="space-y-1.5">
+                            <label className="text-[10px] text-gray-500 font-black uppercase tracking-widest pl-1">密码 / PASSWORD</label>
+                            <input 
+                                type="password" 
+                                required
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-white text-sm focus:outline-none focus:border-blue-500/50 transition-all placeholder:text-gray-700"
+                                placeholder="••••••••"
+                            />
+                        </div>
+
+                        <div className="pt-4 flex flex-col gap-3">
+                            <button 
+                                type="submit"
+                                disabled={isLoading}
+                                className="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-black uppercase tracking-widest rounded-xl shadow-lg shadow-blue-600/20 transition-all flex items-center justify-center gap-3 disabled:opacity-50 active:scale-95"
+                            >
+                                {isLoading ? (
+                                    <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+                                ) : (
+                                    isRegister ? '立即创建存档' : '执行身份同步'
+                                )}
+                            </button>
+                            
+                            <button 
+                                type="button"
+                                onClick={() => setIsRegister(!isRegister)}
+                                className="text-xs text-gray-500 hover:text-blue-400 font-bold transition-colors uppercase tracking-widest py-2"
+                            >
+                                {isRegister ? '已有账号？立即登录' : '没有账号？创建新身份'}
+                            </button>
+                        </div>
+                    </form>
+
+                    <div className="mt-10 pt-6 border-t border-white/5 text-center">
+                        <button onClick={onClose} className="text-[10px] text-gray-600 font-black uppercase tracking-widest hover:text-white transition-colors">
+                            暂不登录，以访客身份继续
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

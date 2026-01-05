@@ -30,7 +30,7 @@ const App: React.FC = () => {
   const [selectedPlayerForModal, setSelectedPlayerForModal] = useState<PlayerPosition | null>(null);
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<ActiveTab>('simulation');
+  const [activeTab, setActiveTab] = useState('simulation');
   const [animationSpeed, setAnimationSpeed] = useState(1.0);
   
   const [homeColor, setHomeColor] = useState('#ffffff');
@@ -78,8 +78,8 @@ const App: React.FC = () => {
         setCurrentPhaseIndex((prev) => {
           if (prev >= selectedBattle.phases.length - 1) {
             setIsPlaying(false);
-            mockApi.updateUserProgress(selectedBattle.id).then(newProgress => {
-                setUser(prevUser => prevUser ? { ...prevUser, battlesAnalyzed: newProgress.battlesAnalyzed } : null);
+            mockApi.updateUserProgress(selectedBattle.id).then(newProfile => {
+                if (newProfile) setUser(newProfile);
             });
             return prev;
           }
@@ -94,19 +94,6 @@ const App: React.FC = () => {
     };
   }, [isPlaying, selectedBattle?.phases.length, animationSpeed]);
 
-  const handleLogin = async () => {
-    const loggedUser = await mockApi.login();
-    setUser(loggedUser);
-    setIsLoginModalOpen(false);
-  };
-
-  const handleLogout = async () => {
-    await mockApi.logout();
-    const guestUser = await mockApi.fetchUserProfile();
-    setUser(guestUser);
-    setIsUserModalOpen(false);
-  };
-
   const handleNavigateToBattle = (battleId: string) => {
     const battle = battles.find(b => b.id === battleId);
     if (battle) {
@@ -120,6 +107,18 @@ const App: React.FC = () => {
   const handleNavigateToKnowledge = (knowledgeId: string) => {
     setActiveTab('knowledge');
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleLoginSuccess = (loggedInUser: UserProfile) => {
+    setUser(loggedInUser);
+    setIsLoginModalOpen(false);
+  };
+
+  const handleLogout = async () => {
+    await mockApi.logout();
+    const guestUser = await mockApi.fetchUserProfile();
+    setUser(guestUser);
+    setIsUserModalOpen(false);
   };
 
   if (isInitialLoading) {
@@ -170,11 +169,14 @@ const App: React.FC = () => {
             onClose={() => setIsUserModalOpen(false)} 
             onLogout={handleLogout}
             onOpenLogin={() => { setIsUserModalOpen(false); setIsLoginModalOpen(true); }}
+            onUpdateProfile={(updates) => {
+                mockApi.updateProfile(updates).then(updated => setUser(updated));
+            }}
           />
       )}
 
       {isLoginModalOpen && (
-          <LoginModal onLogin={handleLogin} onClose={() => setIsLoginModalOpen(false)} />
+          <LoginModal onLoginSuccess={handleLoginSuccess} onClose={() => setIsLoginModalOpen(false)} />
       )}
 
       <header className="flex flex-col md:flex-row justify-between items-start md:items-center pb-6 border-b border-white/10 gap-4">
@@ -269,24 +271,23 @@ const App: React.FC = () => {
       </header>
       
       <main className="flex-grow flex flex-col lg:grid lg:grid-cols-12 gap-8 mt-6 items-start">
-        <div className={`${(activeTab === 'knowledge' || activeTab === 'sandbox' || activeTab === 'learning-paths') ? 'lg:col-span-12' : 'lg:col-span-8 lg:sticky lg:top-6 self-start'} flex flex-col gap-4 w-full transition-all duration-700`}>
+        <div className={`${(activeTab === 'knowledge' || activeTab === 'sandbox' || activeTab === 'learning-paths' || activeTab === 'about') ? 'lg:col-span-12' : 'lg:col-span-8 lg:sticky lg:top-6 self-start'} flex flex-col gap-4 w-full transition-all duration-700`}>
             {activeTab === 'simulation' && (
                 <>
-                    {/* 新增：战役标题与比分展示区 */}
-                    <div className="flex items-center justify-between px-6 py-4 bg-white/5 rounded-2xl border border-white/10 mb-2 animate-fade-in shadow-lg">
-                        <div className="flex flex-col">
-                            <span className="text-[10px] text-blue-500 font-black uppercase tracking-widest">当前分析战役</span>
-                            <h2 className="text-xl font-black text-white tracking-tighter uppercase">{selectedBattle.title}</h2>
+                    <div className="flex items-center justify-between px-6 py-2 bg-white/5 rounded-xl border border-white/10 mb-2 animate-fade-in shadow-lg">
+                        <div className="flex items-center gap-4">
+                            <span className="text-[9px] text-blue-500 font-black uppercase tracking-[0.2em] bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20 whitespace-nowrap hidden sm:block">当前分析</span>
+                            <h2 className="text-lg font-black text-white tracking-tighter uppercase">{selectedBattle.title}</h2>
                         </div>
-                        <div className="flex items-center gap-6">
-                            <div className="flex flex-col items-center">
-                                <span className="text-[10px] text-gray-500 font-black uppercase tracking-tighter mb-1">{selectedBattle.teams.home.name}</span>
-                                <span className="text-4xl font-black text-white leading-none">{selectedBattle.score.home}</span>
+                        <div className="flex items-center gap-8">
+                            <div className="flex items-center gap-3">
+                                <span className="text-[10px] text-gray-500 font-black uppercase tracking-tighter hidden md:block">{selectedBattle.teams.home.name}</span>
+                                <span className="text-2xl font-black text-white tabular-nums leading-none">{selectedBattle.score.home}</span>
                             </div>
-                            <div className="text-2xl font-black text-blue-500 pb-1">:</div>
-                            <div className="flex flex-col items-center">
-                                <span className="text-[10px] text-gray-500 font-black uppercase tracking-tighter mb-1">{selectedBattle.teams.away.name}</span>
-                                <span className="text-4xl font-black text-white leading-none">{selectedBattle.score.away}</span>
+                            <div className="text-xl font-black text-blue-500 opacity-40">:</div>
+                            <div className="flex items-center gap-3">
+                                <span className="text-2xl font-black text-white tabular-nums leading-none">{selectedBattle.score.away}</span>
+                                <span className="text-[10px] text-gray-500 font-black uppercase tracking-tighter hidden md:block">{selectedBattle.teams.away.name}</span>
                             </div>
                         </div>
                     </div>
@@ -316,9 +317,7 @@ const App: React.FC = () => {
                       )}
                     </div>
 
-                    {/* 整合后的单行控制栏 */}
                     <div className="bg-gray-900/40 rounded-xl px-6 py-4 border border-white/5 flex flex-col md:flex-row items-center justify-between gap-6 animate-fade-in shadow-xl backdrop-blur-sm">
-                        {/* 左侧：播放控制与状态 */}
                         <div className="flex items-center gap-5 shrink-0">
                             <button 
                                 onClick={togglePlayback}
@@ -338,7 +337,6 @@ const App: React.FC = () => {
                             </div>
                         </div>
 
-                        {/* 中间：阶段选择器 */}
                         <div className="flex-grow flex flex-wrap items-center justify-center gap-3">
                             {selectedBattle.phases.map((phase, idx) => (
                                 <button
@@ -355,7 +353,6 @@ const App: React.FC = () => {
                             ))}
                         </div>
                         
-                        {/* 右侧：速度调节 */}
                         <div className="flex items-center gap-2 bg-black/30 p-1.5 rounded-xl border border-white/10 shrink-0">
                             {[0.5, 1.0, 2.0].map((speed) => (
                                 <button

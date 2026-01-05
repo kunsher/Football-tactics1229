@@ -5,152 +5,133 @@ import { InfoIcon, TrophyIcon, CoachIcon } from './icons';
 export const ProjectMission: React.FC = () => {
   const techStack = [
     {
-      category: '前端核心 / CORE',
-      techs: ['React 19 (Latest)', 'TypeScript', 'Tailwind CSS'],
+      category: '前端工程架构 / FRONTEND',
+      techs: ['React 19', 'TypeScript', 'Tailwind CSS', 'Framer Motion'],
       icon: '⚛️',
-      desc: '基于 React 19 响应式架构，利用 TypeScript 确保战术数据模型的一致性与严谨性。'
+      desc: '利用 React 19 的并发特性与 Server Components 理念优化感知性能，配合强类型 TypeScript 确保战术元数据的严谨性。'
     },
     {
-      category: '可视化引擎 / ENGINE',
-      techs: ['SVG 2D Canvas', 'Recharts API', 'CSS Keyframes'],
-      icon: '📊',
-      desc: '原生 SVG 渲染动态球场，结合 Recharts 实现战术 DNA 雷达图与多维数据拟合。'
+      category: '可视化渲染引擎 / VISUALS',
+      techs: ['SVG Pattern', 'Recharts API', 'Matrix Transform'],
+      icon: '🎨',
+      desc: '基于声明式 SVG 绘图，通过矩阵变换与贝塞尔曲线插值算法，将抽象的战术坐标转化为流畅的 60FPS 视觉仿真。'
     },
     {
-      category: '人工智能 / AI INTEL',
-      techs: ['Gemini 3 Flash', 'Generative AI SDK'],
+      category: '后端逻辑与持久化 / BACKEND',
+      techs: ['Mock API', 'CRUD Logic', 'Storage Engine'],
+      icon: '💾',
+      desc: '构建了模拟 RESTful 架构的后端层，实现用户档案创建、战术快照读取、进度动态更新及日志清理的完整 CRUD 闭环。'
+    },
+    {
+      category: 'AI 语义解码引擎 / AI CORE',
+      techs: ['Google Gemini 3', 'Prompt Engine', 'Context Mapping'],
       icon: '🧠',
-      desc: '集成 Google Gemini 3 大模型，实时对战术阶段进行语义解码与深度逻辑分析。'
-    },
-    {
-      category: '架构与性能 / ARCH',
-      techs: ['Modular Components', 'Mock Service Layer'],
-      icon: '🏗️',
-      desc: '组件化驱动设计，配备独立的 Mock 仿真接口层，支持无缝切换至生产环境数据库。'
+      desc: '集成 Google Gemini 系列大模型，通过结构化提示词工程，将 22 人的瞬时位置数据解码为专家级的战术分析意见。'
     }
   ];
 
+  const businessLogic = [
+    { op: 'CREATE', detail: '支持用户在沙盒模式下创建自定义战术阵型，并持久化存储至模拟数据库。' },
+    { op: 'READ', detail: '实时检索并同步用户历史复盘记录，通过 ID 索引快速加载战役快照。' },
+    { op: 'UPDATE', detail: '基于 PATCH 协议更新用户成长值与学习路径进度，实现动态的经验累积。' },
+    { op: 'DELETE', detail: '提供冗余战术缓存与过期日志的清理机制，确保客户端状态与数据源强一致性。' }
+  ];
+
   return (
-    <div className="flex flex-col gap-10 animate-fade-in max-w-7xl mx-auto py-4 pb-20 text-center items-center">
-      {/* Hero Header - Centered */}
-      <div className="w-full bg-gradient-to-br from-blue-900/40 to-[#0a0f14] border border-blue-500/20 rounded-[2.5rem] p-12 relative overflow-hidden group shadow-2xl flex flex-col items-center">
-        <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:40px_40px]"></div>
-        <div className="relative z-10 flex flex-col items-center gap-8 max-w-4xl">
-          <div className="shrink-0 p-6 bg-blue-600/10 border border-blue-500/30 rounded-full backdrop-blur-xl">
-             <TrophyIcon className="w-12 h-12 text-blue-500" />
+    <div className="flex flex-col gap-20 animate-fade-in max-w-6xl mx-auto py-16 pb-40 items-center">
+      
+      {/* Centered Hero Section */}
+      <div className="w-full flex flex-col items-center text-center space-y-10 relative">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-80 h-80 bg-blue-600/10 rounded-full blur-[100px] pointer-events-none"></div>
+        
+        <div className="shrink-0 p-8 bg-blue-600/10 border border-blue-500/20 rounded-full backdrop-blur-xl shadow-[0_0_50px_rgba(59,130,246,0.2)] animate-pulse">
+           <TrophyIcon className="w-16 h-16 text-blue-500" />
+        </div>
+
+        <div className="space-y-6 max-w-4xl px-4">
+          <div className="flex items-center justify-center gap-3">
+            <span className="w-12 h-px bg-gradient-to-r from-transparent to-blue-500"></span>
+            <span className="text-blue-400 font-black text-xs uppercase tracking-[0.8em]">Technical Blueprint</span>
+            <span className="w-12 h-px bg-gradient-to-l from-transparent to-blue-500"></span>
           </div>
-          <div className="space-y-6 flex flex-col items-center">
-            <div className="flex items-center justify-center gap-3">
-              <div className="w-1.5 h-6 bg-blue-500 rounded-full shadow-[0_0_15px_rgba(59,130,246,0.5)]"></div>
-              <span className="text-blue-400 font-black text-xs uppercase tracking-[0.4em]">Project Intelligence & Mission</span>
+          <h2 className="text-6xl md:text-8xl font-black text-white tracking-tighter leading-none">全栈战术可视化方案</h2>
+          <p className="text-xl md:text-2xl text-gray-400 font-medium leading-relaxed italic max-w-2xl mx-auto opacity-80">
+            “本项旨在通过现代 Web 技术栈，将足球战术的非线性逻辑转化为可交互的数字化体验，实现从视觉复盘到逻辑推理的完整闭环。”
+          </p>
+        </div>
+      </div>
+
+      {/* Tech Grid - Balanced Centered */}
+      <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 px-4">
+        {techStack.map((stack, i) => (
+          <div key={i} className="bg-white/[0.02] border border-white/5 rounded-[3.5rem] p-12 hover:border-blue-500/30 hover:bg-white/[0.04] transition-all group flex flex-col items-center text-center relative overflow-hidden shadow-2xl">
+            <div className="absolute -top-10 -right-10 text-9xl font-black text-white/[0.02] italic tracking-tighter pointer-events-none group-hover:scale-110 transition-transform duration-1000">
+              {i + 1}
             </div>
-            <h2 className="text-4xl md:text-6xl font-black text-white tracking-tighter leading-none text-center">项目愿景与技术蓝图</h2>
-            <p className="text-lg md:text-xl text-gray-400 font-medium leading-relaxed italic opacity-90 text-center max-w-3xl">
-              “ Soccer Tactic Lab 不仅是一个展示板，它是连接‘数据’与‘直觉’的桥梁，致力于用最前沿的技术重构球迷对绿茵博弈的认知。”
+            <div className="text-6xl mb-8 group-hover:scale-110 transition-transform duration-500">
+              {stack.icon}
+            </div>
+            <h4 className="text-xs text-blue-500 font-black uppercase tracking-[0.4em] mb-4">{stack.category}</h4>
+            <div className="flex flex-wrap gap-2 mb-6 justify-center">
+               {stack.techs.map(t => (
+                 <span key={t} className="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-[10px] font-black text-gray-400">{t}</span>
+               ))}
+            </div>
+            <p className="text-sm text-gray-500 leading-relaxed font-medium max-w-sm">
+              {stack.desc}
             </p>
           </div>
-        </div>
+        ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 w-full items-start">
-        {/* Project Positioning - Left Column */}
-        <div className="lg:col-span-4 space-y-8 flex flex-col items-center w-full">
-          <div className="w-full bg-white/[0.03] border border-white/5 rounded-[2.5rem] p-8 space-y-10 shadow-inner flex flex-col items-center">
-            <div className="w-full flex flex-col items-center">
-              <p className="text-[10px] text-gray-500 font-black uppercase tracking-[0.3em] mb-8 text-center">项目核心定位 / MISSION</p>
-              <div className="space-y-8 w-full flex flex-col items-center">
-                {[
-                  { title: '战术转译', desc: '将复杂的专业战术转化为直观的视觉语言' },
-                  { title: '叙事学习', desc: '通过经典战役复盘，在故事中掌握策略逻辑' },
-                  { title: '无缝准入', desc: '低门槛的交互设计，让每个球迷都能成为分析师' }
-                ].map((item, i) => (
-                  <div key={i} className="group cursor-default flex flex-col items-center text-center">
-                    <div className="flex items-center gap-3 mb-2 justify-center">
-                       <div className="w-1.5 h-1.5 rounded-full bg-blue-500 transition-transform group-hover:scale-150"></div>
-                       <h4 className="text-sm font-black text-white uppercase tracking-wider">{item.title}</h4>
-                    </div>
-                    <p className="text-xs text-gray-500 leading-relaxed font-medium max-w-[220px] mx-auto">{item.desc}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="w-full flex flex-col items-center">
-              <p className="text-[10px] text-gray-500 font-black uppercase tracking-[0.3em] mb-6 text-center">目标受众 / TARGET</p>
-              <div className="flex flex-wrap gap-2 justify-center">
-                {['资深死忠', '战术极客', '高校社团', '青训教练', '数据爱好者'].map(tag => (
-                  <span key={tag} className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-xl text-[10px] text-gray-400 font-black tracking-widest">{tag}</span>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          <div className="w-full p-8 bg-orange-600/5 border border-orange-500/20 rounded-[2.5rem] flex flex-col items-center text-center">
-             <div className="flex items-center gap-3 mb-4 justify-center">
-                <CoachIcon className="w-5 h-5 text-orange-500" />
-                <span className="text-[10px] font-black text-orange-400 uppercase tracking-widest">分析师寄语</span>
-             </div>
-             <p className="text-xs text-gray-400 leading-relaxed italic font-medium max-w-[250px] mx-auto">
-               “ 在数据的海洋中，我们寻找的是那一抹名为‘艺术’的灵光。Soccer Tactic Lab 2.1 旨在捕捉这些瞬间。”
-             </p>
-          </div>
-        </div>
-
-        {/* Technical Architecture - Right Column */}
-        <div className="lg:col-span-8 space-y-8 flex flex-col items-center w-full">
-           <div className="flex items-center justify-between w-full px-6">
-              <div className="flex items-center gap-3">
-                 <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></div>
-                 <h3 className="text-sm font-black text-white uppercase tracking-[0.3em]">技术解决方案 / TECH STACK</h3>
-              </div>
-              <span className="text-[9px] text-gray-600 font-black uppercase tracking-widest bg-white/5 px-3 py-1 rounded-full">System Architecture v4.2</span>
-           </div>
-
-           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
-              {techStack.map((stack, i) => (
-                <div key={i} className="bg-[#0a0f14] border border-white/10 rounded-[2.5rem] p-8 hover:border-blue-500/40 transition-all group relative overflow-hidden shadow-xl flex flex-col items-center text-center">
-                  <div className="text-5xl mb-6 grayscale group-hover:grayscale-0 transition-all group-hover:scale-110 duration-500">
-                    {stack.icon}
-                  </div>
-                  <div className="relative z-10 w-full flex flex-col items-center">
-                    <p className="text-[10px] text-blue-500 font-black uppercase tracking-widest mb-4 text-center">{stack.category}</p>
-                    <div className="flex flex-wrap gap-2 mb-4 justify-center">
-                       {stack.techs.map(t => (
-                         <span key={t} className="px-2 py-0.5 bg-blue-600/10 border border-blue-500/20 rounded text-[9px] font-black text-blue-400">{t}</span>
-                       ))}
-                    </div>
-                    <p className="text-sm text-gray-400 leading-relaxed font-medium text-center">
-                      {stack.desc}
-                    </p>
-                  </div>
+      {/* Data Operations - CRUD Focus */}
+      <div className="w-full bg-[#0a0f14] border border-white/5 rounded-[4rem] p-16 flex flex-col items-center gap-12 shadow-2xl relative overflow-hidden">
+        <div className="absolute inset-0 bg-grid-white/[0.01] bg-[size:30px_30px]"></div>
+        <div className="text-center relative z-10">
+          <p className="text-[11px] text-blue-500 font-black uppercase tracking-[0.6em] mb-3">后端业务闭环 / DATA OPERATIONS</p>
+          <div className="w-20 h-1 bg-blue-600 rounded-full mx-auto mb-10 shadow-[0_0_10px_rgba(59,130,246,1)]"></div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left max-w-5xl">
+            {businessLogic.map((item, idx) => (
+              <div key={idx} className="p-8 bg-white/[0.02] border border-white/5 rounded-3xl flex flex-col gap-3 group hover:border-blue-500/20 transition-all">
+                <div className="flex items-center gap-4">
+                  <span className="text-lg font-black text-blue-600 opacity-40 group-hover:opacity-100 transition-opacity">[{item.op}]</span>
+                  <h5 className="text-sm font-black text-white uppercase tracking-widest">核心逻辑描述</h5>
                 </div>
-              ))}
-           </div>
-
-           <div className="w-full mt-4 p-10 bg-gradient-to-br from-blue-600/10 to-transparent border border-blue-500/20 rounded-[3rem] relative overflow-hidden group shadow-2xl flex flex-col items-center text-center">
-              <div className="absolute top-0 right-0 p-10 text-9xl font-black text-white/[0.02] italic tracking-tighter select-none pointer-events-none group-hover:scale-110 transition-transform duration-1000">
-                PRO
-              </div>
-              <div className="relative z-10 max-w-2xl flex flex-col items-center">
-                <div className="flex items-center justify-center gap-3 mb-6">
-                  <InfoIcon className="w-5 h-5 text-blue-500" />
-                  <h4 className="text-xs font-black text-white uppercase tracking-[0.4em]">未来演进 / ROADMAP</h4>
-                </div>
-                <p className="text-lg md:text-xl text-gray-300 font-medium leading-relaxed italic text-center">
-                  “ 下一阶段，我们将引入 <span className="text-blue-500 font-black">3D 阵型扫描</span> 与 <span className="text-white font-black">多智能体对抗模拟</span>，
-                  让战术推演从‘静态回放’进化为‘动态推演’，实现真正的策略实时反馈。”
+                <p className="text-xs text-gray-500 leading-relaxed pl-16">
+                  {item.detail}
                 </p>
               </div>
-           </div>
+            ))}
+          </div>
         </div>
       </div>
-      
-      {/* Footer Branding */}
-      <div className="flex items-center justify-center gap-8 opacity-20 mt-16 w-full px-12">
-          <div className="h-px flex-grow bg-gradient-to-r from-transparent to-gray-500"></div>
-          <div className="text-[9px] font-black text-gray-400 uppercase tracking-[0.8em] whitespace-nowrap text-center">Tactical Lab Open Intelligence Protocol</div>
-          <div className="h-px flex-grow bg-gradient-to-l from-transparent to-gray-500"></div>
+
+      {/* Future Section */}
+      <div className="w-full flex flex-col items-center text-center space-y-8 px-4">
+        <div className="p-6 bg-blue-600/5 border border-blue-500/20 rounded-3xl max-w-3xl">
+          <div className="flex items-center justify-center gap-4 mb-4">
+            <InfoIcon className="w-5 h-5 text-blue-500" />
+            <span className="text-[11px] font-black text-white uppercase tracking-[0.4em]">演进与路线 / ROADMAP</span>
+          </div>
+          <p className="text-2xl text-gray-200 font-medium italic leading-snug">
+            “ 我们正在攻克基于 <span className="text-blue-500 font-black">Native Audio</span> 的实时战术对话系统，
+            未来将实现通过语音交互动态重构 <span className="text-white font-black">战术快照</span> 的全栈交互体验。”
+          </p>
+        </div>
+        
+        <div className="flex gap-4">
+          <div className="px-6 py-2 rounded-full border border-white/10 text-[10px] text-gray-600 font-black uppercase tracking-widest">Graduation Project v2.1</div>
+          <div className="px-6 py-2 rounded-full bg-blue-600 text-[10px] text-white font-black uppercase tracking-widest shadow-lg shadow-blue-600/20">Certified Academic Solution</div>
+        </div>
       </div>
+
+      {/* Footer Branding */}
+      <div className="pt-20 border-t border-white/5 w-full flex flex-col items-center opacity-30">
+        <div className="text-[11px] font-black text-gray-400 uppercase tracking-[1.5em] mb-4">Tactical Lab Protocol</div>
+        <p className="text-[9px] text-gray-600 font-bold">ALL RIGHTS RESERVED • BASED ON GEMINI INTELLIGENCE UNIT</p>
+      </div>
+
     </div>
   );
 };

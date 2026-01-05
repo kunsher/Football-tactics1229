@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import type { UserProfile } from '../types';
 import { UserIcon, TrophyIcon, InfoIcon, CoachIcon } from './icons';
 
@@ -8,19 +8,26 @@ interface UserSpaceModalProps {
   onClose: () => void;
   onLogout: () => void;
   onOpenLogin: () => void;
+  onUpdateProfile: (updates: Partial<UserProfile>) => void;
 }
 
-export const UserSpaceModal: React.FC<UserSpaceModalProps> = ({ user, onClose, onLogout, onOpenLogin }) => {
+export const UserSpaceModal: React.FC<UserSpaceModalProps> = ({ user, onClose, onLogout, onOpenLogin, onUpdateProfile }) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [newName, setNewName] = useState(user.name);
+
+  const handleUpdate = () => {
+    onUpdateProfile({ name: newName });
+    setIsEditing(false);
+  };
+
   return (
     <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 md:p-8 animate-fade-in backdrop-blur-xl bg-black/80" onClick={onClose}>
       <div 
         className="relative w-full max-w-4xl bg-[#0a0f14] border border-blue-500/20 rounded-[2rem] shadow-[0_0_80px_rgba(59,130,246,0.15)] overflow-hidden flex flex-col md:flex-row"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Decorative Grid Background */}
         <div className="absolute inset-0 opacity-5 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#3b82f6 0.5px, transparent 0.5px)', backgroundSize: '24px 24px' }}></div>
         
-        {/* Left Side: Analyst Card */}
         <div className="w-full md:w-80 bg-blue-600/5 p-10 flex flex-col items-center border-b md:border-b-0 md:border-r border-white/5 relative">
           <div className="relative group">
             <div className={`w-32 h-32 rounded-full p-1 shadow-lg transition-transform duration-500 ${user.isGuest ? 'bg-gray-800' : 'bg-gradient-to-tr from-blue-600 to-blue-400 shadow-[0_0_30px_rgba(59,130,246,0.5)] group-hover:scale-105'}`}>
@@ -35,8 +42,28 @@ export const UserSpaceModal: React.FC<UserSpaceModalProps> = ({ user, onClose, o
             )}
           </div>
 
-          <h2 className="text-2xl font-black text-white mt-8 tracking-tighter">{user.name}</h2>
-          <p className="text-xs font-bold text-blue-500 uppercase tracking-[0.2em] mt-2 mb-10">{user.rank}</p>
+          {isEditing ? (
+              <div className="mt-8 flex flex-col items-center gap-3 w-full">
+                  <input 
+                    type="text" value={newName} onChange={e => setNewName(e.target.value)}
+                    className="w-full bg-white/10 border border-blue-500/30 rounded-lg px-3 py-2 text-white text-center font-bold focus:outline-none"
+                  />
+                  <div className="flex gap-2">
+                    <button onClick={handleUpdate} className="text-[10px] font-black uppercase text-blue-500 hover:text-blue-400">保存</button>
+                    <button onClick={() => setIsEditing(false)} className="text-[10px] font-black uppercase text-gray-500">取消</button>
+                  </div>
+              </div>
+          ) : (
+              <>
+                <h2 className="text-2xl font-black text-white mt-8 tracking-tighter">{user.name}</h2>
+                <p className="text-xs font-bold text-blue-500 uppercase tracking-[0.2em] mt-2 mb-6">{user.rank}</p>
+                {!user.isGuest && (
+                    <button onClick={() => setIsEditing(true)} className="text-[9px] font-black uppercase text-gray-500 hover:text-blue-500 transition-colors mb-8">
+                        [ 编辑资料 / EDIT ]
+                    </button>
+                )}
+              </>
+          )}
 
           <div className="w-full space-y-4">
             <div className="bg-white/5 rounded-2xl p-4 border border-white/5">
@@ -71,7 +98,6 @@ export const UserSpaceModal: React.FC<UserSpaceModalProps> = ({ user, onClose, o
           </div>
         </div>
 
-        {/* Right Side: Dashboard */}
         <div className="flex-grow p-10 md:p-14 space-y-12 overflow-y-auto max-h-[80vh] md:max-h-none">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -83,7 +109,6 @@ export const UserSpaceModal: React.FC<UserSpaceModalProps> = ({ user, onClose, o
             <button onClick={onClose} className="text-gray-500 hover:text-white transition-colors text-2xl">×</button>
           </div>
 
-          {/* Learning Progress Bar Section */}
           <div className="space-y-4 animate-fade-in">
              <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -101,10 +126,9 @@ export const UserSpaceModal: React.FC<UserSpaceModalProps> = ({ user, onClose, o
                     <div className="absolute top-0 right-0 h-full w-4 bg-gradient-to-l from-white/20 to-transparent"></div>
                 </div>
              </div>
-             <p className="text-[9px] text-gray-600 font-medium italic">离下一等级“战术导师 (Tactical Master)”还需完成 8 个核心模块复盘。</p>
+             <p className="text-[9px] text-gray-600 font-medium italic">离下一等级“战术导师 (Tactical Master)”还需完成更多核心模块复盘。</p>
           </div>
 
-          {/* Stats Grid */}
           <div className="grid grid-cols-2 gap-6">
             <div className={`p-6 bg-white/5 rounded-3xl border border-white/5 relative overflow-hidden group ${user.isGuest ? 'opacity-50 grayscale' : ''}`}>
                 <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:scale-125 transition-transform duration-700">
@@ -128,31 +152,6 @@ export const UserSpaceModal: React.FC<UserSpaceModalProps> = ({ user, onClose, o
             </div>
           </div>
 
-          {user.isGuest ? (
-              <div className="bg-blue-600/5 rounded-3xl p-8 border border-dashed border-blue-500/20 text-center animate-pulse">
-                  <p className="text-sm text-blue-400 font-bold mb-2 uppercase tracking-widest">登录后解锁全部成就</p>
-                  <p className="text-xs text-gray-500 font-medium italic">当前处于访客模式，进度将仅保存在本地浏览器。</p>
-              </div>
-          ) : (
-              <div className="space-y-6">
-                <p className="text-xs font-black text-blue-500 uppercase tracking-widest">已解锁荣誉勋章</p>
-                <div className="flex flex-wrap gap-4">
-                    {[
-                        { name: 'Tiki-Taka 专家', color: 'text-orange-400', bg: 'bg-orange-400/10' },
-                        { name: '高位逼抢达人', color: 'text-red-400', bg: 'bg-red-400/10' },
-                        { name: '伪九号分析家', color: 'text-blue-400', bg: 'bg-blue-400/10' },
-                        { name: '深度分析师', color: 'text-purple-400', bg: 'bg-purple-400/10' },
-                    ].map(badge => (
-                        <div key={badge.name} className={`px-4 py-2 rounded-xl ${badge.bg} border border-white/5 flex items-center gap-2 group cursor-pointer hover:border-blue-500/30 transition-all`}>
-                            <div className={`w-2 h-2 rounded-full ${badge.color.replace('text', 'bg')}`}></div>
-                            <span className={`text-xs font-black ${badge.color} uppercase tracking-tighter`}>{badge.name}</span>
-                        </div>
-                    ))}
-                </div>
-              </div>
-          )}
-
-          {/* Activity Log */}
           <div className="space-y-6 pt-6 border-t border-white/5">
              <p className="text-xs font-black text-gray-500 uppercase tracking-widest">近期战术活动</p>
              <div className="space-y-4">
@@ -160,8 +159,8 @@ export const UserSpaceModal: React.FC<UserSpaceModalProps> = ({ user, onClose, o
                     <p className="text-sm text-gray-600 italic">登录后可查看全局活动记录...</p>
                 ) : (
                     [
-                        { action: '完成战役分析', target: '2011 欧冠决赛：瓜帅 vs 爵爷', time: '2 小时前' },
-                        { action: '掌握核心概念', target: '伪九号的演变历程', time: '1 天前' },
+                        { action: '身份验证', target: '已更新分析师代号', time: '刚刚' },
+                        { action: '战术研究', target: '完成了对 Gegenpressing 的深度解码', time: '2 小时前' },
                     ].map((act, i) => (
                         <div key={i} className="flex items-center justify-between py-3 border-b border-white/5 last:border-0 group">
                             <div className="flex gap-4 items-center">
