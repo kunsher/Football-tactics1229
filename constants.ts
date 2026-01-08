@@ -51,6 +51,8 @@ export const BATTLES: Battle[] = [
     phases: [
       {
         id: 'rm1', title: '低位压缩', 
+        matchMinute: "42:15",
+        matchContext: "1 - 1",
         description: '皇马在防守端极其紧凑。哈维·阿隆索与赫迪拉横向锁死梅西的接球空间，后防四人组保持极短间距。',
         ...generateFullSquad(
           [{x:5,y:50},{x:22,y:82},{x:18,y:60},{x:18,y:40},{x:22,y:18},{x:35,y:55},{x:35,y:45},{x:45,y:85},{x:42,y:50},{x:45,y:15},{x:52,y:50}],
@@ -65,6 +67,8 @@ export const BATTLES: Battle[] = [
       },
       {
         id: 'rm2', title: '瞬时转场', 
+        matchMinute: "72:48",
+        matchContext: "1 - 1",
         description: '在断球瞬间，皇马阵型迅速散开。厄齐尔在中场寻找纵向空间，C罗开始在左翼加速。',
         ...generateFullSquad(
           [{x:8,y:50},{x:30,y:85},{x:25,y:65},{x:25,y:35},{x:30,y:15},{x:45,y:60},{x:45,y:40},{x:55,y:80},{x:52,y:50},{x:60,y:20},{x:65,y:55}],
@@ -76,6 +80,8 @@ export const BATTLES: Battle[] = [
       },
       {
         id: 'rm3', title: '致命绝杀', 
+        matchMinute: "73:12",
+        matchContext: "2 - 1",
         description: '厄齐尔送出精准斜塞。C罗高速插上，冷静晃过守门员推射空门，并向诺坎普做出了著名的“Calma”手势。',
         ...generateFullSquad(
           [{x:12,y:50},{x:45,y:85},{x:40,y:65},{x:40,y:35},{x:45,y:15},{x:55,y:62},{x:55,y:38},{x:65,y:88},{x:68,y:55},{x:88,y:25},{x:75,y:45}],
@@ -116,6 +122,8 @@ export const BATTLES: Battle[] = [
     phases: [
       {
         id: 'is1', title: '米兰主宰', 
+        matchMinute: "44:30",
+        matchContext: "0 - 3",
         description: '安切洛蒂的菱形中场彻底支配了上半场。卡卡在前腰位置的盘带无人能挡。',
         ...generateFullSquad(
           [{x:5,y:50},{x:20,y:85},{x:25,y:60},{x:25,y:40},{x:20,y:15},{x:40,y:70},{x:45,y:50},{x:40,y:30},{x:50,y:50},{x:65,y:55},{x:65,y:45}],
@@ -130,6 +138,8 @@ export const BATTLES: Battle[] = [
       },
       {
         id: 'is2', title: '变阵重组', 
+        matchMinute: "46:00",
+        matchContext: "0 - 3",
         description: '利物浦下半场改踢 3-5-2，哈曼的上场解放了杰拉德。阵型开始整体前移。',
         ...generateFullSquad(
           [{x:10,y:50},{x:35,y:75},{x:30,y:50},{x:35,y:25},{x:50,y:90},{x:55,y:65},{x:52,y:50},{x:55,y:35},{x:50,y:10},{x:70,y:60},{x:70,y:40}],
@@ -141,6 +151,8 @@ export const BATTLES: Battle[] = [
       },
       {
         id: 'is3', title: '逆转时刻', 
+        matchMinute: "54:15",
+        matchContext: "1 - 3",
         description: '杰拉德在禁区内高高跃起，头球破门。进球后他挥动手臂激励全队，奇迹正式开始。',
         ...generateFullSquad(
           [{x:15,y:50},{x:45,y:80},{x:40,y:55},{x:45,y:30},{x:60,y:95},{x:65,y:65},{x:65,y:35},{x:70,y:15},{x:85,y:50},{x:85,y:70},{x:85,y:30}],
@@ -178,6 +190,8 @@ export const BATTLES: Battle[] = [
     phases: [
       {
         id: 'cr1', title: '远程发炮', 
+        matchMinute: "66:25",
+        matchContext: "1 - 1",
         description: '莫德里奇替补上场，在禁区弧顶外一记标志性的抽射击中立柱内侧入网。',
         ...generateFullSquad(
           [{x:5,y:50},{x:25,y:85},{x:20,y:60},{x:20,y:40},{x:25,y:15},{x:40,y:65},{x:40,y:35},{x:55,y:75},{x:50,y:50},{x:55,y:25},{x:65,y:50}],
@@ -192,6 +206,8 @@ export const BATTLES: Battle[] = [
       },
       {
         id: 'cr2', title: '旧主绝杀', 
+        matchMinute: "69:10",
+        matchContext: "2 - 1",
         description: '伊瓜因横传，C罗在远端包抄空门得手。进球后的他举起双手谢绝庆祝。',
         ...generateFullSquad(
           [{x:15,y:50},{x:45,y:80},{x:40,y:55},{x:45,y:30},{x:60,y:90},{x:65,y:60},{x:65,y:40},{x:70,y:10},{x:85,y:30},{x:90,y:50},{x:85,y:70}],

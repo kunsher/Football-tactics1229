@@ -18,7 +18,7 @@ const Tooltip: React.FC<{ termObj: GlossaryTerm; children: React.ReactNode }> = 
             <span 
                 onMouseEnter={() => setShow(true)}
                 onMouseLeave={() => setShow(false)}
-                className="text-blue-400 font-black border-b-2 border-blue-500/50 cursor-help hover:text-blue-300 transition-all px-1.5 rounded-md relative z-10 text-lg md:text-xl lg:text-2xl"
+                className="text-blue-400 font-black border-b border-blue-500/50 cursor-help hover:text-blue-300 transition-all px-1 rounded-sm relative z-10 text-sm md:text-base lg:text-[17px]"
             >
                 {children}
             </span>
@@ -101,7 +101,8 @@ const SmartText: React.FC<{ text: string }> = ({ text }) => {
           return (
             <div 
               key={sIdx} 
-              className="animate-fade-in fill-mode-forwards opacity-0 text-gray-200 font-bold text-lg md:text-xl lg:text-2xl leading-[1.6]"
+              // 显著缩小正文字号：text-base (16px) -> text-lg (18px) -> text-xl (20px)
+              className="animate-fade-in fill-mode-forwards opacity-0 text-gray-200 font-bold text-base md:text-lg lg:text-[17px] leading-relaxed tracking-tight"
               style={{ animationDelay: `${sIdx * 0.15}s`, animationFillMode: 'forwards' }}
             >
               {parts}
@@ -154,96 +155,102 @@ const GlossaryItem: React.FC<{ termObj: GlossaryTerm }> = ({ termObj }) => {
 };
 
 export const AnalysisPanel: React.FC<AnalysisPanelProps> = ({ phase, battle, hoveredPlayer }) => {
+  // 模拟累计跑动距离计算
+  const virtualMileage = useMemo(() => {
+    if (!hoveredPlayer) return "0.0";
+    const seed = parseInt(hoveredPlayer.id.replace(/\D/g, '') || "1");
+    const phaseFactor = (battle.phases.indexOf(phase) + 1) * 0.8;
+    return (2.5 + seed * 0.2 + phaseFactor).toFixed(1);
+  }, [hoveredPlayer, phase, battle]);
+
   return (
-    <div className="bg-[#0a0f14]/80 rounded-[2.5rem] p-8 md:p-10 border border-white/10 flex flex-col gap-10 backdrop-blur-3xl shadow-2xl overflow-hidden relative">
+    <div className="bg-[#0a0f14]/80 rounded-[2rem] p-6 md:p-8 border border-white/10 flex flex-col gap-8 backdrop-blur-3xl shadow-2xl overflow-hidden relative">
       <div className="absolute top-0 left-0 w-full h-1 bg-blue-500/30 animate-[moveDown_6s_linear_infinite] pointer-events-none z-0"></div>
 
       <div key={phase.id} className="relative z-10">
-        <div className="flex items-center gap-4 mb-6">
-            <span className="text-[11px] font-black text-blue-500 uppercase tracking-[0.4em] bg-blue-500/15 px-4 py-1 rounded-full border border-blue-500/30">战术核心解码 / TACTICAL DECODER</span>
-            <div className="h-[2px] flex-grow bg-gradient-to-r from-blue-500/50 to-transparent"></div>
+        <div className="flex items-center gap-4 mb-5">
+            <span className="text-[10px] font-black text-blue-500 uppercase tracking-[0.4em] bg-blue-500/10 px-3 py-1 rounded-full border border-blue-500/20">战术核心解码 / TACTICAL DECODER</span>
+            <div className="h-[1px] flex-grow bg-gradient-to-r from-blue-500/40 to-transparent"></div>
         </div>
         
-        <h3 className="text-3xl md:text-4xl lg:text-5xl font-black text-white mb-8 tracking-tighter uppercase leading-none">{phase.title}</h3>
-        <div className="pl-8 border-l-4 border-blue-600/60 py-2 bg-white/[0.04] rounded-r-[2.5rem] shadow-xl">
+        {/* 显著缩小标题字号：text-3xl -> text-4xl */}
+        <h3 className="text-2xl md:text-3xl lg:text-4xl font-black text-white mb-6 tracking-tighter uppercase leading-none">{phase.title}</h3>
+        <div className="pl-6 border-l-2 border-blue-600/60 py-1.5 bg-white/[0.03] rounded-r-2xl">
           <SmartText text={phase.description} />
         </div>
       </div>
 
       <div className="flex-grow relative z-10">
-        <h4 className="text-[11px] font-black text-gray-500 uppercase mb-6 flex items-center gap-4 tracking-[0.5em]">
-            <PlayerIcon className="w-5 h-5" /> 目标球员同步分析
+        <h4 className="text-[10px] font-black text-gray-500 uppercase mb-5 flex items-center gap-3 tracking-[0.4em]">
+            <PlayerIcon className="w-4 h-4" /> 目标球员跑动分析模型
         </h4>
-        <div className={`bg-[#05080b]/95 rounded-[2.5rem] p-8 min-h-[220px] border transition-all duration-700 relative overflow-hidden group ${hoveredPlayer ? 'border-blue-500/60 shadow-[0_0_80px_rgba(59,130,246,0.3)] scale-[1.01]' : 'border-white/10 opacity-70'}`}>
+        <div className={`bg-[#05080b]/95 rounded-2xl p-6 min-h-[240px] border transition-all duration-700 relative overflow-hidden group ${hoveredPlayer ? 'border-blue-500/60 shadow-[0_0_80px_rgba(59,130,246,0.3)] scale-[1.01]' : 'border-white/10 opacity-70'}`}>
           {hoveredPlayer ? (
             <div className="animate-fade-in">
-              <div className="flex justify-between items-start mb-8">
+              <div className="flex justify-between items-start mb-6">
                 <div>
-                  <p className="text-[10px] font-black text-blue-500 uppercase tracking-[0.5em] mb-4 italic">锁定目标：SUBJECT_{hoveredPlayer.id.toUpperCase()}</p>
-                  <p className="text-4xl lg:text-5xl font-black text-white tracking-tighter leading-none">{hoveredPlayer.name}</p>
-                  <p className="text-lg font-black text-blue-400 uppercase tracking-[0.3em] mt-4">{hoveredPlayer.role}</p>
+                  <p className="text-[9px] font-black text-blue-500 uppercase tracking-[0.4em] mb-3 italic">锁定目标：SUBJECT_{hoveredPlayer.id.toUpperCase()}</p>
+                  <p className="text-3xl lg:text-4xl font-black text-white tracking-tighter leading-none">{hoveredPlayer.name}</p>
+                  <p className="text-base font-black text-blue-400 uppercase tracking-[0.3em] mt-3">{hoveredPlayer.role}</p>
                 </div>
-                <div className="w-20 h-20 rounded-[2rem] bg-blue-600/30 border-2 border-blue-500/50 flex items-center justify-center shadow-2xl group-hover:rotate-12 transition-transform duration-700">
-                   <span className="text-4xl font-black text-blue-400 italic">#{hoveredPlayer.number}</span>
+                <div className="flex flex-col items-center">
+                    <div className="w-16 h-16 rounded-2xl bg-blue-600/30 border-2 border-blue-500/50 flex items-center justify-center shadow-2xl group-hover:rotate-12 transition-transform duration-700 mb-1.5">
+                       <span className="text-3xl font-black text-blue-400 italic">#{hoveredPlayer.number}</span>
+                    </div>
+                    <span className="text-[9px] font-black text-blue-500 uppercase tracking-widest">Live Pos</span>
                 </div>
               </div>
               
-              <div className="grid grid-cols-2 gap-6">
-                  <div className="bg-white/5 rounded-[2rem] p-5 border border-white/10">
-                      <p className="text-[10px] text-gray-500 uppercase font-black mb-4 tracking-widest">区域覆盖率 / COVERAGE</p>
-                      <div className="flex items-center gap-4">
-                          <div className="h-2.5 flex-grow bg-gray-900 rounded-full overflow-hidden shadow-inner ring-1 ring-white/5">
-                              <div className="h-full bg-blue-500 w-[88%] shadow-[0_0_20px_rgba(59,130,246,0.8)]"></div>
-                          </div>
-                          <span className="text-sm font-black text-blue-400">88.5%</span>
-                      </div>
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                  <div className="bg-white/5 rounded-2xl p-4 border border-white/10 flex flex-col items-center text-center">
+                      <p className="text-[9px] text-gray-500 uppercase font-black mb-1 tracking-widest">累计跑动里程</p>
+                      <p className="text-2xl font-black text-white">{virtualMileage} <span className="text-xs text-blue-500 font-bold">KM</span></p>
                   </div>
-                  <div className="bg-white/5 rounded-[2rem] p-5 border border-white/10">
-                      <p className="text-[10px] text-gray-500 uppercase font-black mb-4 tracking-widest">战术执行载荷 / LOAD</p>
-                      <div className="flex items-center gap-4">
-                          <div className="h-2.5 flex-grow bg-gray-900 rounded-full overflow-hidden shadow-inner ring-1 ring-white/5">
-                              <div className="h-full bg-orange-500 w-[95%] shadow-[0_0_20px_rgba(249,115,22,0.8)]"></div>
+                  <div className="bg-white/5 rounded-2xl p-4 border border-white/10 flex flex-col items-center text-center">
+                      <p className="text-[9px] text-gray-500 uppercase font-black mb-1 tracking-widest">即时最大时速</p>
+                      <p className="text-2xl font-black text-white">{(Math.random()*5 + 28).toFixed(1)} <span className="text-xs text-orange-500 font-bold">KM/H</span></p>
+                  </div>
+              </div>
+
+              <div className="space-y-3">
+                  <div className="bg-white/5 rounded-2xl p-4 border border-white/10">
+                      <p className="text-[9px] text-gray-500 uppercase font-black mb-3 tracking-widest">跑动负荷指数 / PERFORMANCE LOAD</p>
+                      <div className="flex items-center gap-3">
+                          <div className="h-2 flex-grow bg-gray-900 rounded-full overflow-hidden shadow-inner ring-1 ring-white/5">
+                              <div className="h-full bg-gradient-to-r from-blue-500 to-cyan-400 w-[78%] shadow-[0_0_20px_rgba(59,130,246,0.8)]"></div>
                           </div>
-                          <span className="text-sm font-black text-orange-400">CRITICAL</span>
+                          <span className="text-xs font-black text-blue-400">OPTIMAL</span>
                       </div>
                   </div>
               </div>
             </div>
           ) : (
-            <div className="h-full flex flex-col items-center justify-center text-center opacity-40 py-12">
-              <div className="w-16 h-16 rounded-full border-2 border-dashed border-blue-500/40 flex items-center justify-center mb-6 animate-[spin_15s_linear_infinite]">
-                  <PlayerIcon className="w-8 h-8 text-blue-500/60" />
+            <div className="h-full flex flex-col items-center justify-center text-center opacity-40 py-10">
+              <div className="w-14 h-14 rounded-full border-2 border-dashed border-blue-500/40 flex items-center justify-center mb-5 animate-[spin_15s_linear_infinite]">
+                  <PlayerIcon className="w-7 h-7 text-blue-500/60" />
               </div>
-              <p className="text-lg text-gray-500 font-black uppercase tracking-[0.4em] leading-relaxed">
+              <p className="text-base text-gray-500 font-black uppercase tracking-[0.4em] leading-relaxed">
                 悬停球员图标<br/>
-                <span className="text-xs opacity-60">激活战术神经元实时解码</span>
+                <span className="text-[10px] opacity-60 font-medium">激活运动捕捉模型分析</span>
               </p>
             </div>
           )}
-          <div className="absolute -bottom-20 -right-20 w-56 h-56 bg-blue-600/10 rounded-full blur-[100px] pointer-events-none"></div>
+          <div className="absolute -bottom-20 -right-20 w-48 h-48 bg-blue-600/10 rounded-full blur-[80px] pointer-events-none"></div>
         </div>
       </div>
 
-      <div className="bg-blue-600/5 rounded-[2.5rem] p-8 border border-blue-500/20 relative z-10 shadow-inner">
-          <div className="flex items-center justify-between mb-6">
-            <h4 className="text-[12px] font-black text-blue-400 uppercase tracking-[0.5em] flex items-center gap-4">
-                <span className="w-2 h-6 bg-blue-500 rounded-full shadow-[0_0_15px_rgba(59,130,246,0.6)]"></span>
+      <div className="bg-blue-600/5 rounded-2xl p-6 border border-blue-500/20 relative z-10 shadow-inner">
+          <div className="flex items-center justify-between mb-5">
+            <h4 className="text-[10px] font-black text-blue-400 uppercase tracking-[0.5em] flex items-center gap-3">
+                <span className="w-1.5 h-4 bg-blue-500 rounded-full shadow-[0_0_15px_rgba(59,130,246,0.6)]"></span>
                 相关战术矩阵
             </h4>
           </div>
-          <div className="flex flex-wrap gap-4">
+          <div className="flex flex-wrap gap-3">
               {GLOSSARY.slice(0, 4).map((term, idx) => (
                   <GlossaryItem key={idx} termObj={term} />
               ))}
           </div>
-      </div>
-      
-      <div className="pt-8 mt-auto border-t border-white/10 flex items-center justify-between opacity-50 relative z-10">
-         <p className="text-[11px] text-gray-700 font-black uppercase tracking-[0.6em]">TACTICAL_ENGINE_V4.5 / ACTIVE</p>
-         <div className="flex gap-3">
-            <div className="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></div>
-            <div className="w-2 h-2 rounded-full bg-blue-600 animate-pulse delay-700"></div>
-         </div>
       </div>
     </div>
   );

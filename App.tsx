@@ -25,6 +25,7 @@ const App: React.FC = () => {
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   
   const [currentPhaseIndex, setCurrentPhaseIndex] = useState(0);
+  const [previousPhaseIndex, setPreviousPhaseIndex] = useState<number | null>(null);
   const [hoveredPlayer, setHoveredPlayer] = useState<PlayerPosition | null>(null);
   const [selectedPlayerForModal, setSelectedPlayerForModal] = useState<PlayerPosition | null>(null);
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
@@ -79,6 +80,7 @@ const App: React.FC = () => {
       const stepDuration = 1500 / animationSpeed; 
       playbackTimerRef.current = window.setInterval(() => {
         setCurrentPhaseIndex((prev) => {
+          setPreviousPhaseIndex(prev);
           if (prev >= selectedBattle.phases.length - 1) {
             setIsPlaying(false);
             mockApi.updateUserProgress(selectedBattle.id).then(newProfile => {
@@ -102,6 +104,7 @@ const App: React.FC = () => {
     if (battle) {
       setSelectedBattle(battle);
       setCurrentPhaseIndex(0);
+      setPreviousPhaseIndex(null);
       setActiveTab('simulation');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -136,15 +139,18 @@ const App: React.FC = () => {
   if (!selectedBattle || !user) return null;
 
   const currentPhase = selectedBattle.phases[currentPhaseIndex] || selectedBattle.phases[0];
+  const previousPhase = previousPhaseIndex !== null ? selectedBattle.phases[previousPhaseIndex] : null;
 
   const handlePhaseChange = (index: number) => {
     setIsPlaying(false);
+    setPreviousPhaseIndex(currentPhaseIndex);
     setCurrentPhaseIndex(index);
   };
 
   const togglePlayback = () => {
     if (currentPhaseIndex >= selectedBattle.phases.length - 1) {
         setCurrentPhaseIndex(0);
+        setPreviousPhaseIndex(null);
     }
     setIsPlaying(!isPlaying);
   };
@@ -171,7 +177,7 @@ const App: React.FC = () => {
           </div>
           {activeTab === 'simulation' && (
              <div className="hidden md:block">
-                <BattleSelector battles={battles} selectedId={selectedBattle.id} onSelect={(b) => { setSelectedBattle(b); setCurrentPhaseIndex(0); }} />
+                <BattleSelector battles={battles} selectedId={selectedBattle.id} onSelect={(b) => { setSelectedBattle(b); setCurrentPhaseIndex(0); setPreviousPhaseIndex(null); }} />
              </div>
           )}
         </div>
@@ -219,6 +225,8 @@ const App: React.FC = () => {
                     isPlaying={isPlaying} 
                     showZones={showZones} 
                     annotations={currentPhase.annotations}
+                    previousPhasePlayers={previousPhase ? { home: previousPhase.homePlayers, away: previousPhase.awayPlayers } : undefined}
+                    currentPhase={currentPhase} // 注入相位实况数据
                  />
               </div>
 
@@ -250,7 +258,9 @@ const App: React.FC = () => {
                     </button>
                     <div className="flex flex-col">
                       <span className="text-[10px] text-gray-600 font-bold uppercase tracking-widest opacity-60">AI 实战模拟</span>
-                      <span className="text-base font-black text-white leading-none mt-1 uppercase tracking-tight">{currentPhase.title}</span>
+                      <span className="text-base font-black text-white leading-none mt-1 uppercase tracking-tight">
+                         {currentPhase.title} {currentPhase.matchMinute && <span className="text-blue-500 ml-2 font-mono">[{currentPhase.matchMinute}]</span>}
+                      </span>
                     </div>
                   </div>
 
@@ -276,7 +286,7 @@ const App: React.FC = () => {
                         onClick={() => handlePhaseChange(idx)}
                         className={`px-4 py-2 rounded-lg text-[11px] font-black uppercase transition-all ${idx === currentPhaseIndex ? 'bg-blue-600/30 text-blue-400 border border-blue-500/30' : 'text-gray-600 hover:text-gray-400'}`}
                       >
-                        PHASE {idx + 1}
+                        {p.matchMinute ? `${p.matchMinute}` : `PHASE ${idx + 1}`}
                       </button>
                     ))}
                   </div>

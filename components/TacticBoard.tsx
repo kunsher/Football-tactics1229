@@ -1,6 +1,6 @@
 
 import React, { useMemo, memo } from 'react';
-import type { PlayerPosition, Connection, TacticalAnnotation } from '../types';
+import type { PlayerPosition, Connection, TacticalAnnotation, TacticPhase } from '../types';
 
 interface TacticBoardProps {
   homePlayers: PlayerPosition[];
@@ -15,9 +15,11 @@ interface TacticBoardProps {
   isPlaying?: boolean;
   showZones?: boolean;
   annotations?: TacticalAnnotation[];
+  previousPhasePlayers?: { home: PlayerPosition[], away: PlayerPosition[] };
+  currentPhase?: TacticPhase; // 新增：用于获取当前比赛时间
+  battleTitle?: string; // 比赛名称
 }
 
-// 修改为 1200 x 680，使草地更“长”
 const FootballPitch: React.FC<{ showZones?: boolean }> = memo(({ showZones }) => (
   <svg viewBox="0 0 1200 680" className="w-full h-full opacity-80">
     <defs>
@@ -31,14 +33,8 @@ const FootballPitch: React.FC<{ showZones?: boolean }> = memo(({ showZones }) =>
       <rect x="10" y="10" width="1180" height="660" />
       <line x1="600" y1="10" x2="600" y2="670" />
       <circle cx="600" cy="340" r="100" />
-      {/* 左禁区 */}
       <rect x="10" y="138.5" width="180" height="403" />
-      {/* 右禁区 */}
       <rect x="1010" y="138.5" width="180" height="403" />
-      <circle cx="10" cy="10" r="3" />
-      <circle cx="1190" cy="10" r="3" />
-      <circle cx="10" cy="670" r="3" />
-      <circle cx="1190" cy="670" r="3" />
     </g>
     {showZones && (
       <g stroke="rgba(255,255,255,0.1)" strokeWidth="1.5" strokeDasharray="10,5">
@@ -59,41 +55,77 @@ const PlayerComponent: React.FC<{
     isHovered: boolean;
     duration: number;
     isInPossession: boolean;
-}> = memo(({ player, color, onHover, onClick, isHovered, duration, isInPossession }) => (
-  <g
-    style={{
-      // x 轴坐标映射从 10 变为 12，以适配 1200 宽度
-      transform: `translate(${player.x * 12}px, ${player.y * 6.7 + 5}px)`,
-      transition: `transform ${duration}s linear`,
-      willChange: 'transform',
-    }}
-    onMouseEnter={() => onHover(player)}
-    onMouseLeave={() => onHover(null)}
-    onClick={() => onClick(player)}
-    className="cursor-pointer group"
-  >
-    <circle 
-      r={isHovered ? "22" : "18"} 
-      fill={color} 
-      stroke={isInPossession ? "#3b82f6" : "rgba(255,255,255,0.7)"} 
-      strokeWidth={isInPossession ? "4" : "2"} 
-      className="transition-all duration-300 shadow-2xl"
-      style={{ filter: isInPossession ? 'drop-shadow(0 0 15px rgba(59,130,246,1))' : 'none' }}
-    />
-    
-    <text y="1" textAnchor="middle" alignmentBaseline="middle" fontSize={isHovered ? "14" : "11"} fontWeight="900" 
-      fill={parseInt(color.replace('#',''), 16) > 0xaaaaaa ? '#000' : '#fff'} 
-      className="pointer-events-none select-none transition-all duration-300 font-sans"
+    prevPos?: { x: number, y: number };
+}> = memo(({ player, color, onHover, onClick, isHovered, duration, isInPossession, prevPos }) => {
+  const distance = prevPos ? Math.sqrt(Math.pow(player.x - prevPos.x, 2) + Math.pow(player.y - prevPos.y, 2)) : 0;
+  const isMoving = distance > 2;
+
+  return (
+    <g
+      style={{
+        transform: `translate(${player.x * 12}px, ${player.y * 6.7 + 5}px)`,
+        transition: `transform ${duration}s cubic-bezier(0.4, 0, 0.2, 1)`,
+        willChange: 'transform',
+      }}
+      onMouseEnter={() => onHover(player)}
+      onMouseLeave={() => onHover(null)}
+      onClick={() => onClick(player)}
+      className="cursor-pointer group"
     >
-      {player.number}
-    </text>
-    
-    <g transform={`translate(0, ${isHovered ? '36' : '32'})`} className={`transition-all duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'}`}>
-       <rect x="-50" y="-12" width="100" height="24" rx="8" fill="rgba(0,0,0,0.95)" stroke="rgba(255,255,255,0.15)" />
-       <text textAnchor="middle" fill="#fff" fontSize="11" fontWeight="900" className="tracking-tighter uppercase">{player.name}</text>
+      {prevPos && isMoving && (
+        <line
+          x1={(prevPos.x - player.x) * 12}
+          y1={(prevPos.y - player.y) * 6.7}
+          x2="0"
+          y2="0"
+          stroke={color}
+          strokeWidth="2"
+          strokeDasharray="4,2"
+          className="opacity-30 animate-pulse"
+        />
+      )}
+
+      {isMoving && (
+        <circle 
+          r="22" 
+          fill="none" 
+          stroke={color} 
+          strokeWidth="1" 
+          className="animate-ping opacity-20"
+          style={{ animationDuration: `${2 / (distance/10)}s` }}
+        />
+      )}
+
+      <circle 
+        r={isHovered ? "22" : "18"} 
+        fill={color} 
+        stroke={isInPossession ? "#3b82f6" : "rgba(255,255,255,0.7)"} 
+        strokeWidth={isInPossession ? "4" : "2"} 
+        className="transition-all duration-300 shadow-2xl"
+        style={{ filter: isInPossession ? 'drop-shadow(0 0 15px rgba(59,130,246,1))' : 'none' }}
+      />
+      
+      <text y="1" textAnchor="middle" alignmentBaseline="middle" fontSize={isHovered ? "14" : "11"} fontWeight="900" 
+        fill={parseInt(color.replace('#',''), 16) > 0xaaaaaa ? '#000' : '#fff'} 
+        className="pointer-events-none select-none transition-all duration-300 font-sans"
+      >
+        {player.number}
+      </text>
+
+      {isHovered && isMoving && (
+        <g transform="translate(0, -32)">
+          <rect x="-25" y="-10" width="50" height="18" rx="4" fill="rgba(0,0,0,0.8)" />
+          <text textAnchor="middle" fill="#3b82f6" fontSize="9" fontWeight="900">{(distance * 1.5).toFixed(1)}km/h</text>
+        </g>
+      )}
+      
+      <g transform={`translate(0, ${isHovered ? '36' : '32'})`} className={`transition-all duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'}`}>
+         <rect x="-50" y="-12" width="100" height="24" rx="8" fill="rgba(0,0,0,0.95)" stroke="rgba(255,255,255,0.15)" />
+         <text textAnchor="middle" fill="#fff" fontSize="11" fontWeight="900" className="tracking-tighter uppercase">{player.name}</text>
+      </g>
     </g>
-  </g>
-));
+  );
+});
 
 const AnnotationLayer: React.FC<{ annotations: TacticalAnnotation[] }> = ({ annotations }) => (
   <g>
@@ -141,7 +173,9 @@ export const TacticBoard: React.FC<TacticBoardProps> = ({
     homePlayers, awayPlayers, passingNetwork, hoveredPlayer, 
     onPlayerHover, onPlayerClick, homeColor, awayColor,
     animationSpeed = 1.0, isPlaying = false, showZones = false,
-    annotations = []
+    annotations = [],
+    previousPhasePlayers,
+    currentPhase
 }) => {
     const movementDuration = 1.4 / animationSpeed; 
 
@@ -156,6 +190,26 @@ export const TacticBoard: React.FC<TacticBoardProps> = ({
 
     return (
         <div className="w-full h-full max-w-7xl aspect-[120/68] relative select-none">
+            {/* 比赛实况 HUD */}
+            {currentPhase?.matchMinute && (
+                <div className="absolute top-6 left-6 z-[100] animate-fade-in pointer-events-none">
+                    <div className="bg-black/80 backdrop-blur-xl border border-white/10 rounded-xl px-4 py-2 flex items-center gap-4 shadow-2xl">
+                        <div className="flex flex-col">
+                            <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Live Match Time</span>
+                            <div className="flex items-center gap-2">
+                                <div className="w-2 h-2 rounded-full bg-red-600 animate-pulse shadow-[0_0_8px_red]"></div>
+                                <span className="text-xl font-black text-white font-mono tabular-nums leading-none">{currentPhase.matchMinute}</span>
+                            </div>
+                        </div>
+                        <div className="w-px h-8 bg-white/10"></div>
+                        <div className="flex flex-col">
+                            <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Score Context</span>
+                            <span className="text-xl font-black text-blue-400 tracking-tighter leading-none">{currentPhase.matchContext || '0 - 0'}</span>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <div className="absolute inset-0">
                 <FootballPitch showZones={showZones} />
             </div>
@@ -196,16 +250,31 @@ export const TacticBoard: React.FC<TacticBoardProps> = ({
                   )}
                 </circle>
 
-                {[...awayPlayers, ...homePlayers].map(p => (
+                {homePlayers.map(p => (
                     <PlayerComponent 
                       key={p.id} 
                       player={p} 
-                      color={p.team === 'home' ? homeColor : awayColor} 
+                      color={homeColor} 
                       onHover={onPlayerHover} 
                       onClick={onPlayerClick} 
                       isHovered={hoveredPlayer?.id === p.id} 
                       duration={movementDuration} 
                       isInPossession={ballPath?.from.id === p.id} 
+                      prevPos={previousPhasePlayers?.home.find(pp => pp.id === p.id)}
+                    />
+                ))}
+
+                {awayPlayers.map(p => (
+                    <PlayerComponent 
+                      key={p.id} 
+                      player={p} 
+                      color={awayColor} 
+                      onHover={onPlayerHover} 
+                      onClick={onPlayerClick} 
+                      isHovered={hoveredPlayer?.id === p.id} 
+                      duration={movementDuration} 
+                      isInPossession={ballPath?.from.id === p.id} 
+                      prevPos={previousPhasePlayers?.away.find(pp => pp.id === p.id)}
                     />
                 ))}
             </svg>

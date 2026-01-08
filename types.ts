@@ -21,6 +21,8 @@ export interface TacticPhase {
   id: string;
   title: string;
   description: string;
+  matchMinute?: string; // 新增：比赛具体时刻
+  matchContext?: string; // 新增：瞬时比分或事件背景
   homePlayers: PlayerPosition[];
   awayPlayers: PlayerPosition[];
   connections: Connection[];
