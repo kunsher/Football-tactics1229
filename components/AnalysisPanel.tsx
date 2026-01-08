@@ -137,16 +137,7 @@ const GlossaryItem: React.FC<{ termObj: GlossaryTerm }> = ({ termObj }) => {
                         )}
                         <p className="text-base font-bold text-white tracking-tight underline decoration-blue-500/30 decoration-2 underline-offset-4">{termObj.term}</p>
                     </div>
-
-                    {termObj.visualEffect && (
-                        <div className="mb-4">
-                            <TacticalVisualizer type={termObj.visualEffect} />
-                        </div>
-                    )}
-
                     <p className="text-sm text-gray-200 leading-relaxed font-medium">{termObj.definition}</p>
-                    <div className="absolute top-full left-6 -mt-[2px] border-x-[8px] border-x-transparent border-t-[8px] border-t-blue-500/40"></div>
-                    <div className="absolute top-full left-6 -mt-[4px] border-x-[8px] border-x-transparent border-t-[8px] border-t-gray-900"></div>
                 </div>
             )}
         </div>
@@ -155,65 +146,88 @@ const GlossaryItem: React.FC<{ termObj: GlossaryTerm }> = ({ termObj }) => {
 
 export const AnalysisPanel: React.FC<AnalysisPanelProps> = ({ phase, battle, hoveredPlayer }) => {
   return (
-    <div className="bg-gray-900/60 rounded-2xl p-6 border border-white/10 flex flex-col gap-6 backdrop-blur-xl shadow-2xl">
-      <div key={phase.id}>
+    <div className="bg-gray-900/60 rounded-2xl p-6 border border-white/10 flex flex-col gap-6 backdrop-blur-xl shadow-2xl overflow-hidden relative">
+      {/* 战术扫描线动画装饰 */}
+      <div className="absolute top-0 left-0 w-full h-1 bg-blue-500/20 animate-[moveDown_4s_linear_infinite] pointer-events-none z-0"></div>
+      <style>{`
+        @keyframes moveDown {
+          0% { transform: translateY(-100px); opacity: 0; }
+          10% { opacity: 1; }
+          90% { opacity: 1; }
+          100% { transform: translateY(600px); opacity: 0; }
+        }
+      `}</style>
+
+      <div key={phase.id} className="relative z-10">
         <div className="flex items-center gap-2 mb-4">
-            <span className="text-[10px] font-black text-blue-500 uppercase tracking-widest bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20">实时战术解码单元</span>
+            <span className="text-[10px] font-black text-blue-500 uppercase tracking-widest bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20">战术解码单元 / TACTICAL SCAN</span>
             <div className="h-px flex-grow bg-gradient-to-r from-blue-500/40 to-transparent"></div>
         </div>
         
-        <h3 className="text-2xl font-black text-white mb-3 tracking-tight transition-all duration-500">{phase.title}</h3>
+        <h3 className="text-2xl font-black text-white mb-3 tracking-tight">{phase.title}</h3>
         <div className="text-base text-gray-300 leading-relaxed pl-4 border-l-2 border-blue-600/50 italic py-1 bg-white/[0.02] rounded-r-xl">
           <SmartText text={phase.description} />
         </div>
       </div>
 
-      <div className="flex-grow">
+      <div className="flex-grow relative z-10">
         <h4 className="text-xs font-black text-gray-500 uppercase mb-4 flex items-center gap-2 tracking-widest">
-            <PlayerIcon className="w-4 h-4" /> 球员战术考察报告
+            <PlayerIcon className="w-4 h-4" /> 深度球员分析报告
         </h4>
-        <div className={`bg-[#05080b] rounded-2xl p-5 min-h-[140px] border transition-all duration-500 relative overflow-hidden group ${hoveredPlayer ? 'border-blue-500/40 shadow-[0_0_30px_rgba(59,130,246,0.1)] scale-[1.02]' : 'border-white/5 opacity-80'}`}>
+        <div className={`bg-[#05080b]/80 rounded-2xl p-5 min-h-[160px] border transition-all duration-500 relative overflow-hidden group ${hoveredPlayer ? 'border-blue-500/40 shadow-[0_0_30px_rgba(59,130,246,0.15)] scale-[1.02]' : 'border-white/5 opacity-80'}`}>
           {hoveredPlayer ? (
-            <div className="animate-fade-in relative z-10">
-              <div className="flex justify-between items-start">
+            <div className="animate-fade-in">
+              <div className="flex justify-between items-start mb-4">
                 <div>
-                  <p className="text-[10px] font-black text-blue-500 uppercase tracking-widest mb-1">正在锁定扫描对象</p>
+                  <p className="text-[9px] font-black text-blue-500 uppercase tracking-widest mb-1 italic">锁定目标：ID_{hoveredPlayer.id.toUpperCase()}</p>
                   <p className="text-3xl font-black text-white tracking-tighter">{hoveredPlayer.name}</p>
                   <p className="text-sm font-bold text-blue-400 uppercase tracking-tighter mt-1">{hoveredPlayer.role}</p>
                 </div>
-                <div className="w-12 h-12 rounded-xl bg-blue-600/15 border border-blue-500/30 flex items-center justify-center shadow-lg">
+                <div className="w-14 h-14 rounded-2xl bg-blue-600/15 border border-blue-500/30 flex items-center justify-center shadow-lg group-hover:rotate-12 transition-transform">
                    <span className="text-2xl font-black text-blue-400 italic">#{hoveredPlayer.number}</span>
                 </div>
               </div>
               
-              <div className="mt-5 grid grid-cols-2 gap-4">
-                  <div className="bg-white/5 rounded-xl p-3 border border-white/5 group-hover:bg-white/10 transition-colors">
-                      <p className="text-[9px] text-gray-500 uppercase font-black mb-1 tracking-widest">执行区域</p>
-                      <p className="text-sm text-gray-200 font-bold">{hoveredPlayer.position}</p>
+              <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-white/5 rounded-xl p-3 border border-white/5">
+                      <p className="text-[9px] text-gray-500 uppercase font-black mb-1 tracking-widest">区域热度</p>
+                      <div className="flex items-center gap-2">
+                          <div className="h-1.5 flex-grow bg-gray-800 rounded-full overflow-hidden">
+                              <div className="h-full bg-blue-500 w-[85%]"></div>
+                          </div>
+                          <span className="text-[10px] font-black text-gray-300">HIGH</span>
+                      </div>
                   </div>
-                  <div className="bg-white/5 rounded-xl p-3 border border-white/5 group-hover:bg-white/10 transition-colors">
-                      <p className="text-[9px] text-gray-500 uppercase font-black mb-1 tracking-widest">所属阵营</p>
-                      <p className="text-sm text-gray-200 font-bold">{hoveredPlayer.team === 'home' ? battle.teams.home.name : battle.teams.away.name}</p>
+                  <div className="bg-white/5 rounded-xl p-3 border border-white/5">
+                      <p className="text-[9px] text-gray-500 uppercase font-black mb-1 tracking-widest">战术负荷</p>
+                      <div className="flex items-center gap-2">
+                          <div className="h-1.5 flex-grow bg-gray-800 rounded-full overflow-hidden">
+                              <div className="h-full bg-orange-500 w-[92%]"></div>
+                          </div>
+                          <span className="text-[10px] font-black text-gray-300">MAX</span>
+                      </div>
                   </div>
               </div>
             </div>
           ) : (
-            <div className="h-full flex flex-col items-center justify-center text-center opacity-40 py-4">
-              <InfoIcon className="w-10 h-10 mb-3 text-gray-600" />
-              <p className="text-sm text-gray-500 font-bold uppercase tracking-[0.2em]">悬停于球员图标<br/>同步战术职责分析</p>
+            <div className="h-full flex flex-col items-center justify-center text-center opacity-40 py-8">
+              <div className="w-12 h-12 rounded-full border-2 border-dashed border-gray-600 flex items-center justify-center mb-4 animate-spin-slow">
+                  <PlayerIcon className="w-6 h-6 text-gray-600" />
+              </div>
+              <style>{` .animate-spin-slow { animation: spin 8s linear infinite; } `}</style>
+              <p className="text-sm text-gray-500 font-bold uppercase tracking-[0.2em]">悬停球员图标<br/>同步战术职责实时分析</p>
             </div>
           )}
-          <div className="absolute top-0 right-0 w-32 h-32 bg-blue-600/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
+          <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-blue-600/10 rounded-full blur-2xl pointer-events-none"></div>
         </div>
       </div>
 
-      <div className="bg-blue-600/5 rounded-2xl p-6 border border-blue-500/15">
+      <div className="bg-blue-600/5 rounded-2xl p-6 border border-blue-500/15 relative z-10">
           <div className="flex items-center justify-between mb-4">
             <h4 className="text-[11px] font-black text-blue-400 uppercase tracking-widest flex items-center gap-2">
                 <span className="w-1.5 h-4 bg-blue-500 rounded-full"></span>
-                核心术语百科
+                相关战术术语
             </h4>
-            <span className="text-[9px] text-gray-500 font-black uppercase tracking-widest bg-white/5 px-3 py-1 rounded-full">悬停交互以学习</span>
           </div>
           <div className="flex flex-wrap gap-3">
               {GLOSSARY.map((term, idx) => (
@@ -222,12 +236,11 @@ export const AnalysisPanel: React.FC<AnalysisPanelProps> = ({ phase, battle, hov
           </div>
       </div>
       
-      <div className="pt-4 mt-auto border-t border-white/5 flex items-center justify-between opacity-50">
-         <p className="text-[9px] text-gray-600 font-bold uppercase tracking-[0.3em]">Tactical Engine V4.2 / AI Decoder</p>
+      <div className="pt-4 mt-auto border-t border-white/5 flex items-center justify-between opacity-50 relative z-10">
+         <p className="text-[9px] text-gray-600 font-bold uppercase tracking-[0.3em]">MOURINHO_LEGACY / SYSTEM_RECAP</p>
          <div className="flex gap-1.5">
             <div className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse"></div>
-            <div className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse delay-100"></div>
-            <div className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse delay-200"></div>
+            <div className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse delay-150"></div>
          </div>
       </div>
     </div>

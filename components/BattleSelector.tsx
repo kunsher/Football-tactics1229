@@ -17,10 +17,10 @@ export const BattleSelector: React.FC<BattleSelectorProps> = ({ battles, selecte
             const battle = battles.find(b => b.id === e.target.value);
             if (battle) onSelect(battle);
         }}
-        className="appearance-none bg-gray-800/80 border border-white/10 text-white text-xs font-bold py-2 px-4 pr-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all cursor-pointer backdrop-blur-sm"
+        className="appearance-none bg-gray-800/80 border border-white/10 text-white text-sm font-bold py-2 px-4 pr-10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all cursor-pointer backdrop-blur-md shadow-lg"
       >
         {battles.map(b => (
-          <option key={b.id} value={b.id}>{b.title}</option>
+          <option key={b.id} value={b.id} className="bg-gray-900">{b.title}</option>
         ))}
       </select>
       <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-400">
