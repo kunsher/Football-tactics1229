@@ -24,16 +24,14 @@ export interface TacticPhase {
   homePlayers: PlayerPosition[];
   awayPlayers: PlayerPosition[];
   connections: Connection[];
-  annotations?: TacticalAnnotation[]; // 新增战术标注
+  annotations?: TacticalAnnotation[]; 
 }
 
-// Added ScoutingStat interface to define player attributes used in PlayerModal
 export interface ScoutingStat {
   label: string;
   value: number;
 }
 
-// Added PhysicalInfo interface to define player biology used in PlayerModal
 export interface PhysicalInfo {
   age: string;
   height: string;
@@ -50,7 +48,6 @@ export interface PlayerPosition {
   name: string;
   role: string;
   team: 'home' | 'away';
-  // Added optional fields required by PlayerModal
   tacticalBrief?: string[];
   scoutingStats?: ScoutingStat[];
   physical?: PhysicalInfo;
@@ -78,7 +75,6 @@ export interface TeamInfo {
   keyInstructions?: string[];
 }
 
-// Added RadarPoint interface to handle multi-series radar chart data
 export interface RadarPoint {
   subject: string;
   A: number;
@@ -95,7 +91,6 @@ export interface Battle {
   teams: { home: TeamInfo; away: TeamInfo };
   phases: TacticPhase[];
   stats: MatchStatistics;
-  // Updated to use the typed RadarPoint interface
   radarData: RadarPoint[];
 }
 
@@ -104,19 +99,16 @@ export interface GlossaryTerm {
   definition: string;
   category: 'Position' | 'Phase' | 'Action' | 'System';
   icon?: string;
-  // Restricted visualEffect to match literal union in TacticalVisualizer
-  visualEffect?: 'overlap' | 'tiki-taka' | 'pressing' | 'false-9' | 'low-block' | 'counter-press' | 'half-space';
+  visualEffect?: 'overlap' | 'tiki-taka' | 'pressing' | 'false-9' | 'low-block' | 'counter-press' | 'half-space' | 'vertical-counter' | 'catenaccio' | 'total-football';
   complexity?: number;
   strategicFocus?: string[];
   historicalContext?: string;
   keyTraits?: string[];
-  // Updated to use the typed RadarPoint interface
   radarProfile?: RadarPoint[];
   famousTeams?: string[];
   relatedBattleId?: string;
 }
 
-// Added LearningModule interface to define components of a LearningPath
 export interface LearningModule {
   id: string;
   title: string;
@@ -132,6 +124,5 @@ export interface LearningPath {
   description: string;
   level: string;
   icon: string;
-  // Updated to use the typed LearningModule interface
   modules: LearningModule[];
 }
