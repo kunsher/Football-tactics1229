@@ -15,10 +15,9 @@ interface TacticBoardProps {
   isPlaying?: boolean;
   showZones?: boolean;
   highlightedZone?: string | null;
-  isScanning?: boolean;
 }
 
-const FootballPitch: React.FC<{ showZones?: boolean; highlightedZone?: string | null; isScanning?: boolean }> = ({ showZones, highlightedZone, isScanning }) => (
+const FootballPitch: React.FC<{ showZones?: boolean; highlightedZone?: string | null }> = ({ showZones, highlightedZone }) => (
   <svg viewBox="0 0 1050 680" className="w-full h-full opacity-95">
     <defs>
       <pattern id="stripes" width="105" height="680" patternUnits="userSpaceOnUse">
@@ -28,25 +27,10 @@ const FootballPitch: React.FC<{ showZones?: boolean; highlightedZone?: string | 
       <pattern id="tacticalGrid" width="42" height="42" patternUnits="userSpaceOnUse">
         <circle cx="1" cy="1" r="0.5" fill="rgba(59, 130, 246, 0.2)" />
       </pattern>
-      <linearGradient id="scanGradient" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stopColor="rgba(59, 130, 246, 0)" />
-        <stop offset="50%" stopColor="rgba(59, 130, 246, 0.4)" />
-        <stop offset="100%" stopColor="rgba(59, 130, 246, 0)" />
-      </linearGradient>
     </defs>
     
     <rect width="1050" height="680" fill="url(#stripes)" rx="12" />
     
-    {isScanning && (
-      <rect width="1050" height="680" fill="url(#tacticalGrid)" className="animate-pulse" />
-    )}
-
-    {isScanning && (
-      <rect width="1050" height="220" fill="url(#scanGradient)">
-        <animate attributeName="y" from="-220" to="680" dur="1.8s" repeatCount="indefinite" />
-      </rect>
-    )}
-
     <rect width="1050" height="680" fill="rgba(10, 15, 20, 0.2)" rx="12" pointerEvents="none" />
 
     {showZones && (
@@ -92,7 +76,6 @@ const Player: React.FC<{
       onClick={() => onClick(player)}
       className="cursor-pointer group"
     >
-      {/* Target/Selection Ring - enhanced for hovered state */}
       {(isReceiver || isHovered) && (
           <circle 
             r={isHovered ? "32" : "28"} 
@@ -104,7 +87,6 @@ const Player: React.FC<{
           />
       )}
       
-      {/* Subtle Glow/Aura around player - Scaled down for better aesthetics */}
       <circle 
         r="16" 
         fill={color} 
@@ -115,7 +97,6 @@ const Player: React.FC<{
         }}
       />
       
-      {/* Possession Indicators */}
       {isInPossession && (
         <g>
           <circle r="28" fill="none" stroke={color} strokeWidth="1" strokeDasharray="3,3" className="opacity-30">
@@ -128,7 +109,6 @@ const Player: React.FC<{
         </g>
       )}
       
-      {/* Main Player Body */}
       <circle 
         r={isHovered ? "20" : "16"} 
         fill={color} 
@@ -140,7 +120,6 @@ const Player: React.FC<{
         }}
       />
       
-      {/* Number Text */}
       <text
         y="1" 
         textAnchor="middle" 
@@ -153,7 +132,6 @@ const Player: React.FC<{
         {player.number}
       </text>
       
-      {/* Name Label */}
       <g 
         transform={isHovered ? "translate(0, 38)" : "translate(0, 32)"} 
         className={`transition-all duration-500 ${isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-1'}`}
@@ -181,7 +159,7 @@ const Player: React.FC<{
 export const TacticBoard: React.FC<TacticBoardProps> = ({ 
     homePlayers, awayPlayers, passingNetwork, hoveredPlayer, 
     onPlayerHover, onPlayerClick, homeColor, awayColor,
-    animationSpeed = 1.0, isPlaying = false, showZones = false, isScanning = false
+    animationSpeed = 1.0, isPlaying = false, showZones = false
 }) => {
     const movementDuration = 0.8 / animationSpeed;
 
@@ -197,7 +175,7 @@ export const TacticBoard: React.FC<TacticBoardProps> = ({
     return (
         <div className="w-full aspect-[105/68] max-w-5xl mx-auto relative select-none rounded-2xl overflow-hidden shadow-[0_0_80px_rgba(0,0,0,0.7)] bg-[#081208]">
             <div className="absolute inset-0">
-                <FootballPitch showZones={showZones} isScanning={isScanning} />
+                <FootballPitch showZones={showZones} />
             </div>
             
             <svg viewBox="0 0 1050 680" className="w-full h-full relative z-10">
@@ -208,7 +186,6 @@ export const TacticBoard: React.FC<TacticBoardProps> = ({
                    </radialGradient>
                 </defs>
 
-                {/* Passing Connections */}
                 <g>
                     {passingNetwork.connections.map((conn, i) => {
                         const from = homePlayers.find(p => p.id === conn.from) || awayPlayers.find(p => p.id === conn.from);
@@ -235,7 +212,6 @@ export const TacticBoard: React.FC<TacticBoardProps> = ({
                     })}
                 </g>
 
-                {/* Ball Movement */}
                 {ballPath && (
                     <circle r="6" fill="url(#ballGlow)" style={{ filter: 'drop-shadow(0 0 10px rgba(255,255,255,0.8))' }}>
                         <animateMotion 
@@ -249,7 +225,6 @@ export const TacticBoard: React.FC<TacticBoardProps> = ({
                     </circle>
                 )}
 
-                {/* Players */}
                 {[...awayPlayers, ...homePlayers].map(p => (
                     <Player 
                         key={p.id} player={p} 
