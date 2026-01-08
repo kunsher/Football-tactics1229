@@ -88,7 +88,6 @@ export const TacticalKnowledgeBase: React.FC<TacticalKnowledgeBaseProps> = ({ on
     }
   };
 
-  // 根据战术类型决定详情页氛围色
   const atmosphereColor = useMemo(() => {
     if (selectedTerm.category === 'System') return 'rgba(59, 130, 246, 0.08)';
     if (selectedTerm.category === 'Action') return 'rgba(239, 68, 68, 0.08)';
@@ -97,7 +96,6 @@ export const TacticalKnowledgeBase: React.FC<TacticalKnowledgeBaseProps> = ({ on
 
   return (
     <div className="flex flex-col gap-8 animate-fade-in max-w-7xl mx-auto py-2 mb-20 px-4">
-      {/* 搜索与过滤栏 */}
       <div className="bg-[#0a0f14] border border-white/10 rounded-[2.5rem] p-6 lg:p-8 flex flex-col lg:flex-row items-center justify-between gap-6 shadow-2xl relative overflow-hidden">
         <div className="absolute inset-0 bg-blue-600/[0.02] pointer-events-none"></div>
         
@@ -145,7 +143,6 @@ export const TacticalKnowledgeBase: React.FC<TacticalKnowledgeBaseProps> = ({ on
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* 侧边导航栏 */}
         <div className="lg:col-span-3 space-y-3 max-h-[80vh] overflow-y-auto pr-2 custom-scrollbar">
           <AnimatePresence mode="popLayout">
             {filteredTerms.map((term) => (
@@ -173,7 +170,6 @@ export const TacticalKnowledgeBase: React.FC<TacticalKnowledgeBaseProps> = ({ on
                   </div>
                 </div>
                 
-                {/* 微型动态示意图 */}
                 {term.visualEffect && (
                    <div className={`w-full aspect-[2/1] rounded-xl overflow-hidden pointer-events-none transition-all duration-700 border border-white/5 relative bg-black/40 ${selectedTerm.term === term.term ? 'opacity-100' : 'opacity-10 group-hover:opacity-40'}`}>
                       <TacticalVisualizer type={term.visualEffect} size="small" />
@@ -209,7 +205,6 @@ export const TacticalKnowledgeBase: React.FC<TacticalKnowledgeBaseProps> = ({ on
           )}
         </div>
 
-        {/* 核心详情视图 */}
         <div className="lg:col-span-9 space-y-6">
           <AnimatePresence mode="wait">
             <motion.div
@@ -221,7 +216,6 @@ export const TacticalKnowledgeBase: React.FC<TacticalKnowledgeBaseProps> = ({ on
               style={{ background: `radial-gradient(circle at top right, ${atmosphereColor}, transparent)` }}
             >
               <div className="relative z-10">
-                {/* 顶部概览 */}
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-10">
                   <div className="lg:col-span-7 space-y-8">
                     <div className="flex items-center gap-4">
@@ -268,7 +262,6 @@ export const TacticalKnowledgeBase: React.FC<TacticalKnowledgeBaseProps> = ({ on
                     )}
                   </div>
 
-                  {/* 雷达图性能分析 */}
                   <div className="lg:col-span-5 bg-[#05080b]/90 rounded-[2.5rem] p-6 border border-white/5 relative min-h-[320px] flex items-center justify-center shadow-inner">
                     <div className="absolute top-6 left-1/2 -translate-x-1/2 text-[9px] font-black text-gray-700 uppercase tracking-[0.3em]">DNA TOPOLOGY ANALYTICS</div>
                     <ResponsiveContainer width="100%" height={260}>
@@ -300,7 +293,6 @@ export const TacticalKnowledgeBase: React.FC<TacticalKnowledgeBaseProps> = ({ on
                   </div>
                 </div>
 
-                {/* 实战核心逻辑演示区 */}
                 {selectedTerm.visualEffect && !compareMode && (
                   <div className="mb-10 bg-white/[0.02] border border-white/5 p-8 md:p-12 rounded-[2.5rem] relative overflow-hidden flex flex-col items-center shadow-inner">
                      <div className="w-full flex justify-between items-center mb-8">
@@ -315,7 +307,6 @@ export const TacticalKnowledgeBase: React.FC<TacticalKnowledgeBaseProps> = ({ on
                   </div>
                 )}
 
-                {/* 深度分析矩阵 */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-10 pt-10 border-t border-white/5">
                   <div className="space-y-10">
                     <section className="space-y-4">
@@ -363,13 +354,13 @@ export const TacticalKnowledgeBase: React.FC<TacticalKnowledgeBaseProps> = ({ on
                           <div className="flex gap-3">
                              <div className="w-1 h-8 bg-blue-500 rounded-full shrink-0"></div>
                              <p className="text-xs text-blue-200 font-bold leading-relaxed italic pr-4">
-                               <span className="text-blue-500 font-black mr-2 uppercase tracking-widest text-[9px]">PROS:</span> 最大化球员技术特征，通过空间坐标重构创造结构性优势。
+                               <span className="text-blue-500 font-black mr-2 uppercase tracking-widest text-[9px]">优点:</span> 最大化球员技术特征，通过空间坐标重构创造结构性优势。
                              </p>
                           </div>
                           <div className="flex gap-3">
                              <div className="w-1 h-8 bg-gray-700 rounded-full shrink-0"></div>
                              <p className="text-xs text-gray-500 font-bold leading-relaxed italic pr-4">
-                               <span className="text-gray-600 font-black mr-2 uppercase tracking-widest text-[9px]">RISK:</span> 对球员智商与体能要求极高，高位防线身后的空档是天然风险点。
+                               <span className="text-gray-600 font-black mr-2 uppercase tracking-widest text-[9px]">风险:</span> 对球员智商与体能要求极高，高位防线身后的空档是天然风险点。
                              </p>
                           </div>
                        </div>
