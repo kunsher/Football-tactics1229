@@ -11,17 +11,20 @@ export const TacticalVisualizer: React.FC<TacticalVisualizerProps> = ({ type, si
   const width = isLarge ? 500 : 280;
   const height = isLarge ? 320 : 180;
 
+  // 默认视口 300x200，为了“放大草地”，我们将视口缩小并居中，从而实现缩放效果
+  const zoomedViewBox = "25 15 250 170";
+
   const Pitch = () => (
     <g>
-      <rect width="100%" height="100%" fill="#1a2e1a" rx="16" />
+      <rect width="300" height="200" fill="#1a2e1a" rx="16" />
       <rect x="5%" y="5%" width="90%" height="90%" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="1.5" rx="8" />
-      <line x1="50%" y1="5%" x2="50%" y2="95%" stroke="rgba(255,255,255,0.08)" strokeWidth="1.5" />
-      <circle cx="50%" cy="50%" r="15%" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="1.5" />
+      <line x1="150" y1="10" x2="150" y2="190" stroke="rgba(255,255,255,0.08)" strokeWidth="1.5" />
+      <circle cx="150" cy="100" r="45" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="1.5" />
       {/* Half Spaces highlight */}
       {(type === 'half-space' || type === 'tiki-taka') && (
         <g opacity="0.3">
-          <rect x="25%" y="5%" width="12%" height="90%" fill="rgba(59, 130, 246, 0.2)" />
-          <rect x="63%" y="5%" width="12%" height="90%" fill="rgba(59, 130, 246, 0.2)" />
+          <rect x="75" y="10" width="36" height="180" fill="rgba(59, 130, 246, 0.2)" />
+          <rect x="189" y="10" width="36" height="180" fill="rgba(59, 130, 246, 0.2)" />
         </g>
       )}
     </g>
@@ -32,14 +35,14 @@ export const TacticalVisualizer: React.FC<TacticalVisualizerProps> = ({ type, si
   );
 
   const Player = ({ x, y, team, className, style }: { x: string; y: string; team: 'home' | 'away'; className?: string; style?: React.CSSProperties }) => (
-    <circle cx={x} cy={y} r="7" fill={team === 'home' ? '#3b82f6' : '#ef4444'} className={className} style={style} stroke="#fff" strokeWidth="1" />
+    <circle cx={x} cy={y} r="8" fill={team === 'home' ? '#3b82f6' : '#ef4444'} className={className} style={style} stroke="#fff" strokeWidth="1.5" />
   );
 
   const renderAnimation = () => {
     switch (type) {
       case 'tiki-taka':
         return (
-          <svg viewBox="0 0 300 200" className="w-full h-full">
+          <svg viewBox={zoomedViewBox} className="w-full h-full">
             <Pitch />
             <Player x="35%" y="35%" team="home" />
             <Player x="65%" y="35%" team="home" />
@@ -53,7 +56,7 @@ export const TacticalVisualizer: React.FC<TacticalVisualizerProps> = ({ type, si
         );
       case 'vertical-counter':
         return (
-          <svg viewBox="0 0 300 200" className="w-full h-full">
+          <svg viewBox={zoomedViewBox} className="w-full h-full">
             <Pitch />
             <Player x="20%" y="50%" team="home" />
             <Player x="45%" y="40%" team="home" className="vc-mid" />
@@ -71,7 +74,7 @@ export const TacticalVisualizer: React.FC<TacticalVisualizerProps> = ({ type, si
         );
       case 'catenaccio':
         return (
-          <svg viewBox="0 0 300 200" className="w-full h-full">
+          <svg viewBox={zoomedViewBox} className="w-full h-full">
             <Pitch />
             <Player x="85%" y="50%" team="home" className="libero" />
             <g className="defense-line">
@@ -89,7 +92,7 @@ export const TacticalVisualizer: React.FC<TacticalVisualizerProps> = ({ type, si
         );
       case 'total-football':
         return (
-          <svg viewBox="0 0 300 200" className="w-full h-full">
+          <svg viewBox={zoomedViewBox} className="w-full h-full">
             <Pitch />
             <Player x="40%" y="40%" team="home" className="tf-1" />
             <Player x="60%" y="60%" team="home" className="tf-2" />
@@ -104,7 +107,7 @@ export const TacticalVisualizer: React.FC<TacticalVisualizerProps> = ({ type, si
       case 'pressing':
       case 'counter-press':
         return (
-          <svg viewBox="0 0 300 200" className="w-full h-full">
+          <svg viewBox={zoomedViewBox} className="w-full h-full">
             <Pitch />
             <Player x="50%" y="50%" team="away" />
             <Ball x="52%" y="52%" className="lost-ball" />
@@ -125,7 +128,7 @@ export const TacticalVisualizer: React.FC<TacticalVisualizerProps> = ({ type, si
         );
       case 'false-9':
         return (
-          <svg viewBox="0 0 300 200" className="w-full h-full">
+          <svg viewBox={zoomedViewBox} className="w-full h-full">
             <Pitch />
             <Player x="75%" y="50%" team="away" className="defender-f9" />
             <Player x="70%" y="50%" team="home" className="false-9-player" />
@@ -142,7 +145,7 @@ export const TacticalVisualizer: React.FC<TacticalVisualizerProps> = ({ type, si
         );
       case 'low-block':
         return (
-          <svg viewBox="0 0 300 200" className="w-full h-full">
+          <svg viewBox={zoomedViewBox} className="w-full h-full">
             <Pitch />
             <g className="defense-block">
               <Player x="72%" y="25%" team="away" />
@@ -165,7 +168,7 @@ export const TacticalVisualizer: React.FC<TacticalVisualizerProps> = ({ type, si
         );
       case 'overlap':
         return (
-          <svg viewBox="0 0 300 200" className="w-full h-full">
+          <svg viewBox={zoomedViewBox} className="w-full h-full">
             <Pitch />
             <Player x="65%" y="25%" team="home" className="winger-static" />
             <Player x="40%" y="15%" team="home" className="fullback-overlap" />
@@ -181,7 +184,7 @@ export const TacticalVisualizer: React.FC<TacticalVisualizerProps> = ({ type, si
         );
       case 'half-space':
         return (
-          <svg viewBox="0 0 300 200" className="w-full h-full">
+          <svg viewBox={zoomedViewBox} className="w-full h-full">
             <Pitch />
             <Player x="35%" y="50%" team="home" className="half-space-playmaker" />
             <Player x="70%" y="30%" team="home" className="half-space-receiver" />

@@ -17,32 +17,35 @@ interface TacticBoardProps {
   annotations?: TacticalAnnotation[];
 }
 
+// 修改为 1200 x 680，使草地更“长”
 const FootballPitch: React.FC<{ showZones?: boolean }> = memo(({ showZones }) => (
-  <svg viewBox="0 0 1050 680" className="w-full h-full opacity-70">
+  <svg viewBox="0 0 1200 680" className="w-full h-full opacity-80">
     <defs>
-      <pattern id="stripes" width="105" height="680" patternUnits="userSpaceOnUse">
-        <rect width="52.5" height="680" fill="#142614" />
-        <rect x="52.5" width="52.5" height="680" fill="#1b331b" />
+      <pattern id="stripes" width="120" height="680" patternUnits="userSpaceOnUse">
+        <rect width="60" height="680" fill="#142614" />
+        <rect x="60" width="60" height="680" fill="#1b331b" />
       </pattern>
     </defs>
-    <rect width="1050" height="680" fill="url(#stripes)" rx="12" />
-    <g stroke="rgba(255,255,255,0.25)" strokeWidth="2.5" fill="none">
-      <rect x="10" y="10" width="1030" height="660" />
-      <line x1="525" y1="10" x2="525" y2="670" />
-      <circle cx="525" cy="340" r="91.5" />
-      <rect x="10" y="138.5" width="165" height="403" />
-      <rect x="875" y="138.5" width="165" height="403" />
+    <rect width="1200" height="680" fill="url(#stripes)" rx="16" />
+    <g stroke="rgba(255,255,255,0.25)" strokeWidth="3" fill="none">
+      <rect x="10" y="10" width="1180" height="660" />
+      <line x1="600" y1="10" x2="600" y2="670" />
+      <circle cx="600" cy="340" r="100" />
+      {/* 左禁区 */}
+      <rect x="10" y="138.5" width="180" height="403" />
+      {/* 右禁区 */}
+      <rect x="1010" y="138.5" width="180" height="403" />
       <circle cx="10" cy="10" r="3" />
-      <circle cx="1040" cy="10" r="3" />
+      <circle cx="1190" cy="10" r="3" />
       <circle cx="10" cy="670" r="3" />
-      <circle cx="1040" cy="670" r="3" />
+      <circle cx="1190" cy="670" r="3" />
     </g>
     {showZones && (
       <g stroke="rgba(255,255,255,0.1)" strokeWidth="1.5" strokeDasharray="10,5">
-        <line x1="210" y1="10" x2="210" y2="670" />
-        <line x1="420" y1="10" x2="420" y2="670" />
-        <line x1="630" y1="10" x2="630" y2="670" />
-        <line x1="840" y1="10" x2="840" y2="670" />
+        <line x1="240" y1="10" x2="240" y2="670" />
+        <line x1="480" y1="10" x2="480" y2="670" />
+        <line x1="720" y1="10" x2="720" y2="670" />
+        <line x1="960" y1="10" x2="960" y2="670" />
       </g>
     )}
   </svg>
@@ -59,7 +62,8 @@ const PlayerComponent: React.FC<{
 }> = memo(({ player, color, onHover, onClick, isHovered, duration, isInPossession }) => (
   <g
     style={{
-      transform: `translate(${player.x * 10}px, ${player.y * 6.7 + 5}px)`,
+      // x 轴坐标映射从 10 变为 12，以适配 1200 宽度
+      transform: `translate(${player.x * 12}px, ${player.y * 6.7 + 5}px)`,
       transition: `transform ${duration}s linear`,
       willChange: 'transform',
     }}
@@ -68,26 +72,25 @@ const PlayerComponent: React.FC<{
     onClick={() => onClick(player)}
     className="cursor-pointer group"
   >
-    {/* 缩小球员半径：基础 16，悬停 20 */}
     <circle 
-      r={isHovered ? "20" : "16"} 
+      r={isHovered ? "22" : "18"} 
       fill={color} 
-      stroke={isInPossession ? "#3b82f6" : "rgba(255,255,255,0.6)"} 
-      strokeWidth={isInPossession ? "3" : "1.5"} 
-      className="transition-all duration-300 shadow-xl"
-      style={{ filter: isInPossession ? 'drop-shadow(0 0 10px rgba(59,130,246,1))' : 'none' }}
+      stroke={isInPossession ? "#3b82f6" : "rgba(255,255,255,0.7)"} 
+      strokeWidth={isInPossession ? "4" : "2"} 
+      className="transition-all duration-300 shadow-2xl"
+      style={{ filter: isInPossession ? 'drop-shadow(0 0 15px rgba(59,130,246,1))' : 'none' }}
     />
     
-    <text y="1" textAnchor="middle" alignmentBaseline="middle" fontSize={isHovered ? "13" : "10"} fontWeight="900" 
+    <text y="1" textAnchor="middle" alignmentBaseline="middle" fontSize={isHovered ? "14" : "11"} fontWeight="900" 
       fill={parseInt(color.replace('#',''), 16) > 0xaaaaaa ? '#000' : '#fff'} 
       className="pointer-events-none select-none transition-all duration-300 font-sans"
     >
       {player.number}
     </text>
     
-    <g transform={`translate(0, ${isHovered ? '32' : '28'})`} className={`transition-all duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'}`}>
-       <rect x="-40" y="-10" width="80" height="20" rx="6" fill="rgba(0,0,0,0.9)" stroke="rgba(255,255,255,0.1)" />
-       <text textAnchor="middle" fill="#fff" fontSize="10" fontWeight="900" className="tracking-tighter uppercase">{player.name}</text>
+    <g transform={`translate(0, ${isHovered ? '36' : '32'})`} className={`transition-all duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'}`}>
+       <rect x="-50" y="-12" width="100" height="24" rx="8" fill="rgba(0,0,0,0.95)" stroke="rgba(255,255,255,0.15)" />
+       <text textAnchor="middle" fill="#fff" fontSize="11" fontWeight="900" className="tracking-tighter uppercase">{player.name}</text>
     </g>
   </g>
 ));
@@ -95,23 +98,23 @@ const PlayerComponent: React.FC<{
 const AnnotationLayer: React.FC<{ annotations: TacticalAnnotation[] }> = ({ annotations }) => (
   <g>
     <defs>
-      <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
-        <polygon points="0 0, 10 3.5, 0 7" fill="rgba(59, 130, 246, 0.9)" />
+      <marker id="arrowhead" markerWidth="12" markerHeight="8" refX="0" refY="4" orient="auto">
+        <polygon points="0 0, 12 4, 0 8" fill="rgba(59, 130, 246, 1)" />
       </marker>
     </defs>
     {annotations.map((ann, i) => {
       const key = `${ann.type}-${i}`;
       if (ann.type === 'line') {
         return (
-          <path key={key} d={`M ${ann.points.map(p => `${p.x * 10},${p.y * 6.7 + 5}`).join(' L ')}`} 
-            fill="none" stroke={ann.color || 'rgba(59, 130, 246, 0.5)'} strokeWidth="2.5" strokeDasharray="6,3" 
+          <path key={key} d={`M ${ann.points.map(p => `${p.x * 12},${p.y * 6.7 + 5}`).join(' L ')}`} 
+            fill="none" stroke={ann.color || 'rgba(59, 130, 246, 0.6)'} strokeWidth="3" strokeDasharray="8,4" 
             className="animate-fade-in" />
         );
       }
       if (ann.type === 'area') {
         return (
-          <polygon key={key} points={ann.points.map(p => `${p.x * 10},${p.y * 6.7 + 5}`).join(' ')} 
-            fill={ann.color || "rgba(59, 130, 246, 0.15)"} stroke="rgba(59, 130, 246, 0.3)" strokeWidth="1.5" 
+          <polygon key={key} points={ann.points.map(p => `${p.x * 12},${p.y * 6.7 + 5}`).join(' ')} 
+            fill={ann.color || "rgba(59, 130, 246, 0.2)"} stroke="rgba(59, 130, 246, 0.4)" strokeWidth="2" 
             className="animate-fade-in" />
         );
       }
@@ -119,14 +122,14 @@ const AnnotationLayer: React.FC<{ annotations: TacticalAnnotation[] }> = ({ anno
         const p1 = ann.points[0];
         const p2 = ann.points[1];
         return (
-          <line key={key} x1={p1.x*10} y1={p1.y*6.7+5} x2={p2.x*10} y2={p2.y*6.7+5} 
-            stroke="rgba(59, 130, 246, 0.9)" strokeWidth="3" markerEnd="url(#arrowhead)" className="animate-fade-in" />
+          <line key={key} x1={p1.x*12} y1={p1.y*6.7+5} x2={p2.x*12} y2={p2.y*6.7+5} 
+            stroke="rgba(59, 130, 246, 1)" strokeWidth="4" markerEnd="url(#arrowhead)" className="animate-fade-in" />
         );
       }
       if (ann.type === 'focus') {
         const p = ann.points[0];
         return (
-          <circle key={key} cx={p.x*10} cy={p.y*6.7+5} r="35" fill="none" stroke="rgba(59, 130, 246, 0.4)" strokeWidth="2" strokeDasharray="5,5" className="animate-[spin_20s_linear_infinite]" />
+          <circle key={key} cx={p.x*12} cy={p.y*6.7+5} r="45" fill="none" stroke="rgba(59, 130, 246, 0.5)" strokeWidth="3" strokeDasharray="6,6" className="animate-[spin_25s_linear_infinite]" />
         );
       }
       return null;
@@ -140,7 +143,6 @@ export const TacticBoard: React.FC<TacticBoardProps> = ({
     animationSpeed = 1.0, isPlaying = false, showZones = false,
     annotations = []
 }) => {
-    // 动画时长：基础 1.4s，随倍速线性缩减
     const movementDuration = 1.4 / animationSpeed; 
 
     const ballPath = useMemo(() => {
@@ -153,11 +155,11 @@ export const TacticBoard: React.FC<TacticBoardProps> = ({
     }, [passingNetwork.connections, homePlayers, awayPlayers]);
 
     return (
-        <div className="w-full h-full max-w-6xl aspect-[105/68] relative select-none">
+        <div className="w-full h-full max-w-7xl aspect-[120/68] relative select-none">
             <div className="absolute inset-0">
                 <FootballPitch showZones={showZones} />
             </div>
-            <svg viewBox="0 0 1050 680" className="w-full h-full relative z-10">
+            <svg viewBox="0 0 1200 680" className="w-full h-full relative z-10">
                 <AnnotationLayer annotations={annotations} />
                 
                 <g>
@@ -168,18 +170,18 @@ export const TacticBoard: React.FC<TacticBoardProps> = ({
                         const isHovered = hoveredPlayer && (hoveredPlayer.id === conn.from || hoveredPlayer.id === conn.to);
                         return (
                             <line key={`${conn.from}-${conn.to}`} 
-                              x1={from.x*10} y1={from.y*6.7+5} 
-                              x2={to.x*10} y2={to.y*6.7+5} 
-                              stroke="rgba(59, 130, 246, 0.4)" strokeWidth={isHovered ? 3 : 1.2} 
-                              strokeDasharray="5,2" />
+                              x1={from.x*12} y1={from.y*6.7+5} 
+                              x2={to.x*12} y2={to.y*6.7+5} 
+                              stroke="rgba(59, 130, 246, 0.5)" strokeWidth={isHovered ? 4 : 1.5} 
+                              strokeDasharray="6,3" />
                         );
                     })}
                 </g>
 
-                <circle r="6" fill="#fff" 
+                <circle r="7" fill="#fff" 
                   className="transition-opacity duration-300"
                   style={{ 
-                    filter: 'drop-shadow(0 0 8px #fff)',
+                    filter: 'drop-shadow(0 0 12px #fff)',
                     opacity: ballPath ? 1 : 0,
                     pointerEvents: 'none'
                   }}
@@ -188,7 +190,7 @@ export const TacticBoard: React.FC<TacticBoardProps> = ({
                     <animateMotion 
                       dur={`${movementDuration}s`} 
                       repeatCount="indefinite" 
-                      path={`M ${ballPath.from.x*10} ${ballPath.from.y*6.7+5} L ${ballPath.to.x*10} ${ballPath.to.y*6.7+5}`} 
+                      path={`M ${ballPath.from.x*12} ${ballPath.from.y*6.7+5} L ${ballPath.to.x*12} ${ballPath.to.y*6.7+5}`} 
                       calcMode="linear" 
                     />
                   )}

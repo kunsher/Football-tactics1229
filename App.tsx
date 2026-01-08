@@ -74,7 +74,6 @@ const App: React.FC = () => {
     }
   }, [selectedBattle]);
 
-  // 加快播放节奏：基础 1.5s，随倍速缩短。步进略大于动画时长（1.5s vs 1.4s）
   useEffect(() => {
     if (isPlaying && selectedBattle) {
       const stepDuration = 1500 / animationSpeed; 
@@ -165,10 +164,10 @@ const App: React.FC = () => {
       <header className="h-16 shrink-0 border-b border-white/5 bg-[#0a0f14] flex items-center justify-between px-6 z-50">
         <div className="flex items-center gap-8">
           <div className="flex flex-col">
-            <h1 className="text-lg font-black tracking-tighter uppercase leading-none">
+            <h1 className="text-xl font-black tracking-tighter uppercase leading-none">
               足球战术<span className="text-blue-500 ml-1">科普系统</span>
             </h1>
-            <p className="text-[8px] text-gray-600 font-bold uppercase tracking-[0.3em] mt-1">Tactical Visualization Platform</p>
+            <p className="text-[10px] text-gray-600 font-bold uppercase tracking-[0.3em] mt-1">Tactical Visualization Platform</p>
           </div>
           {activeTab === 'simulation' && (
              <div className="hidden md:block">
@@ -178,21 +177,25 @@ const App: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-6">
-          <nav className="hidden xl:flex bg-white/5 p-1 rounded-xl border border-white/5 backdrop-blur-sm">
+          <nav className="hidden xl:flex bg-white/5 p-1.5 rounded-2xl border border-white/5 backdrop-blur-sm shadow-inner">
             {['simulation', 'learning-paths', 'sandbox', 'knowledge', 'about'].map(id => (
-              <button key={id} onClick={() => setActiveTab(id as any)} className={`px-4 py-2 rounded-lg text-[9px] font-black uppercase transition-all ${activeTab === id ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-gray-500 hover:text-white'}`}>
+              <button 
+                key={id} 
+                onClick={() => setActiveTab(id as any)} 
+                className={`px-5 py-2 rounded-xl text-[13px] font-black uppercase tracking-tight transition-all duration-300 ${activeTab === id ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/40' : 'text-gray-400 hover:text-white'}`}
+              >
                 {id === 'simulation' ? '战役复盘' : id === 'learning-paths' ? '学习路径' : id === 'sandbox' ? '战术沙盒' : id === 'knowledge' ? '战术百科' : '项目使命'}
               </button>
             ))}
           </nav>
 
           <button onClick={() => setIsUserModalOpen(true)} className="flex items-center gap-2.5 p-1.5 pr-3 rounded-lg border border-white/5 bg-white/5 hover:bg-white/10 transition-all">
-            <div className={`w-7 h-7 rounded flex items-center justify-center ${user.isGuest ? 'bg-gray-800' : 'bg-blue-600'}`}>
-              <UserIcon className="w-3.5 h-3.5 text-white" />
+            <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${user.isGuest ? 'bg-gray-800' : 'bg-blue-600'}`}>
+              <UserIcon className="w-4 h-4 text-white" />
             </div>
             <div className="text-left hidden sm:block">
-              <p className="text-[10px] font-black text-white leading-none">{user.name}</p>
-              <p className="text-[7px] font-bold text-blue-500 uppercase tracking-widest mt-0.5 opacity-60">{user.rank}</p>
+              <p className="text-[11px] font-black text-white leading-none">{user.name}</p>
+              <p className="text-[8px] font-bold text-blue-500 uppercase tracking-widest mt-0.5 opacity-60">{user.rank}</p>
             </div>
           </button>
         </div>
@@ -201,8 +204,8 @@ const App: React.FC = () => {
       <main className="flex-grow flex flex-col lg:flex-row overflow-hidden bg-[#0a0f14]">
         {activeTab === 'simulation' ? (
           <>
-            <section className="w-full lg:w-[72%] h-full flex flex-col p-3 lg:p-4 shrink-0 border-r border-white/5">
-              <div id="tutorial-board" className="flex-grow bg-[#050c05] rounded-[2.5rem] border border-white/5 relative overflow-hidden shadow-[0_30px_80px_rgba(0,0,0,0.6)] group flex items-center justify-center">
+            <section className="w-full lg:w-[64%] h-full flex flex-col p-3 lg:p-4 shrink-0 border-r border-white/5">
+              <div id="tutorial-board" className="flex-grow bg-[#050c05] rounded-[3rem] border border-white/10 relative overflow-hidden shadow-[0_40px_100px_rgba(0,0,0,0.8)] group flex items-center justify-center aspect-[120/68]">
                  <TacticBoard 
                     homePlayers={currentPhase.homePlayers} 
                     awayPlayers={currentPhase.awayPlayers}
@@ -219,9 +222,7 @@ const App: React.FC = () => {
                  />
               </div>
 
-              {/* 还原 UI 控制栏：阶段标签在轴上方，按钮在下方 */}
               <div id="tutorial-controls" className="mt-4 shrink-0 bg-[#0e141b] border border-white/5 rounded-[1.8rem] p-5 flex flex-col gap-6">
-                {/* 顶部进度条与相位标签 */}
                 <div className="relative w-full h-1 bg-white/10 rounded-full flex items-center justify-between px-1">
                   <div 
                     className="absolute left-0 top-0 h-full bg-blue-600 rounded-full transition-all duration-500 ease-linear shadow-[0_0_15px_rgba(59,130,246,0.6)]"
@@ -243,26 +244,24 @@ const App: React.FC = () => {
                 </div>
 
                 <div className="flex items-center justify-between">
-                  {/* 左：播放与当前相位 */}
                   <div className="flex items-center gap-4">
                     <button onClick={togglePlayback} className="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center transition-all shadow-lg hover:bg-blue-500 active:scale-95">
                         {isPlaying ? <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg> : <svg className="w-6 h-6 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>}
                     </button>
                     <div className="flex flex-col">
-                      <span className="text-[9px] text-gray-600 font-bold uppercase tracking-widest opacity-60">AI 实战模拟</span>
-                      <span className="text-sm font-black text-white leading-none mt-1 uppercase tracking-tight">{currentPhase.title}</span>
+                      <span className="text-[10px] text-gray-600 font-bold uppercase tracking-widest opacity-60">AI 实战模拟</span>
+                      <span className="text-base font-black text-white leading-none mt-1 uppercase tracking-tight">{currentPhase.title}</span>
                     </div>
                   </div>
 
-                  {/* 中：倍速调节器 */}
                   <div className="flex flex-col items-center gap-1.5">
-                    <span className="text-[8px] text-gray-600 font-black uppercase tracking-widest opacity-40">播放倍速率</span>
+                    <span className="text-[9px] text-gray-600 font-black uppercase tracking-widest opacity-40">播放倍速率</span>
                     <div className="flex bg-black/40 p-1 rounded-xl border border-white/5">
                       {[0.5, 1, 1.5, 2].map(speed => (
                         <button 
                           key={speed} 
                           onClick={() => setAnimationSpeed(speed)} 
-                          className={`w-10 py-1.5 rounded-lg text-[10px] font-black transition-all ${animationSpeed === speed ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-600 hover:text-gray-400'}`}
+                          className={`w-10 py-1.5 rounded-lg text-[11px] font-black transition-all ${animationSpeed === speed ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-600 hover:text-gray-400'}`}
                         >
                           {speed}x
                         </button>
@@ -270,13 +269,12 @@ const App: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* 右：PHASE 快捷按钮组 */}
                   <div id="tutorial-phases" className="hidden xl:flex gap-1.5 bg-white/5 p-1.5 rounded-xl border border-white/5">
                     {selectedBattle.phases.map((p, idx) => (
                       <button 
                         key={p.id} 
                         onClick={() => handlePhaseChange(idx)}
-                        className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase transition-all ${idx === currentPhaseIndex ? 'bg-blue-600/30 text-blue-400 border border-blue-500/30' : 'text-gray-600 hover:text-gray-400'}`}
+                        className={`px-4 py-2 rounded-lg text-[11px] font-black uppercase transition-all ${idx === currentPhaseIndex ? 'bg-blue-600/30 text-blue-400 border border-blue-500/30' : 'text-gray-600 hover:text-gray-400'}`}
                       >
                         PHASE {idx + 1}
                       </button>
@@ -286,8 +284,8 @@ const App: React.FC = () => {
               </div>
             </section>
 
-            <section className="flex-grow h-full overflow-y-auto custom-scrollbar p-5 lg:p-6 shrink bg-[#0a0f14]">
-                <div id="tutorial-analysis" className="mb-8">
+            <section className="flex-grow h-full overflow-y-auto custom-scrollbar p-6 lg:p-10 shrink bg-[#0a0f14]">
+                <div id="tutorial-analysis" className="mb-10">
                     <AnalysisPanel phase={currentPhase} battle={selectedBattle} hoveredPlayer={hoveredPlayer} />
                 </div>
                 <div id="tutorial-stats" className="pb-32">
