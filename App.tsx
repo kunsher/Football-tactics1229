@@ -12,6 +12,7 @@ import { UserSpaceModal } from './components/UserSpaceModal';
 import { LoginModal } from './components/LoginModal';
 import { DailyChallenge } from './components/DailyChallenge';
 import { TacticalSandbox } from './components/TacticalSandbox';
+import { TutorialOverlay } from './components/TutorialOverlay';
 import type { PlayerPosition, Battle, UserProfile } from './types';
 import { UserIcon } from './components/icons';
 import { mockApi } from './services/mockApi';
@@ -39,6 +40,9 @@ const App: React.FC = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const playbackTimerRef = useRef<number | null>(null);
 
+  // 教程状态
+  const [showTutorial, setShowTutorial] = useState(false);
+
   useEffect(() => {
     const initApp = async () => {
         try {
@@ -51,6 +55,12 @@ const App: React.FC = () => {
             setUser(fetchedUser);
             setHomeColor(fetchedBattles[0].teams.home.color);
             setAwayColor(fetchedBattles[0].teams.away.color);
+
+            // 检查是否是第一次访问
+            const hasSeenTutorial = localStorage.getItem('has_seen_tutorial_v2');
+            if (!hasSeenTutorial) {
+                setShowTutorial(true);
+            }
         } catch (e) {
             console.error("Failed to connect to tactical server");
         } finally {
@@ -148,8 +158,17 @@ const App: React.FC = () => {
     setIsPlaying(!isPlaying);
   };
 
+  const closeTutorial = () => {
+    setShowTutorial(false);
+    localStorage.setItem('has_seen_tutorial_v2', 'true');
+  };
+
   return (
     <div className={`min-h-screen bg-[#0a0f14] text-gray-200 flex flex-col p-4 md:p-6 font-sans selection:bg-blue-500/30 transition-opacity duration-1000 opacity-100`}>
+      {showTutorial && activeTab === 'simulation' && (
+        <TutorialOverlay onClose={closeTutorial} />
+      )}
+      
       {selectedPlayerForModal && (
         <PlayerModal 
           player={selectedPlayerForModal} 
@@ -174,7 +193,7 @@ const App: React.FC = () => {
           <LoginModal onLoginSuccess={handleLoginSuccess} onClose={() => setIsLoginModalOpen(false)} />
       )}
 
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-center pb-6 border-b border-white/10 gap-4">
+      <header id="tutorial-header" className="flex flex-col md:flex-row justify-between items-start md:items-center pb-6 border-b border-white/10 gap-4">
         <div className="flex items-center gap-4">
             <div className="animate-fade-in">
               <div className="flex items-center gap-3">
@@ -287,7 +306,7 @@ const App: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="bg-gray-800/10 rounded-2xl p-4 md:p-8 border border-white/5 backdrop-blur-md relative overflow-hidden group shadow-2xl animate-fade-in">
+                    <div id="tutorial-board" className="bg-gray-800/10 rounded-2xl p-4 md:p-8 border border-white/5 backdrop-blur-md relative overflow-hidden group shadow-2xl animate-fade-in">
                        <TacticBoard 
                         homePlayers={currentPhase.homePlayers} awayPlayers={currentPhase.awayPlayers}
                         passingNetwork={{ connections: currentPhase.connections }}
@@ -298,7 +317,7 @@ const App: React.FC = () => {
                     </div>
 
                     <div className="bg-gray-900/40 rounded-xl px-6 py-4 border border-white/5 flex flex-col md:flex-row items-center justify-between gap-6 animate-fade-in shadow-xl backdrop-blur-sm">
-                        <div className="flex items-center gap-5 shrink-0">
+                        <div id="tutorial-controls" className="flex items-center gap-5 shrink-0">
                             <button 
                                 onClick={togglePlayback}
                                 className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all ${
@@ -313,7 +332,7 @@ const App: React.FC = () => {
                             </button>
                         </div>
 
-                        <div className="flex-grow flex flex-wrap items-center justify-center gap-3">
+                        <div id="tutorial-phases" className="flex-grow flex flex-wrap items-center justify-center gap-3">
                             {selectedBattle.phases.map((phase, idx) => (
                                 <button
                                     key={phase.id}
@@ -356,11 +375,15 @@ const App: React.FC = () => {
 
         {activeTab === 'simulation' && (
             <aside className="lg:col-span-4 flex flex-col gap-6 w-full animate-fade-in">
-                <AnalysisPanel phase={currentPhase} battle={selectedBattle} hoveredPlayer={hoveredPlayer} />
-                <StatsDashboard 
-                    stats={selectedBattle.stats} teamNames={{ home: selectedBattle.teams.home.name, away: selectedBattle.teams.away.name }}
-                    colors={{ home: homeColor, away: awayColor }} teams={selectedBattle.teams} radarData={selectedBattle.radarData}
-                />
+                <div id="tutorial-analysis">
+                    <AnalysisPanel phase={currentPhase} battle={selectedBattle} hoveredPlayer={hoveredPlayer} />
+                </div>
+                <div id="tutorial-stats">
+                    <StatsDashboard 
+                        stats={selectedBattle.stats} teamNames={{ home: selectedBattle.teams.home.name, away: selectedBattle.teams.away.name }}
+                        colors={{ home: homeColor, away: awayColor }} teams={selectedBattle.teams} radarData={selectedBattle.radarData}
+                    />
+                </div>
                 <DailyChallenge />
             </aside>
         )}
