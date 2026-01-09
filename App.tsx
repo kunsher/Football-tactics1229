@@ -264,18 +264,55 @@ const App: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="flex flex-col items-center gap-1.5">
-                    <span className="text-[9px] text-gray-600 font-black uppercase tracking-widest opacity-40">播放倍速率</span>
-                    <div className="flex bg-black/40 p-1 rounded-xl border border-white/5">
-                      {[0.5, 1, 1.5, 2].map(speed => (
-                        <button 
-                          key={speed} 
-                          onClick={() => setAnimationSpeed(speed)} 
-                          className={`w-10 py-1.5 rounded-lg text-[11px] font-black transition-all ${animationSpeed === speed ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-600 hover:text-gray-400'}`}
-                        >
-                          {speed}x
-                        </button>
-                      ))}
+                  <div className="flex items-center gap-8">
+                    {/* 新增：战队色彩自定义区域 */}
+                    <div className="flex items-center gap-4 px-4 py-1.5 bg-black/40 rounded-2xl border border-white/5">
+                        <div className="flex flex-col items-center gap-1.5">
+                            <span className="text-[9px] text-gray-600 font-black uppercase tracking-widest opacity-40">主队色彩</span>
+                            <div className="relative w-8 h-8 group">
+                                <input 
+                                    type="color" 
+                                    value={homeColor} 
+                                    onChange={(e) => setHomeColor(e.target.value)}
+                                    className="absolute inset-0 opacity-0 w-full h-full cursor-pointer z-10"
+                                />
+                                <div 
+                                    className="w-full h-full rounded-lg border-2 border-white/10 transition-transform group-hover:scale-110 shadow-lg"
+                                    style={{ backgroundColor: homeColor, boxShadow: `0 0 10px ${homeColor}44` }}
+                                ></div>
+                            </div>
+                        </div>
+                        <div className="w-px h-8 bg-white/5"></div>
+                        <div className="flex flex-col items-center gap-1.5">
+                            <span className="text-[9px] text-gray-600 font-black uppercase tracking-widest opacity-40">客队色彩</span>
+                            <div className="relative w-8 h-8 group">
+                                <input 
+                                    type="color" 
+                                    value={awayColor} 
+                                    onChange={(e) => setAwayColor(e.target.value)}
+                                    className="absolute inset-0 opacity-0 w-full h-full cursor-pointer z-10"
+                                />
+                                <div 
+                                    className="w-full h-full rounded-lg border-2 border-white/10 transition-transform group-hover:scale-110 shadow-lg"
+                                    style={{ backgroundColor: awayColor, boxShadow: `0 0 10px ${awayColor}44` }}
+                                ></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col items-center gap-1.5">
+                        <span className="text-[9px] text-gray-600 font-black uppercase tracking-widest opacity-40">播放倍速率</span>
+                        <div className="flex bg-black/40 p-1 rounded-xl border border-white/5">
+                        {[0.5, 1, 1.5, 2].map(speed => (
+                            <button 
+                            key={speed} 
+                            onClick={() => setAnimationSpeed(speed)} 
+                            className={`w-10 py-1.5 rounded-lg text-[11px] font-black transition-all ${animationSpeed === speed ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-600 hover:text-gray-400'}`}
+                            >
+                            {speed}x
+                            </button>
+                        ))}
+                        </div>
                     </div>
                   </div>
 
