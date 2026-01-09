@@ -113,7 +113,7 @@ const DetailColumn: React.FC<{ term: GlossaryTerm; accentColor: string; isSecond
 );
 
 export const TacticalKnowledgeBase: React.FC<TacticalKnowledgeBaseProps> = ({ onNavigateToBattle }) => {
-  const categories = ['All', 'System', 'Position', 'Action', 'Phase'];
+  const categories = ['All', 'System', 'Position', 'Action', 'Phase', 'Emerging'];
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   
@@ -156,6 +156,7 @@ export const TacticalKnowledgeBase: React.FC<TacticalKnowledgeBaseProps> = ({ on
   const atmosphereColor = useMemo(() => {
     if (selectedTerm.category === 'System') return 'rgba(59, 130, 246, 0.08)';
     if (selectedTerm.category === 'Action') return 'rgba(239, 68, 68, 0.08)';
+    if (selectedTerm.category === 'Emerging') return 'rgba(249, 115, 22, 0.08)';
     return 'rgba(255, 255, 255, 0.05)';
   }, [selectedTerm]);
 
@@ -180,7 +181,7 @@ export const TacticalKnowledgeBase: React.FC<TacticalKnowledgeBaseProps> = ({ on
                     : 'bg-white/5 border-white/10 text-gray-500 hover:text-white'
                 }`}
               >
-                {cat === 'All' ? '全部' : cat === 'System' ? '体系' : cat === 'Position' ? '位置' : cat === 'Action' ? '动作' : '阶段'}
+                {cat === 'All' ? '全部' : cat === 'System' ? '体系' : cat === 'Position' ? '位置' : cat === 'Action' ? '动作' : cat === 'Phase' ? '阶段' : '新兴'}
               </button>
             ))}
           </div>
@@ -311,24 +312,42 @@ export const TacticalKnowledgeBase: React.FC<TacticalKnowledgeBaseProps> = ({ on
                       </div>
                     )}
 
-                    <p className="text-lg md:text-xl text-gray-300 leading-relaxed font-bold italic border-l-4 border-blue-500/40 pl-6 py-3 bg-white/[0.03] rounded-r-2xl">
-                        {selectedTerm.definition}
-                        {compareMode && comparisonTarget && (
-                          <span className="block mt-4 pt-4 border-t border-white/5 text-orange-400/80">
-                            对比视角: {comparisonTarget.definition}
-                          </span>
+                    <div className="flex flex-col gap-6">
+                      <div className="space-y-4">
+                        <p className="text-lg md:text-xl text-gray-300 leading-relaxed font-bold italic border-l-4 border-blue-500/40 pl-6 py-3 bg-white/[0.03] rounded-r-2xl">
+                            {selectedTerm.definition}
+                        </p>
+                        {selectedTerm.relatedBattleId && (
+                            <button 
+                              onClick={() => onNavigateToBattle?.(selectedTerm.relatedBattleId!)}
+                              className="w-full max-w-sm px-6 py-4 bg-blue-600 hover:bg-blue-500 text-white text-[10px] font-black uppercase tracking-[0.4em] rounded-2xl shadow-xl transition-all transform hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-4"
+                            >
+                              实测 {selectedTerm.term.split(' (')[0]} 战役
+                              <span className="text-xl">→</span>
+                            </button>
                         )}
-                    </p>
-                    
-                    {selectedTerm.relatedBattleId && !compareMode && (
-                        <button 
-                          onClick={() => onNavigateToBattle?.(selectedTerm.relatedBattleId!)}
-                          className="w-full max-w-sm px-6 py-4 bg-blue-600 hover:bg-blue-500 text-white text-[10px] font-black uppercase tracking-[0.4em] rounded-2xl shadow-xl transition-all transform hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-4"
-                        >
-                          加载相关实验战役进行实测
-                          <span className="text-xl">→</span>
-                        </button>
-                    )}
+                      </div>
+
+                      {compareMode && comparisonTarget && (
+                        <div className="space-y-4 pt-6 border-t border-white/5">
+                           <div className="flex items-center gap-2 mb-2">
+                              <span className="px-2 py-0.5 bg-orange-500/10 border border-orange-500/30 text-[9px] font-black text-orange-500 uppercase tracking-widest rounded">对比视角 / VIEW B</span>
+                           </div>
+                           <p className="text-lg md:text-xl text-orange-400/80 leading-relaxed font-bold italic border-l-4 border-orange-500/40 pl-6 py-3 bg-white/[0.03] rounded-r-2xl">
+                              {comparisonTarget.definition}
+                           </p>
+                           {comparisonTarget.relatedBattleId && (
+                              <button 
+                                onClick={() => onNavigateToBattle?.(comparisonTarget.relatedBattleId!)}
+                                className="w-full max-w-sm px-6 py-4 bg-orange-600 hover:bg-orange-500 text-white text-[10px] font-black uppercase tracking-[0.4em] rounded-2xl shadow-xl transition-all transform hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-4"
+                              >
+                                实测 {comparisonTarget.term.split(' (')[0]} 战役
+                                <span className="text-xl">→</span>
+                              </button>
+                           )}
+                        </div>
+                      )}
+                    </div>
                   </div>
 
                   <div className="lg:col-span-5 bg-[#05080b]/90 rounded-[2.5rem] p-6 border border-white/5 relative min-h-[320px] flex items-center justify-center shadow-inner">
@@ -381,7 +400,6 @@ export const TacticalKnowledgeBase: React.FC<TacticalKnowledgeBaseProps> = ({ on
                            <div className="w-1.5 h-1.5 rounded-full bg-blue-500/30"></div>
                         </div>
                      </div>
-                     {/* Fix: cast visualEffect to any to satisfy TacticalVisualizer's type requirements */}
                      <TacticalVisualizer type={selectedTerm.visualEffect as any} size="large" />
                      <p className="text-[9px] text-gray-700 font-black uppercase tracking-[0.5em] mt-6">QUANTUM ENGINE INTERACTIVE PREVIEW</p>
                   </div>

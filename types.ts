@@ -113,7 +113,7 @@ export interface Battle {
 export interface GlossaryTerm {
   term: string;
   definition: string;
-  category: 'Position' | 'Phase' | 'Action' | 'System';
+  category: 'Position' | 'Phase' | 'Action' | 'System' | 'Emerging';
   icon?: string;
   visualEffect?: string;
   complexity?: number;

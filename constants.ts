@@ -44,7 +44,7 @@ export const BATTLES: Battle[] = [
     id: 'barcelona-2011',
     title: '2011 欧冠决赛：巴萨 3-1 曼联',
     subtitle: '温布利的杰作：传控足球的终极形态',
-    description: '巴萨通过极致的控球与空间重构，让曼联防线完全陷入被动。这是克鲁伊夫哲学在瓜迪奥拉时代的最高体现。',
+    description: '巴萨通过极致的控球与空间重构，让曼联防线完全陷入被动。这是克鲁英夫哲学在瓜迪奥拉时代的最高体现。',
     score: { home: 3, away: 1 },
     teams: {
       home: { 
@@ -162,19 +162,42 @@ export const BATTLES: Battle[] = [
       away: { name: '巴塞罗那', color: '#a50044', coach: '瓜迪奥拉', formation: '4-3-3' }
     },
     events: [
-      { id: 're1', type: 'Goal', minute: '73:00', phaseId: 'rm2', label: 'C罗冷静终结' },
+      { id: 're1', type: 'Interception', minute: '72:30', phaseId: 'rm1', label: '中场断球启动' },
+      { id: 're2', type: 'Goal', minute: '73:00', phaseId: 'rm3', label: 'C罗冷静终结' },
     ],
     phases: [
       {
-        id: 'rm1', title: '深度防守块', matchMinute: "42:00", matchContext: "1 - 1",
-        description: '皇马四名后卫与两名后腰保持极其紧凑的间距，梅西被迫回撤到中圈接球。',
+        id: 'rm1', title: '深度防守块', matchMinute: "72:00", matchContext: "1 - 1",
+        description: '皇马四名后卫与两名后腰保持极其紧凑的间距，梅西被迫回撤到中圈接球。这是反击的温床。',
         ...generateFullSquad(
           [{x:5,y:50},{x:20,y:85},{x:15,y:60},{x:15,y:40},{x:20,y:15},{x:30,y:55},{x:30,y:45},{x:45,y:85},{x:42,y:50},{x:45,y:15},{x:52,y:50}],
           [{x:95,y:50},{x:58,y:92},{x:70,y:62},{x:70,y:38},{x:58,y:8},{x:62,y:50},{x:52,y:68},{x:52,y:32},{x:45,y:75},{x:45,y:50},{x:45,y:25}],
           RM_2012_NAMES, BARSA_2011_NAMES, [1,17,3,4,5,6,14,22,10,7,9], []
         ),
         connections: [],
-        annotations: [{ type: 'area', points: [{x:20,y:30},{x:40,y:30},{x:40,y:70},{x:20,y:70}], label: '封锁区', color: 'rgba(59, 130, 246, 0.1)' }]
+        annotations: [{ type: 'area', points: [{x:10,y:30},{x:35,y:30},{x:35,y:70},{x:10,y:70}], label: '皇马锁死区', color: 'rgba(59, 130, 246, 0.15)' }]
+      },
+      {
+        id: 'rm2', title: '转换：垂直打击', matchMinute: "72:45", matchContext: "1 - 1",
+        description: '赫迪拉断球后第一时间交给厄齐尔，皇马全员瞬间由守转攻。C罗在弱侧开始高速前插。',
+        ...generateFullSquad(
+          [{x:15,y:50},{x:45,y:88},{x:35,y:65},{x:35,y:35},{x:45,y:12},{x:50,y:55},{x:48,y:40},{x:62,y:80},{x:60,y:50},{x:70,y:15},{x:65,y:35}],
+          [{x:92,y:50},{x:70,y:85},{x:75,y:60},{x:75,y:40},{x:70,y:15},{x:60,y:70},{x:60,y:30},{x:55,y:60},{x:55,y:40},{x:40,y:55},{x:38,y:45}],
+          RM_2012_NAMES, BARSA_2011_NAMES, [1,17,3,4,5,6,14,22,10,7,9], []
+        ),
+        connections: [{ from: 'h5', to: 'h8', weight: 8, successRate: 100 }],
+        annotations: [{ type: 'arrow', points: [{x:70,y:15},{x:88,y:35}], label: 'C罗极限冲刺', color: '#ffcc00' }]
+      },
+      {
+        id: 'rm3', title: '终结：Calma', matchMinute: "73:10", matchContext: "2 - 1",
+        description: '厄齐尔送出精准斜长传，C罗领球晃过巴尔德斯推射空门。诺坎普瞬间安静。',
+        ...generateFullSquad(
+          [{x:20,y:50},{x:55,y:85},{x:45,y:60},{x:45,y:40},{x:55,y:15},{x:60,y:55},{x:58,y:45},{x:75,y:75},{x:70,y:50},{x:90,y:40},{x:78,y:45}],
+          [{x:96,y:50},{x:78,y:80},{x:85,y:55},{x:85,y:45},{x:78,y:20},{x:72,y:65},{x:72,y:35},{x:68,y:55},{x:68,y:45},{x:65,y:52},{x:62,y:48}],
+          RM_2012_NAMES, BARSA_2011_NAMES, [1,17,3,4,5,6,14,22,10,7,9], []
+        ),
+        connections: [{ from: 'h8', to: 'h9', weight: 10, successRate: 100 }],
+        annotations: [{ type: 'focus', points: [{x:90,y:40}], label: '关键终结' }]
       }
     ],
     stats: {
@@ -205,6 +228,7 @@ export const BATTLES: Battle[] = [
     },
     events: [
       { id: 'ie1', type: 'Goal', minute: '30:00', phaseId: 'in2', label: '斯内德扳平' },
+      { id: 'ie2', type: 'Goal', minute: '48:00', phaseId: 'in3', label: '麦孔反超' },
     ],
     phases: [
       {
@@ -217,6 +241,28 @@ export const BATTLES: Battle[] = [
         ),
         connections: [],
         annotations: [{ type: 'area', points: [{x:25,y:25},{x:45,y:25},{x:45,y:75},{x:25,y:75}], label: '死亡绞杀区', color: 'rgba(239, 68, 68, 0.2)' }]
+      },
+      {
+        id: 'in2', title: '转换：斯内德的核心作用', matchMinute: "30:00", matchContext: "1 - 1",
+        description: '米利托在禁区内扛住皮克，将球回做给后插上的斯内德。国米的身体优势体现得淋漓尽致。',
+        ...generateFullSquad(
+          [{x:10,y:50},{x:40,y:85},{x:30,y:60},{x:30,y:40},{x:40,y:15},{x:55,y:62},{x:55,y:38},{x:70,y:50},{x:75,y:80},{x:75,y:20},{x:85,y:50}],
+          [{x:94,y:50},{x:78,y:88},{x:82,y:58},{x:82,y:42},{x:78,y:12},{x:68,y:65},{x:68,y:35},{x:62,y:58},{x:62,y:42},{x:55,y:50},{x:52,y:50}],
+          INTER_2010_NAMES, BARSA_2011_NAMES, [1,2,6,25,26,4,19,10,27,9,22], []
+        ),
+        connections: [{ from: 'h10', to: 'h7', weight: 9, successRate: 100 }],
+        annotations: [{ type: 'focus', points: [{x:70,y:50}], label: '斯内德接球' }]
+      },
+      {
+        id: 'in3', title: '致命套边：麦孔超车', matchMinute: "48:15", matchContext: "2 - 1",
+        description: '麦孔在右路突然发动助攻，利用巴萨阿比达尔压上后的空档。这是一个经典的内切边卫转侧翼突击。',
+        ...generateFullSquad(
+          [{x:15,y:50},{x:75,y:88},{x:45,y:65},{x:45,y:35},{x:50,y:15},{x:60,y:60},{x:60,y:40},{x:72,y:55},{x:82,y:75},{x:80,y:25},{x:88,y:50}],
+          [{x:94,y:50},{x:82,y:90},{x:88,y:60},{x:88,y:40},{x:82,y:10},{x:72,y:70},{x:72,y:30},{x:65,y:60},{x:65,y:40},{x:58,y:55},{x:55,y:45}],
+          INTER_2010_NAMES, BARSA_2011_NAMES, [1,2,6,25,26,4,19,10,27,9,22], []
+        ),
+        connections: [{ from: 'h10', to: 'h1', weight: 10, successRate: 100 }],
+        annotations: [{ type: 'arrow', points: [{x:60,y:80},{x:90,y:85}], label: '麦孔疯狂超车', color: '#3b82f6' }]
       }
     ],
     stats: {
@@ -243,7 +289,7 @@ export const GLOSSARY: GlossaryTerm[] = [
     visualEffect: 'tiki-taka',
     complexity: 4,
     strategicFocus: ['球权控制', '空间重构', '第三人跑位'],
-    historicalContext: '由克鲁伊夫奠基，瓜迪奥拉时期在巴萨达到巅峰。',
+    historicalContext: '由克鲁英夫奠基，瓜迪奥拉时期在巴萨达到巅峰。',
     keyTraits: ['短距离快速传递', '寻找第三人', '高位夺回球权'],
     radarProfile: [
       { subject: '控球率', A: 98, fullMark: 100 },
@@ -258,7 +304,7 @@ export const GLOSSARY: GlossaryTerm[] = [
   {
     term: 'Gegenpressing (反抢压迫)',
     definition: '丢球瞬时集体压迫。利用对手阵型切换混乱期夺回球权。',
-    category: 'System',
+    category: 'Emerging',
     icon: '⚡',
     visualEffect: 'counter-press',
     complexity: 5,
@@ -273,6 +319,25 @@ export const GLOSSARY: GlossaryTerm[] = [
       { subject: '转换速度', A: 95, fullMark: 100 }
     ],
     famousTeams: ['利物浦 (2019-2020)', '多特蒙德 (2011-2013)']
+  },
+  {
+    term: 'Vertical Tiki-Taka (垂直传控)',
+    definition: '结合传控的节奏感与极高的纵向穿透力，强调快速寻找对方防线核心空档。',
+    category: 'Emerging',
+    icon: '🏹',
+    visualEffect: 'vertical-counter',
+    complexity: 5,
+    strategicFocus: ['纵向渗透', '快速节奏转换', '高位逼抢'],
+    historicalContext: '萨里在拿波里和切尔西时期完善，旨在保持控球的同时增加进攻效率。',
+    keyTraits: ['高频纵向传球', '中场三角形突刺', '快速一脚传球'],
+    radarProfile: [
+      { subject: '纵向效率', A: 95, fullMark: 100 },
+      { subject: '传球速度', A: 90, fullMark: 100 },
+      { subject: '控球', A: 80, fullMark: 100 },
+      { subject: '创造力', A: 95, fullMark: 100 },
+      { subject: '纪律性', A: 85, fullMark: 100 }
+    ],
+    famousTeams: ['萨里拿波里 (2015-2018)', '布莱顿 (2022-2024)']
   },
   {
     term: 'Half-space (肋部空间)',
