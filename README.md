@@ -1,11 +1,10 @@
 
-# ⚽ 基于web可视化技术足球科普系统 (TacticalLab)
-### —— 从绿茵博弈到空间语义的数字化重构 (2026 毕业设计作品)
+# ⚽ 基于 Web 可视化技术的足球科普系统 (TacticalLab)
+### —— 从绿茵博弈到空间语义的数字化重构 (2025 毕业设计作品)
 
-[![Version](https://img.shields.io/badge/Version-3.2_QUANTUM-blue?style=for-the-badge)](https://github.com/XieKun/TacticalLab)
+[![Version](https://img.shields.io/badge/Version-3.2_QUANTUM-blue?style=for-the-badge)](https://github.com/kunsher/Football-tactics1229)
 [![Tech](https://img.shields.io/badge/Stack-React_19_%2B_SVG-green?style=for-the-badge)](https://react.dev)
-[![Developer](https://img.shields.io/badge/Developer-Xie_Kun-orange?style=for-the-badge)](mailto:xiekun@example.com)
-[![License](https://img.shields.io/badge/License-MIT-lightgrey?style=for-the-badge)](LICENSE)
+[![Repo](https://img.shields.io/badge/Github-Football--Tactics-orange?style=for-the-badge)](https://github.com/kunsher/Football-tactics1229)
 
 ---
 
@@ -66,8 +65,8 @@
 ### 安装与运行
 1. **克隆仓库**
    ```bash
-   git clone https://github.com/your-repo/TacticalLab.git
-   cd TacticalLab
+   git clone https://github.com/kunsher/Football-tactics1229.git
+   cd Football-tactics1229
    ```
 
 2. **安装依赖**
