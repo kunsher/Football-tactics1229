@@ -82,11 +82,11 @@ export const AnalysisPanel: React.FC<AnalysisPanelProps> = ({ phase, battle, hov
               <div className="grid grid-cols-2 gap-4">
                   <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
                       <p className="text-[9px] text-gray-500 font-black uppercase mb-1">瞬时代谢率</p>
-                      <p className="text-xl font-black text-white">24.2 <span className="text-[9px] text-blue-500 font-bold">W/KG</span></p>
+                      <p className="text-xl font-black text-white">{(hoveredPlayer.gps?.metabolicPower || 24.2).toFixed(1)} <span className="text-[9px] text-blue-500 font-bold">W/KG</span></p>
                   </div>
                   <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
                       <p className="text-[9px] text-gray-500 font-black uppercase mb-1">HSR 累积</p>
-                      <p className="text-xl font-black text-orange-500">42 <span className="text-[9px] font-bold">M</span></p>
+                      <p className="text-xl font-black text-orange-500">{Math.round(hoveredPlayer.gps?.highIntensityDistance || 42)} <span className="text-[9px] font-bold">M</span></p>
                   </div>
               </div>
             </div>

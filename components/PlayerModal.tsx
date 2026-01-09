@@ -60,14 +60,14 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({ player, phaseTitle, on
              <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
                 <p className="text-[9px] text-gray-500 font-black uppercase tracking-widest mb-1">代谢功率指数 / POWER</p>
                 <div className="flex items-end gap-2">
-                    <span className="text-2xl font-black text-white">{gpsData.metabolicPower}</span>
+                    <span className="text-2xl font-black text-white">{gpsData.metabolicPower.toFixed(1)}</span>
                     <span className="text-[10px] text-blue-500 font-bold mb-1">W/kg</span>
                 </div>
              </div>
              <div className="p-4 bg-blue-600/10 rounded-2xl border border-blue-500/20">
-                <p className="text-[9px] text-blue-400 font-black uppercase tracking-widest mb-1">高强度跑动阈值 / HSR</p>
+                <p className="text-[9px] text-gray-500 font-black uppercase tracking-widest mb-1">高强度跑动阈值 / HSR</p>
                 <div className="flex items-end gap-2">
-                    <span className="text-2xl font-black text-white">{gpsData.highIntensityDistance}</span>
+                    <span className="text-2xl font-black text-white">{Math.round(gpsData.highIntensityDistance)}</span>
                     <span className="text-[10px] text-blue-400 font-bold mb-1">METERS</span>
                 </div>
              </div>
@@ -98,8 +98,8 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({ player, phaseTitle, on
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
              {[
                { label: '总跑动距离', val: (gpsData.totalDistance/1000).toFixed(2), unit: 'KM', color: 'text-white' },
-               { label: '最高瞬时时速', val: gpsData.maxSpeed, unit: 'KM/H', color: 'text-orange-500' },
-               { label: '冲刺次数', val: gpsData.sprintsCount, unit: 'TIMES', color: 'text-blue-400' },
+               { label: '最高瞬时时速', val: gpsData.maxSpeed.toFixed(1), unit: 'KM/H', color: 'text-orange-500' },
+               { label: '冲刺次数', val: Math.floor(gpsData.sprintsCount), unit: 'TIMES', color: 'text-blue-400' },
                { label: '代谢负荷', val: (gpsData.metabolicPower * 0.85).toFixed(1), unit: 'LOAD', color: 'text-green-400' },
              ].map((stat, i) => (
                <div key={i} className="p-6 bg-white/[0.03] border border-white/5 rounded-3xl">
@@ -112,7 +112,7 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({ player, phaseTitle, on
           {/* 速度区间百分比堆叠图 */}
           <div className="space-y-6">
              <div className="flex items-center justify-between">
-                <p className="text-[11px] font-black text-gray-500 uppercase tracking-[0.3em]">速度区间分布分析 / SPEED ZONES</p>
+                <p className="text-11px font-black text-gray-500 uppercase tracking-[0.3em]">速度区间分布分析 / SPEED ZONES</p>
                 <InfoIcon className="w-4 h-4 text-gray-700" />
              </div>
              <div className="bg-[#05080b] p-8 rounded-[2.5rem] border border-white/5 shadow-inner">
