@@ -32,6 +32,7 @@ const App: React.FC = () => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<ActiveTab>('simulation');
   const [animationSpeed, setAnimationSpeed] = useState(1.0);
+  const [targetKnowledgeId, setTargetKnowledgeId] = useState<string | null>(null);
   
   const [homeColor, setHomeColor] = useState('#ffffff');
   const [awayColor, setAwayColor] = useState('#000000');
@@ -111,6 +112,7 @@ const App: React.FC = () => {
   };
 
   const handleNavigateToKnowledge = (knowledgeId: string) => {
+    setTargetKnowledgeId(knowledgeId);
     setActiveTab('knowledge');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -167,13 +169,13 @@ const App: React.FC = () => {
       {isUserModalOpen && <UserSpaceModal user={user} onClose={() => setIsUserModalOpen(false)} onLogout={handleLogout} onOpenLogin={() => { setIsUserModalOpen(false); setIsLoginModalOpen(true); }} onUpdateProfile={(updates) => mockApi.updateProfile(updates).then(updated => setUser(updated))} />}
       {isLoginModalOpen && <LoginModal onLoginSuccess={handleLoginSuccess} onClose={() => setIsLoginModalOpen(false)} />}
 
-      <header className="h-16 shrink-0 border-b border-white/5 bg-[#0a0f14] flex items-center justify-between px-6 z-50">
+      <header id="tutorial-header" className="h-16 shrink-0 border-b border-white/5 bg-[#0a0f14] flex items-center justify-between px-6 z-50">
         <div className="flex items-center gap-8">
           <div className="flex flex-col">
             <h1 className="text-xl font-black tracking-tighter uppercase leading-none">
-              足球战术<span className="text-blue-500 ml-1">科普系统</span>
+              足球<span className="text-blue-500 ml-1">可视化科普系统</span>
             </h1>
-            <p className="text-[10px] text-gray-600 font-bold uppercase tracking-[0.3em] mt-1">Tactical Visualization Platform</p>
+            <p className="text-[9px] text-gray-600 font-bold uppercase tracking-[0.2em] mt-1">Football Tactical Visualization System</p>
           </div>
           {activeTab === 'simulation' && (
              <div className="hidden md:block">
@@ -187,7 +189,7 @@ const App: React.FC = () => {
             {['simulation', 'learning-paths', 'sandbox', 'knowledge', 'about'].map(id => (
               <button 
                 key={id} 
-                onClick={() => setActiveTab(id as any)} 
+                onClick={() => { setActiveTab(id as any); if(id !== 'knowledge') setTargetKnowledgeId(null); }} 
                 className={`px-5 py-2 rounded-xl text-[13px] font-black uppercase tracking-tight transition-all duration-300 ${activeTab === id ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/40' : 'text-gray-400 hover:text-white'}`}
               >
                 {id === 'simulation' ? '战役复盘' : id === 'learning-paths' ? '学习路径' : id === 'sandbox' ? '战术沙盒' : id === 'knowledge' ? '战术百科' : '项目使命'}
@@ -226,7 +228,7 @@ const App: React.FC = () => {
                     showZones={showZones} 
                     annotations={currentPhase.annotations}
                     previousPhasePlayers={previousPhase ? { home: previousPhase.homePlayers, away: previousPhase.awayPlayers } : undefined}
-                    currentPhase={currentPhase} // 注入相位实况数据
+                    currentPhase={currentPhase} 
                  />
               </div>
 
@@ -265,7 +267,6 @@ const App: React.FC = () => {
                   </div>
 
                   <div className="flex items-center gap-8">
-                    {/* 新增：战队色彩自定义区域 */}
                     <div className="flex items-center gap-4 px-4 py-1.5 bg-black/40 rounded-2xl border border-white/5">
                         <div className="flex flex-col items-center gap-1.5">
                             <span className="text-[9px] text-gray-600 font-black uppercase tracking-widest opacity-40">主队色彩</span>
@@ -333,7 +334,12 @@ const App: React.FC = () => {
 
             <section className="flex-grow h-full overflow-y-auto custom-scrollbar p-6 lg:p-10 shrink bg-[#0a0f14]">
                 <div id="tutorial-analysis" className="mb-10">
-                    <AnalysisPanel phase={currentPhase} battle={selectedBattle} hoveredPlayer={hoveredPlayer} />
+                    <AnalysisPanel 
+                      phase={currentPhase} 
+                      battle={selectedBattle} 
+                      hoveredPlayer={hoveredPlayer} 
+                      onNavigateToKnowledge={handleNavigateToKnowledge}
+                    />
                 </div>
                 <div id="tutorial-stats" className="pb-32">
                     <StatsDashboard stats={selectedBattle.stats} teamNames={{ home: selectedBattle.teams.home.name, away: selectedBattle.teams.away.name }} colors={{ home: homeColor, away: awayColor }} teams={selectedBattle.teams} radarData={selectedBattle.radarData} />
@@ -343,7 +349,12 @@ const App: React.FC = () => {
         ) : (
           <div className="w-full h-full overflow-y-auto custom-scrollbar p-6 lg:p-10">
             {activeTab === 'sandbox' && <TacticalSandbox />}
-            {activeTab === 'knowledge' && <TacticalKnowledgeBase onNavigateToBattle={handleNavigateToBattle} />}
+            {activeTab === 'knowledge' && (
+              <TacticalKnowledgeBase 
+                onNavigateToBattle={handleNavigateToBattle} 
+                initialKnowledgeId={targetKnowledgeId}
+              />
+            )}
             {activeTab === 'learning-paths' && <LearningPaths onNavigateToBattle={handleNavigateToBattle} onNavigateToKnowledge={handleNavigateToKnowledge} />}
             {activeTab === 'about' && <ProjectMission />}
           </div>

@@ -1,5 +1,5 @@
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { GLOSSARY } from '../constants';
 import type { GlossaryTerm } from '../types';
 import { ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Tooltip } from 'recharts';
@@ -9,6 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 interface TacticalKnowledgeBaseProps {
   onNavigateToBattle?: (battleId: string) => void;
+  initialKnowledgeId?: string | null;
 }
 
 const CustomRadarTooltip = ({ active, payload }: any) => {
@@ -112,7 +113,7 @@ const DetailColumn: React.FC<{ term: GlossaryTerm; accentColor: string; isSecond
   </div>
 );
 
-export const TacticalKnowledgeBase: React.FC<TacticalKnowledgeBaseProps> = ({ onNavigateToBattle }) => {
+export const TacticalKnowledgeBase: React.FC<TacticalKnowledgeBaseProps> = ({ onNavigateToBattle, initialKnowledgeId }) => {
   const categories = ['All', 'System', 'Position', 'Action', 'Phase', 'Emerging'];
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
@@ -129,6 +130,18 @@ export const TacticalKnowledgeBase: React.FC<TacticalKnowledgeBaseProps> = ({ on
   const [selectedTerm, setSelectedTerm] = useState<GlossaryTerm>(filteredTerms[0] || GLOSSARY[0]);
   const [compareMode, setCompareMode] = useState(false);
   const [comparisonTarget, setComparisonTarget] = useState<GlossaryTerm | null>(null);
+
+  // 处理从外部（如战役）带过来的初始词条 ID
+  useEffect(() => {
+    if (initialKnowledgeId) {
+      const term = GLOSSARY.find(t => t.term === initialKnowledgeId || t.term.includes(initialKnowledgeId));
+      if (term) {
+        setSelectedTerm(term);
+        setActiveCategory('All');
+        setCompareMode(false);
+      }
+    }
+  }, [initialKnowledgeId]);
 
   const radarData = useMemo(() => {
     const primary = selectedTerm.radarProfile || [];

@@ -23,6 +23,7 @@ export interface TacticalEvent {
   minute: string;
   phaseId: string;
   label: string;
+  relatedKnowledgeId?: string; // 新增：关联的战术百科 ID
 }
 
 export interface TacticPhase {

@@ -54,8 +54,8 @@ export const BATTLES: Battle[] = [
       away: { name: '曼彻斯特联', color: '#da291c', coach: '弗格森', formation: '4-4-1-1' }
     },
     events: [
-      { id: 'be1', type: 'Goal', minute: '27:00', phaseId: 'ba1', label: '佩德罗反插破门' },
-      { id: 'be2', type: 'Goal', minute: '54:00', phaseId: 'ba2', label: '梅西远程发炮' },
+      { id: 'be1', type: 'Goal', minute: '27:00', phaseId: 'ba1', label: '佩德罗反插破门', relatedKnowledgeId: 'Tiki-taka (传控足球)' },
+      { id: 'be2', type: 'Goal', minute: '54:00', phaseId: 'ba2', label: '梅西远程发炮', relatedKnowledgeId: 'False 9 (伪九号)' },
     ],
     phases: [
       {
@@ -109,7 +109,7 @@ export const BATTLES: Battle[] = [
     },
     events: [
       { id: 'me1', type: 'Goal', minute: '01:00', phaseId: 'mi1', label: '马尔蒂尼闪击' },
-      { id: 'me2', type: 'Transition', minute: '38:00', phaseId: 'mi2', label: '卡卡半场长传' },
+      { id: 'me2', type: 'Transition', minute: '38:00', phaseId: 'mi2', label: '卡卡半场长传', relatedKnowledgeId: 'Half-space (肋部空间)' },
     ],
     phases: [
       {
@@ -162,8 +162,8 @@ export const BATTLES: Battle[] = [
       away: { name: '巴塞罗那', color: '#a50044', coach: '瓜迪奥拉', formation: '4-3-3' }
     },
     events: [
-      { id: 're1', type: 'Interception', minute: '72:30', phaseId: 'rm1', label: '中场断球启动' },
-      { id: 're2', type: 'Goal', minute: '73:00', phaseId: 'rm3', label: 'C罗冷静终结' },
+      { id: 're1', type: 'Interception', minute: '72:30', phaseId: 'rm1', label: '中场断球启动', relatedKnowledgeId: 'Gegenpressing (反抢压迫)' },
+      { id: 're2', type: 'Goal', minute: '73:00', phaseId: 'rm3', label: 'C罗冷静终结', relatedKnowledgeId: 'Vertical Tiki-Taka (垂直传控)' },
     ],
     phases: [
       {
@@ -227,8 +227,8 @@ export const BATTLES: Battle[] = [
       away: { name: '巴塞罗那', color: '#a50044', coach: '瓜迪奥拉', formation: '4-3-3' }
     },
     events: [
-      { id: 'ie1', type: 'Goal', minute: '30:00', phaseId: 'in2', label: '斯内德扳平' },
-      { id: 'ie2', type: 'Goal', minute: '48:00', phaseId: 'in3', label: '麦孔反超' },
+      { id: 'ie1', type: 'Goal', minute: '30:00', phaseId: 'in2', label: '斯内德扳平', relatedKnowledgeId: 'Anchor Man (中场锚点)' },
+      { id: 'ie2', type: 'Goal', minute: '48:00', phaseId: 'in3', label: '麦孔反超', relatedKnowledgeId: 'Inverted Fullback (内切边卫)' },
     ],
     phases: [
       {

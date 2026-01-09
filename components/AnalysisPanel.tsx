@@ -9,6 +9,7 @@ interface AnalysisPanelProps {
   phase: TacticPhase;
   battle: Battle;
   hoveredPlayer: PlayerPosition | null;
+  onNavigateToKnowledge?: (knowledgeId: string) => void;
 }
 
 const EVENT_VISUAL_MAP: Record<string, any> = {
@@ -66,11 +67,12 @@ const TimelineEvent: React.FC<{
 }> = ({ event, isActive, onHover }) => {
   const ref = React.useRef<HTMLDivElement>(null);
   return (
-    <div 
+    // Change div to motion.div to support onHoverStart and onHoverEnd from framer-motion
+    <motion.div 
       ref={ref}
       className={`flex flex-col items-center gap-2 group cursor-pointer transition-all relative ${isActive ? 'scale-110' : 'opacity-40 hover:opacity-100'}`}
-      onMouseEnter={() => onHover(event, ref.current)}
-      onMouseLeave={() => onHover(null, null)}
+      onHoverStart={() => onHover(event, ref.current)}
+      onHoverEnd={() => onHover(null, null)}
     >
       <div className={`w-10 h-10 rounded-xl flex items-center justify-center border transition-all duration-300 ${
         event.type === 'Goal' ? 'bg-orange-500/20 border-orange-400 shadow-[0_0_15px_rgba(249,115,22,0.2)]' : 'bg-blue-600/20 border-blue-400'
@@ -86,11 +88,11 @@ const TimelineEvent: React.FC<{
       {isActive && (
         <div className="absolute -top-1 -right-1 w-2 h-2 bg-blue-500 rounded-full border border-[#0a0f14] shadow-[0_0_8px_#3b82f6]"></div>
       )}
-    </div>
+    </motion.div>
   );
 };
 
-export const AnalysisPanel: React.FC<AnalysisPanelProps> = ({ phase, battle, hoveredPlayer }) => {
+export const AnalysisPanel: React.FC<AnalysisPanelProps> = ({ phase, battle, hoveredPlayer, onNavigateToKnowledge }) => {
   const [hoveredEvent, setHoveredEvent] = useState<TacticalEvent | null>(null);
   const [hoveredElement, setHoveredElement] = useState<HTMLElement | null>(null);
   const [isVoicePlaying, setIsVoicePlaying] = useState(false);
@@ -157,7 +159,7 @@ export const AnalysisPanel: React.FC<AnalysisPanelProps> = ({ phase, battle, hov
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 10, scale: 0.95 }}
                   style={{ position: 'absolute', bottom: '100%', left: bubblePosition.left, transform: 'translateX(-50%)', marginBottom: '1.5rem', zIndex: 100 }}
-                  className="pointer-events-none"
+                  className="pointer-events-auto"
                 >
                   <div className="bg-[#0f172a] border border-blue-500/40 p-5 rounded-[2.5rem] shadow-2xl backdrop-blur-2xl flex flex-col gap-5 w-[320px]">
                     <div className="flex items-center justify-between">
@@ -169,6 +171,17 @@ export const AnalysisPanel: React.FC<AnalysisPanelProps> = ({ phase, battle, hov
                     </div>
                     <div className="space-y-4">
                         <p className="text-xs text-gray-300 leading-relaxed font-medium italic">“ {EVENT_DETAILS_MAP[hoveredEvent.type]?.desc || '解析中...'} ”</p>
+                        {hoveredEvent.relatedKnowledgeId && (
+                           <button 
+                             onClick={(e) => {
+                               e.stopPropagation();
+                               onNavigateToKnowledge?.(hoveredEvent.relatedKnowledgeId!);
+                             }}
+                             className="w-full py-2.5 bg-blue-600/20 border border-blue-500/30 rounded-xl text-[10px] font-black text-blue-400 uppercase tracking-widest hover:bg-blue-600 hover:text-white transition-all"
+                           >
+                             深度解码战术基因 →
+                           </button>
+                        )}
                         <p className="text-[10px] text-gray-500 border-t border-white/5 pt-2 italic">{EVENT_DETAILS_MAP[hoveredEvent.type]?.tacticalNote}</p>
                     </div>
                   </div>
