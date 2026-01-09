@@ -1,6 +1,7 @@
 
 import type { Battle, GlossaryTerm, PlayerPosition, LearningPath } from './types';
 
+// 通用球员生成器：注入职业级 GPS 数据
 const generateFullSquad = (homeCoords: {x:number, y:number}[], awayCoords: {x:number, y:number}[], homeNames: string[], awayNames: string[], homeNumbers: number[], awayNumbers: number[]) => {
   const homePlayers: PlayerPosition[] = homeCoords.map((c, i) => ({
     id: `h${i}`, 
@@ -31,11 +32,11 @@ const generateFullSquad = (homeCoords: {x:number, y:number}[], awayCoords: {x:nu
   return { homePlayers, awayPlayers };
 };
 
-const RM_NAMES = ['卡西利亚斯', '阿韦洛亚', '佩佩', '拉莫斯', '科恩特朗', '赫迪拉', '哈维·阿隆索', '迪马利亚', '厄齐尔', 'C罗', '本泽马'];
-const RM_NUMS = [1, 17, 3, 4, 5, 6, 14, 22, 10, 7, 9];
-
-const BARSA_NAMES = ['巴尔德斯', '阿尔维斯', '普约尔', '马斯切拉诺', '阿德里亚诺', '布斯克茨', '哈维', '蒂亚戈', '伊涅斯塔', '梅西', '特略'];
-const BARSA_NUMS = [1, 2, 5, 14, 21, 16, 6, 11, 8, 10, 37];
+// 预设名单
+const RM_2012_NAMES = ['卡西', '阿韦洛亚', '佩佩', '拉莫斯', '科恩特朗', '赫迪拉', '阿隆索', '迪马利亚', '厄齐尔', 'C罗', '本泽马'];
+const BARSA_2012_NAMES = ['巴尔德斯', '阿尔维斯', '普约尔', '马斯切拉诺', '阿德里亚诺', '布斯克茨', '哈维', '蒂亚戈', '伊涅斯塔', '梅西', '特略'];
+const INTER_2010_NAMES = ['塞萨尔', '麦孔', '卢西奥', '萨穆埃尔', '齐沃', '萨内蒂', '坎比亚索', '斯内德', '潘德夫', '埃托奥', '米利托'];
+const MU_2013_NAMES = ['德赫亚', '拉斐尔', '里奥', '维迪奇', '埃弗拉', '卡里克', '克莱维利', '吉格斯', '纳尼', '范佩西', '维尔贝克'];
 
 export const BATTLES: Battle[] = [
   {
@@ -59,49 +60,37 @@ export const BATTLES: Battle[] = [
     ],
     phases: [
       {
-        id: 'rm1', title: '低位压缩', 
-        matchMinute: "42:15",
-        matchContext: "1 - 1",
+        id: 'rm1', title: '低位压缩', matchMinute: "42:15", matchContext: "1 - 1",
         description: '皇马在防守端极其紧凑。哈维·阿隆索与赫迪拉横向锁死梅西的接球空间，后防四人组保持极短间距。',
         ...generateFullSquad(
           [{x:5,y:50},{x:22,y:82},{x:18,y:60},{x:18,y:40},{x:22,y:18},{x:35,y:55},{x:35,y:45},{x:45,y:85},{x:42,y:50},{x:45,y:15},{x:52,y:50}],
           [{x:95,y:50},{x:58,y:92},{x:70,y:62},{x:70,y:38},{x:58,y:8},{x:62,y:50},{x:52,y:68},{x:52,y:32},{x:45,y:75},{x:45,y:50},{x:45,y:25}],
-          RM_NAMES, BARSA_NAMES, RM_NUMS, BARSA_NUMS
+          RM_2012_NAMES, BARSA_2012_NAMES, [1,17,3,4,5,6,14,22,10,7,9], []
         ),
         connections: [],
-        annotations: [
-          { type: 'line', points: [{x:22,y:82},{x:18,y:60},{x:18,y:40},{x:22,y:18}], label: '四后卫防线', color: '#ffffff88' },
-          { type: 'area', points: [{x:25,y:30},{x:45,y:30},{x:45,y:70},{x:25,y:70}], label: '梅西封锁区', color: 'rgba(59, 130, 246, 0.2)' }
-        ]
+        annotations: [{ type: 'area', points: [{x:25,y:30},{x:45,y:30},{x:45,y:70},{x:25,y:70}], label: '梅西封锁区', color: 'rgba(59, 130, 246, 0.2)' }]
       },
       {
-        id: 'rm2', title: '瞬时转场', 
-        matchMinute: "72:48",
-        matchContext: "1 - 1",
+        id: 'rm2', title: '瞬时转场', matchMinute: "72:48", matchContext: "1 - 1",
         description: '在断球瞬间，皇马阵型迅速散开。厄齐尔在中场寻找纵向空间，C罗开始在左翼加速。',
         ...generateFullSquad(
           [{x:8,y:50},{x:30,y:85},{x:25,y:65},{x:25,y:35},{x:30,y:15},{x:45,y:60},{x:45,y:40},{x:55,y:80},{x:52,y:50},{x:60,y:20},{x:65,y:55}],
           [{x:92,y:50},{x:65,y:90},{x:75,y:65},{x:75,y:35},{x:65,y:10},{x:55,y:55},{x:48,y:65},{x:48,y:35},{x:42,y:70},{x:42,y:50},{x:42,y:30}],
-          RM_NAMES, BARSA_NAMES, RM_NUMS, BARSA_NUMS
+          RM_2012_NAMES, BARSA_2012_NAMES, [1,17,3,4,5,6,14,22,10,7,9], []
         ),
         connections: [{ from: 'h6', to: 'h8', weight: 8, successRate: 100 }],
         annotations: [{ type: 'arrow', points: [{x:60,y:20},{x:85,y:25}], label: 'C罗突进', color: '#3b82f6' }]
       },
       {
-        id: 'rm3', title: '致命绝杀', 
-        matchMinute: "73:12",
-        matchContext: "2 - 1",
-        description: '厄齐尔送出精准斜塞。C罗高速插上，冷静晃过守门员推射空门，并向诺坎普做出了著名的“Calma”手势。',
+        id: 'rm3', title: '致命绝杀', matchMinute: "73:12", matchContext: "2 - 1",
+        description: '厄齐尔送出精准斜塞。C罗高速插上，冷静晃过守门员推射空门，并做出 Calma 手势。',
         ...generateFullSquad(
           [{x:12,y:50},{x:45,y:85},{x:40,y:65},{x:40,y:35},{x:45,y:15},{x:55,y:62},{x:55,y:38},{x:65,y:88},{x:68,y:55},{x:88,y:25},{x:75,y:45}],
           [{x:88,y:50},{x:75,y:95},{x:82,y:68},{x:82,y:32},{x:75,y:5},{x:65,y:55},{x:55,y:62},{x:55,y:38},{x:45,y:65},{x:48,y:50},{x:42,y:32}],
-          RM_NAMES, BARSA_NAMES, RM_NUMS, BARSA_NUMS
+          RM_2012_NAMES, BARSA_2012_NAMES, [1,17,3,4,5,6,14,22,10,7,9], []
         ),
         connections: [{ from: 'h8', to: 'h9', weight: 10, successRate: 100 }],
-        annotations: [
-          { type: 'arrow', points: [{x:68,y:55},{x:88,y:25}], label: '致命直塞', color: '#ffcc00' },
-          { type: 'focus', points: [{x:88,y:25}], label: 'C罗' }
-        ]
+        annotations: [{ type: 'focus', points: [{x:88,y:25}], label: 'C罗' }]
       }
     ],
     stats: {
@@ -112,10 +101,105 @@ export const BATTLES: Battle[] = [
     radarData: [
       { subject: '压迫', A: 85, B: 70, fullMark: 100 },
       { subject: '控球', A: 30, B: 100, fullMark: 100 },
-      { subject: '速度', A: 100, B: 50, fullMark: 100 },
+      { subject: '反击', A: 100, B: 50, fullMark: 100 },
       { subject: '对抗', A: 95, B: 60, fullMark: 100 },
-      { subject: '纪律', A: 100, B: 80, fullMark: 100 },
-      { subject: '创造力', A: 80, B: 95, fullMark: 100 },
+      { subject: '战术执行', A: 100, B: 80, fullMark: 100 },
+      { subject: '终结力', A: 90, B: 95, fullMark: 100 },
+    ]
+  },
+  {
+    id: 'inter-2010',
+    title: '2010 欧冠：国米 3-1 巴萨',
+    subtitle: '穆里尼奥的防守艺术：梅阿查的枷锁',
+    description: '这是“特殊的一个”职业生涯最具代表性的胜仗之一，通过强力的身体对抗和针对性包夹彻底锁死了巅峰梦三。',
+    score: { home: 3, away: 1 },
+    teams: {
+      home: { 
+        name: '国际米兰', color: '#0066b2', coach: '穆里尼奥', formation: '4-2-3-1', 
+        philosophy: '全员退守，针对梅西进行多人包夹，利用反击中的边路宽度。'
+      },
+      away: { name: '巴塞罗那', color: '#a50044', coach: '瓜迪奥拉', formation: '4-3-3' }
+    },
+    events: [
+      { id: 'e1', type: 'Goal', minute: '19:00', phaseId: 'in1', label: '佩德罗开局闪击' },
+      { id: 'e2', type: 'Transition', minute: '30:00', phaseId: 'in2', label: '斯内德扳平比分' },
+      { id: 'e3', type: 'Goal', minute: '61:00', phaseId: 'in3', label: '米利托锁定胜局' },
+    ],
+    phases: [
+      {
+        id: 'in1', title: '锁死核心', matchMinute: "25:00", matchContext: "0 - 1",
+        description: '萨内蒂和萨穆埃尔在左肋部构建了坚不可摧的防线，切断了梅西与哈维的连线。',
+        ...generateFullSquad(
+          [{x:5,y:50},{x:15,y:85},{x:12,y:60},{x:12,y:40},{x:15,y:15},{x:30,y:60},{x:30,y:40},{x:50,y:50},{x:45,y:85},{x:45,y:15},{x:55,y:50}],
+          [{x:95,y:50},{x:60,y:90},{x:75,y:65},{x:75,y:35},{x:60,y:10},{x:65,y:50},{x:55,y:65},{x:55,y:35},{x:48,y:80},{x:48,y:50},{x:48,y:20}],
+          INTER_2010_NAMES, BARSA_2012_NAMES, [1,2,6,25,26,4,19,10,27,9,22], []
+        ),
+        connections: [],
+        annotations: [{ type: 'area', points: [{x:25,y:25},{x:45,y:25},{x:45,y:75},{x:25,y:75}], label: '死亡绞杀区', color: 'rgba(239, 68, 68, 0.2)' }]
+      },
+      {
+        id: 'in2', title: '麦孔式突进', matchMinute: "48:00", matchContext: "2 - 1",
+        description: '麦孔利用对方边翼卫助攻留下的空档，接米利托传球高速插入禁区完成反超。',
+        ...generateFullSquad(
+          [{x:8,y:50},{x:45,y:85},{x:25,y:65},{x:25,y:35},{x:30,y:15},{x:45,y:55},{x:45,y:45},{x:52,y:50},{x:55,y:80},{x:55,y:20},{x:75,y:82}],
+          [{x:92,y:50},{x:55,y:90},{x:65,y:65},{x:65,y:35},{x:65,y:10},{x:55,y:50},{x:45,y:65},{x:45,y:35},{x:35,y:70},{x:35,y:50},{x:35,y:30}],
+          INTER_2010_NAMES, BARSA_2012_NAMES, [1,2,6,25,26,4,19,10,27,9,22], []
+        ),
+        connections: [{ from: 'h10', to: 'h1', weight: 8, successRate: 100 }],
+        annotations: [{ type: 'arrow', points: [{x:45,y:85},{x:75,y:82}], label: '麦孔插上', color: '#3b82f6' }]
+      }
+    ],
+    stats: {
+      possession: { home: 30, away: 70 },
+      shots: { home: 10, away: 9, onTargetHome: 5, onTargetAway: 4 },
+      passes: { home: 310, away: 680, accuracyHome: 72, accuracyAway: 89 }
+    },
+    radarData: [
+      { subject: '身体对抗', A: 100, B: 60, fullMark: 100 },
+      { subject: '防守深度', A: 100, B: 40, fullMark: 100 },
+      { subject: '反击致命', A: 95, B: 50, fullMark: 100 },
+      { subject: '体能表现', A: 98, B: 85, fullMark: 100 },
+      { subject: '控球', A: 30, B: 100, fullMark: 100 },
+    ]
+  },
+  {
+    id: 'real-madrid-2013-mu',
+    title: '2013 欧冠：皇马 2-1 曼联',
+    subtitle: '梦剧场的逆转：魔笛的一箭穿心',
+    description: '在纳尼红牌后，穆里尼奥迅速通过换上莫德里奇接管比赛，C罗反戈一击奠定胜局。',
+    score: { home: 2, away: 1 },
+    teams: {
+      home: { name: '皇家马德里', color: '#ffffff', coach: '穆里尼奥', formation: '4-2-3-1' },
+      away: { name: '曼彻斯特联', color: '#da291c', coach: '弗格森', formation: '4-4-2' }
+    },
+    events: [
+      { id: 'e1', type: 'Goal', minute: '48:00', phaseId: 'mu1', label: '拉莫斯乌龙球' },
+      { id: 'e2', type: 'Transition', minute: '66:00', phaseId: 'mu2', label: '莫德里奇世界波' },
+      { id: 'e3', type: 'Goal', minute: '69:00', phaseId: 'mu3', label: 'C罗门前包抄' },
+    ],
+    phases: [
+      {
+        id: 'mu2', title: '魔笛接管', matchMinute: "66:05", matchContext: "1 - 1",
+        description: '莫德里奇替补登场后，皇马利用多打一人的优势在中路获得空间。他用一记标志性的弧线球击中立柱内侧入网。',
+        ...generateFullSquad(
+          [{x:10,y:50},{x:45,y:85},{x:40,y:60},{x:40,y:40},{x:45,y:15},{x:55,y:55},{x:55,y:45},{x:62,y:52},{x:75,y:85},{x:75,y:15},{x:82,y:50}],
+          [{x:92,y:50},{x:75,y:90},{x:82,y:60},{x:82,y:40},{x:75,y:10},{x:65,y:65},{x:65,y:35},{x:55,y:80},{x:55,y:20},{x:45,y:50}],
+          ['卡西', '阿韦洛亚', '佩佩', '拉莫斯', '科恩特朗', '阿隆索', '赫迪拉', '莫德里奇', '迪马利亚', 'C罗', '本泽马'], MU_2013_NAMES, [1,17,3,4,5,14,6,19,22,7,9], []
+        ),
+        connections: [],
+        annotations: [{ type: 'arrow', points: [{x:62,y:52},{x:90,y:50}], label: '致命弧线', color: '#ffcc00' }]
+      }
+    ],
+    stats: {
+      possession: { home: 65, away: 35 },
+      shots: { home: 18, away: 12, onTargetHome: 8, onTargetAway: 6 },
+      passes: { home: 580, away: 320, accuracyHome: 88, accuracyAway: 74 }
+    },
+    radarData: [
+      { subject: '调度力', A: 95, B: 60, fullMark: 100 },
+      { subject: '控制力', A: 90, B: 55, fullMark: 100 },
+      { subject: '战术调整', A: 100, B: 80, fullMark: 100 },
+      { subject: '逆境商', A: 95, B: 90, fullMark: 100 },
     ]
   }
 ];
@@ -223,7 +307,7 @@ export const LEARNING_PATHS: LearningPath[] = [
     icon: '🔬',
     modules: [
       { id: 'm3-1', title: '数据看板：HSR 与冲刺阈值', type: 'Theory', description: '分析英超级别的跑动数据，理解高强度跑动对战术的影响。' },
-      { id: 'm3-2', title: 'Sportscode 标签化实战', type: 'Simulation', description: '在 2012 国家德比战役中进行实时标签化（Coding）复盘。', relatedBattleId: 'real-madrid-2012' }
+      { id: 'm3-2', title: 'Sportscode 标签化实战', type: 'Simulation', description: '在经典战役中进行实时标签化（Coding）复盘。', relatedBattleId: 'real-madrid-2012' }
     ]
   }
 ];
