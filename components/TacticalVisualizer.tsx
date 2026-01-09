@@ -58,6 +58,69 @@ export const TacticalVisualizer: React.FC<TacticalVisualizerProps> = ({ type, si
             <Annotation x="68%" y="62%" text="核心接应区" color="#fff" className="opacity-20" />
           </svg>
         );
+      case 'false-9':
+        return (
+          <svg viewBox={zoomedViewBox} className="w-full h-full">
+            <Pitch />
+            <Annotation x="50%" y="20%" text="伪九号回撤拉空 / FALSE 9" className="opacity-30" />
+            <Player x="85%" y="42%" team="away" className="df-1" />
+            <Player x="85%" y="58%" team="away" className="df-2" />
+            
+            <Player x="80%" y="50%" team="home" className="f9-main" />
+            <Player x="60%" y="30%" team="home" className="wg-1" />
+            <Player x="60%" y="70%" team="home" className="wg-2" />
+
+            <style>{`
+              .f9-main { animation: f9Drop 3s infinite ease-in-out; }
+              .df-1 { animation: dfPull 3s infinite ease-in-out; }
+              .wg-1, .wg-2 { animation: wgRun 3s infinite ease-in-out; }
+              @keyframes f9Drop { 0%, 100% { transform: translate(0,0); } 40%, 60% { transform: translate(-30px,0); } }
+              @keyframes dfPull { 0%, 100% { transform: translate(0,0); } 40%, 60% { transform: translate(-10px,-5px); } }
+              @keyframes wgRun { 0%, 50% { transform: translate(0,0); opacity: 0.3; } 80%, 100% { transform: translate(30px, 0); opacity: 1; } }
+            `}</style>
+            <Annotation x="55%" y="52%" text="制造中路人数优势" color="#3b82f6" className="opacity-40" />
+          </svg>
+        );
+      case 'catenaccio':
+        return (
+          <svg viewBox={zoomedViewBox} className="w-full h-full">
+            <Pitch />
+            <Annotation x="50%" y="20%" text="自由人清道夫模式 / LIBERO" className="opacity-30" />
+            <Player x="80%" y="30%" team="away" />
+            <Player x="80%" y="50%" team="away" />
+            <Player x="80%" y="70%" team="away" />
+            <Player x="92%" y="50%" team="away" className="libero" />
+            
+            <Player x="60%" y="45%" team="home" className="att-1" />
+            <circle cx="62%" cy="47%" r="3" fill="#fff" className="att-ball" />
+
+            <style>{`
+              .libero { animation: liberoSweep 2s infinite alternate ease-in-out; }
+              .att-ball { animation: attShoot 2s infinite; }
+              @keyframes liberoSweep { from { transform: translate(0,-40px); } to { transform: translate(0,40px); } }
+              @keyframes attShoot { 0% { transform: translate(0,0); opacity:1; } 60% { transform: translate(30px,0); opacity:0; } 100% { transform: translate(30px,0); opacity:0; } }
+            `}</style>
+            <Annotation x="90%" y="35%" text="最后一道防线" color="#ef4444" className="opacity-40" />
+          </svg>
+        );
+      case 'total-football':
+        return (
+          <svg viewBox={zoomedViewBox} className="w-full h-full">
+            <Pitch />
+            <Annotation x="50%" y="20%" text="位置轮转体系 / POSITION ROTATION" className="opacity-30" />
+            <Player x="40%" y="40%" team="home" className="tf-1" />
+            <Player x="60%" y="60%" team="home" className="tf-2" />
+            <circle cx="50%" cy="50%" r="50" fill="none" stroke="rgba(59,130,246,0.1)" strokeDasharray="4,4" />
+
+            <style>{`
+              .tf-1 { animation: tfRotate1 4s infinite linear; }
+              .tf-2 { animation: tfRotate2 4s infinite linear; }
+              @keyframes tfRotate1 { 0% { transform: rotate(0deg) translate(40px) rotate(0deg); } 100% { transform: rotate(360deg) translate(40px) rotate(-360deg); } }
+              @keyframes tfRotate2 { 0% { transform: rotate(180deg) translate(40px) rotate(-180deg); } 100% { transform: rotate(540deg) translate(40px) rotate(-540deg); } }
+            `}</style>
+            <Annotation x="50%" y="52%" text="全员流动性" color="#3b82f6" className="opacity-40" />
+          </svg>
+        );
       case 'vertical-counter':
         return (
           <svg viewBox={zoomedViewBox} className="w-full h-full">

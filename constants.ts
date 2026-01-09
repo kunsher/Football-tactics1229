@@ -163,72 +163,6 @@ export const BATTLES: Battle[] = [
       { subject: '空间限制', A: 100, B: 70, fullMark: 100 },
       { subject: '身体负荷', A: 98, B: 85, fullMark: 100 },
     ]
-  },
-  {
-    id: 'real-madrid-2013-mu',
-    title: '2013 欧冠：皇马 2-1 曼联',
-    subtitle: '梦剧场的逆转：魔笛与 C 罗的黄昏突击',
-    description: '在老特拉福德，纳尼的红牌成为转折点，但穆里尼奥通过换上莫德里奇迅速接管中场，C罗反戈一击奠定胜局，展示了其在极端逆境下的战术应变。',
-    score: { home: 2, away: 1 },
-    teams: {
-      home: { name: '皇家马德里', color: '#ffffff', coach: '穆里尼奥', formation: '4-2-3-1', philosophy: '通过换人增加中路控球密度，利用阵型宽度撕扯少一人作战的防线。' },
-      away: { name: '曼彻斯特联', color: '#da291c', coach: '弗格森', formation: '4-4-2' }
-    },
-    events: [
-      { id: 'e1', type: 'Goal', minute: '48:00', phaseId: 'mu1', label: '拉莫斯不幸乌龙' },
-      { id: 'e2', type: 'Transition', minute: '66:00', phaseId: 'mu2', label: '莫德里奇惊天波' },
-      { id: 'e3', type: 'Goal', minute: '69:00', phaseId: 'mu3', label: 'C罗门前绝杀' },
-    ],
-    phases: [
-      {
-        id: 'mu1', title: '阵地僵持：红牌前的胶着', matchMinute: "35:00", matchContext: "0 - 0",
-        description: '费格森安排维尔贝克死缠哈维·阿隆索。皇马在中场推进受阻，两翼的 C 罗和迪马利亚不断通过个人内切寻求空间。',
-        ...generateFullSquad(
-          [{x:5,y:50},{x:20,y:85},{x:18,y:65},{x:18,y:35},{x:20,y:15},{x:35,y:60},{x:35,y:40},{x:50,y:82},{x:48,y:50},{x:50,y:18},{x:58,y:50}],
-          [{x:95,y:50},{x:65,y:90},{x:75,y:65},{x:75,y:35},{x:65,y:10},{x:55,y:60},{x:55,y:40},{x:48,y:75},{x:48,y:25},{x:40,y:55},{x:40,y:45}],
-          RM_2012_NAMES, MU_2013_NAMES, [1,17,3,4,5,14,6,22,10,7,9], []
-        ),
-        connections: [],
-        annotations: [{ type: 'focus', points: [{x:35,y:60}], label: '阿隆索被包围' }]
-      },
-      {
-        id: 'mu2', title: '魔笛变招：空间的解放', matchMinute: "66:05", matchContext: "1 - 1",
-        description: '纳尼离场后，穆里尼奥派上莫德里奇。克罗地亚人在中路通过横向盘带创造出 25 码外的远射窗口，皮球击中立柱内侧入网。',
-        ...generateFullSquad(
-          [{x:10,y:50},{x:45,y:85},{x:40,y:60},{x:40,y:40},{x:45,y:15},{x:55,y:55},{x:55,y:45},{x:62,y:52},{x:75,y:85},{x:75,y:15},{x:82,y:50}],
-          [{x:92,y:50},{x:75,y:90},{x:82,y:60},{x:82,y:40},{x:75,y:10},{x:65,y:65},{x:65,y:35},{x:55,y:80},{x:55,y:20},{x:45,y:50}],
-          ['卡西', '阿韦洛亚', '佩佩', '拉莫斯', '科恩特朗', '阿隆索', '赫迪拉', '莫德里奇', '迪马利亚', 'C罗', '本泽马'], MU_2013_NAMES, [1,17,3,4,5,14,6,19,22,7,9], []
-        ),
-        connections: [],
-        annotations: [
-          { type: 'arrow', points: [{x:62,y:52},{x:90,y:50}], label: '外脚背世界波', color: '#ffcc00' },
-          { type: 'area', points: [{x:55,y:40},{x:75,y:40},{x:75,y:65},{x:55,y:65}], label: '中场控制域', color: 'rgba(59, 130, 246, 0.1)' }
-        ]
-      },
-      {
-        id: 'mu3', title: 'C罗包抄：反戈一击', matchMinute: "69:00", matchContext: "2 - 1",
-        description: '皇马连续传递后，伊瓜因在禁区右侧送出横传。C 罗出现在远端，以后点铲射完成进球，但他出于尊重拒绝庆祝。',
-        ...generateFullSquad(
-          [{x:15,y:50},{x:55,y:85},{x:50,y:65},{x:50,y:35},{x:55,y:15},{x:65,y:60},{x:65,y:40},{x:75,y:82},{x:78,y:55},{x:88,y:25},{x:82,y:45}],
-          [{x:88,y:50},{x:80,y:92},{x:85,y:68},{x:85,y:32},{x:80,y:8},{x:70,y:55},{x:65,y:62},{x:65,y:38},{x:55,y:65},{x:48,y:50},{x:42,y:32}],
-          ['卡西', '阿韦洛亚', '佩佩', '拉莫斯', '科恩特朗', '阿隆索', '赫迪拉', '厄齐尔', '伊瓜因', 'C罗', '莫德里奇'], MU_2013_NAMES, [1,17,3,4,5,14,6,10,20,7,19], []
-        ),
-        connections: [{ from: 'h8', to: 'h9', weight: 10, successRate: 100 }],
-        annotations: [{ type: 'focus', points: [{x:88,y:25}], label: 'C罗后点包抄' }]
-      }
-    ],
-    stats: {
-      possession: { home: 65, away: 35 },
-      shots: { home: 18, away: 12, onTargetHome: 8, onTargetAway: 6 },
-      passes: { home: 580, away: 320, accuracyHome: 88, accuracyAway: 74 }
-    },
-    radarData: [
-      { subject: '调度维度', A: 95, B: 60, fullMark: 100 },
-      { subject: '控制韧性', A: 90, B: 75, fullMark: 100 },
-      { subject: '战术变阵', A: 100, B: 80, fullMark: 100 },
-      { subject: '致命传导', A: 92, B: 50, fullMark: 100 },
-      { subject: '心理博弈', A: 95, B: 90, fullMark: 100 },
-    ]
   }
 ];
 
@@ -272,6 +206,63 @@ export const GLOSSARY: GlossaryTerm[] = [
     famousTeams: ['多特蒙德 (2012)', '利物浦 (2019)']
   },
   {
+    term: 'False 9 (伪九号)',
+    definition: '一名前锋位置上的球员，频繁地大幅度回撤到中场接球，目的是将对方的中后卫带离防守位置，并为两侧边锋创造插入身后的空间。',
+    category: 'Position',
+    icon: '🔄',
+    visualEffect: 'false-9',
+    complexity: 5,
+    strategicFocus: ['空间拉引', '中路超载', '防线撕裂'],
+    historicalContext: '从 1930 年代的匈牙利队开始萌芽，在瓜迪奥拉时代的梅西身上达到了战术巅峰。',
+    keyTraits: ['极高视野', '中路调度', '瞬间前插'],
+    radarProfile: [
+      { subject: '创造力', A: 100, fullMark: 100 },
+      { subject: '传球', A: 95, fullMark: 100 },
+      { subject: '射门', A: 92, fullMark: 100 },
+      { subject: '跑动量', A: 80, fullMark: 100 },
+      { subject: '身体对抗', A: 40, fullMark: 100 }
+    ],
+    famousTeams: ['巴塞罗那 (2009-2012)', '罗马 (托蒂时期)']
+  },
+  {
+    term: 'Catenaccio (十字联防)',
+    definition: '传统的意大利防守体系，强调一名自由人（Libero）在防线后方的查缺补漏，结合严密的区域标记。',
+    category: 'System',
+    icon: '🔒',
+    visualEffect: 'catenaccio',
+    complexity: 3,
+    strategicFocus: ['自由人补位', '防守层次', '反击转场'],
+    historicalContext: '1960 年代海伦尼奥·赫雷拉带领“大国际米兰”席卷欧洲的法宝。',
+    keyTraits: ['一人多余原则', '极高纪律性', '暴力反击'],
+    radarProfile: [
+      { subject: '防守深度', A: 100, fullMark: 100 },
+      { subject: '拦截成功率', A: 98, fullMark: 100 },
+      { subject: '长传', A: 85, fullMark: 100 },
+      { subject: '控球率', A: 30, fullMark: 100 },
+      { subject: '侵略性', A: 90, fullMark: 100 }
+    ],
+    famousTeams: ['国际米兰 (1964)', '意大利国家队 (1982)']
+  },
+  {
+    term: 'Total Football (全攻全守)',
+    definition: '一种任何位置的球员都可以替代其他任何位置球员的体系。要求全员具备极高的技术素养和位置感知能力。',
+    category: 'System',
+    icon: '🌌',
+    visualEffect: 'total-football',
+    complexity: 5,
+    strategicFocus: ['位置轮转', '全场压迫', '空间控制'],
+    historicalContext: '由米歇尔斯开创，克鲁伊夫在球场上完美践行的荷兰足球灵魂。',
+    keyTraits: ['全员进攻', '灵活换位', '越位陷阱'],
+    radarProfile: [
+      { subject: '通用性', A: 100, fullMark: 100 },
+      { subject: '体能要求', A: 95, fullMark: 100 },
+      { subject: '控球', A: 90, fullMark: 100 },
+      { subject: '战术智商', A: 100, fullMark: 100 },
+      { subject: '防守稳定性', A: 70, fullMark: 100 }
+    ],
+    famousTeams: ['阿贾克斯 (1970s)', '荷兰国家队 (1974)']
+  },
+  {
     term: 'Low Block (低位防守)',
     definition: '将全队防守线大幅向本方禁区回撤，通过压缩后场深度和宽度来消除对手的插上空间。',
     category: 'Phase',
@@ -279,7 +270,7 @@ export const GLOSSARY: GlossaryTerm[] = [
     visualEffect: 'low-block',
     complexity: 3,
     strategicFocus: ['深度防御', '间距控制', '长传转场'],
-    historicalContext: '意式防守（Catenaccio）的现代化演变，穆里尼奥、马竞西蒙尼的拿手好戏。',
+    historicalContext: '穆里尼奥、马竞西蒙尼的拿手好戏。',
     keyTraits: ['防线前移限制', '双后腰锁喉', '反击前锋孤立'],
     radarProfile: [
       { subject: '防守深度', A: 100, fullMark: 100 },
