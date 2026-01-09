@@ -40,7 +40,7 @@ export const TacticalVisualizer: React.FC<TacticalVisualizerProps> = ({ type, si
         return (
           <svg viewBox={zoomedViewBox} className="w-full h-full">
             <Pitch />
-            <Annotation x="50%" y="25%" text="三角传递网络 / TRIANGLE" className="opacity-30" />
+            <Annotation x="50%" y="25%" text="扫描传球通道 / SCANNING LANES" className="opacity-30" />
             <g className="passing-lanes">
                <line x1="35%" y1="35%" x2="65%" y2="35%" stroke="#3b82f6" strokeWidth="0.5" strokeDasharray="2,2" className="opacity-40" />
                <line x1="65%" y1="35%" x2="50%" y2="65%" stroke="#3b82f6" strokeWidth="0.5" strokeDasharray="2,2" className="opacity-40" />
@@ -55,14 +55,17 @@ export const TacticalVisualizer: React.FC<TacticalVisualizerProps> = ({ type, si
               <animate attributeName="cy" values="35%;35%;65%;35%" dur="1.5s" repeatCount="indefinite" calcMode="spline" keySplines="0.42 0 0.58 1; 0.42 0 0.58 1; 0.42 0 0.58 1" />
             </circle>
             
-            <Annotation x="68%" y="62%" text="核心接应区" color="#fff" className="opacity-20" />
+            <Annotation x="50%" y="55%" text="寻找第三人跑位" color="#fff" className="opacity-40 text-[6px]" />
           </svg>
         );
       case 'false-9':
         return (
           <svg viewBox={zoomedViewBox} className="w-full h-full">
             <Pitch />
-            <Annotation x="50%" y="20%" text="伪九号回撤拉空 / FALSE 9" className="opacity-30" />
+            <Annotation x="50%" y="20%" text="防线深度牵引 / DEPTH PULL" className="opacity-30" />
+            <rect x="80%" y="35%" width="20" height="30" fill="rgba(239, 68, 68, 0.1)" stroke="#ef4444" strokeWidth="0.5" strokeDasharray="1,1" className="df-zone" />
+            <Annotation x="90%" y="68%" text="制造真空区" color="#ef4444" className="opacity-40 text-[6px]" />
+            
             <Player x="85%" y="42%" team="away" className="df-1" />
             <Player x="85%" y="58%" team="away" className="df-2" />
             
@@ -74,68 +77,58 @@ export const TacticalVisualizer: React.FC<TacticalVisualizerProps> = ({ type, si
               .f9-main { animation: f9Drop 3s infinite ease-in-out; }
               .df-1 { animation: dfPull 3s infinite ease-in-out; }
               .wg-1, .wg-2 { animation: wgRun 3s infinite ease-in-out; }
+              .df-zone { animation: zoneFade 3s infinite ease-in-out; }
               @keyframes f9Drop { 0%, 100% { transform: translate(0,0); } 40%, 60% { transform: translate(-30px,0); } }
               @keyframes dfPull { 0%, 100% { transform: translate(0,0); } 40%, 60% { transform: translate(-10px,-5px); } }
               @keyframes wgRun { 0%, 50% { transform: translate(0,0); opacity: 0.3; } 80%, 100% { transform: translate(30px, 0); opacity: 1; } }
+              @keyframes zoneFade { 0%, 100% { opacity: 0; } 50% { opacity: 0.3; } }
             `}</style>
-            <Annotation x="55%" y="52%" text="制造中路人数优势" color="#3b82f6" className="opacity-40" />
           </svg>
         );
-      case 'catenaccio':
+      case 'counter-press':
         return (
           <svg viewBox={zoomedViewBox} className="w-full h-full">
             <Pitch />
-            <Annotation x="50%" y="20%" text="自由人清道夫模式 / LIBERO" className="opacity-30" />
-            <Player x="80%" y="30%" team="away" />
-            <Player x="80%" y="50%" team="away" />
-            <Player x="80%" y="70%" team="away" />
-            <Player x="92%" y="50%" team="away" className="libero" />
+            <Annotation x="50%" y="25%" text="切断出球角度 / ANGLE CLOSURE" className="opacity-30" />
+            <Player x="50%" y="50%" team="away" />
             
-            <Player x="60%" y="45%" team="home" className="att-1" />
-            <circle cx="62%" cy="47%" r="3" fill="#fff" className="att-ball" />
+            {/* 动态压迫区 */}
+            <circle cx="50%" cy="50%" r="30" fill="none" stroke="rgba(239,68,68,0.2)" strokeWidth="1" strokeDasharray="2,2" className="press-wave" />
+            
+            <Player x="35%" y="35%" team="home" className="press-1" />
+            <Player x="65%" y="35%" team="home" className="press-2" />
+            <Player x="50%" y="75%" team="home" className="press-3" />
+            
+            <Annotation x="35%" y="30%" text="第一合围" color="#fff" className="opacity-20 text-[6px]" />
 
             <style>{`
-              .libero { animation: liberoSweep 2s infinite alternate ease-in-out; }
-              .att-ball { animation: attShoot 2s infinite; }
-              @keyframes liberoSweep { from { transform: translate(0,-40px); } to { transform: translate(0,40px); } }
-              @keyframes attShoot { 0% { transform: translate(0,0); opacity:1; } 60% { transform: translate(30px,0); opacity:0; } 100% { transform: translate(30px,0); opacity:0; } }
+              .press-1 { animation: press1 1.2s infinite alternate ease-in-out; }
+              .press-2 { animation: press2 1.2s infinite alternate ease-in-out; }
+              .press-3 { animation: press3 1.2s infinite alternate ease-in-out; }
+              .press-wave { animation: waveScale 1.2s infinite alternate; }
+              @keyframes waveScale { from { r: 15; opacity: 0.5; } to { r: 35; opacity: 0; } }
+              @keyframes press1 { from { transform: translate(0,0); } to { transform: translate(35px,35px); } }
+              @keyframes press2 { from { transform: translate(0,0); } to { transform: translate(-35px,35px); } }
+              @keyframes press3 { from { transform: translate(0,0); } to { transform: translate(0,-55px); } }
             `}</style>
-            <Annotation x="90%" y="35%" text="最后一道防线" color="#ef4444" className="opacity-40" />
-          </svg>
-        );
-      case 'total-football':
-        return (
-          <svg viewBox={zoomedViewBox} className="w-full h-full">
-            <Pitch />
-            <Annotation x="50%" y="20%" text="位置轮转体系 / POSITION ROTATION" className="opacity-30" />
-            <Player x="40%" y="40%" team="home" className="tf-1" />
-            <Player x="60%" y="60%" team="home" className="tf-2" />
-            <circle cx="50%" cy="50%" r="50" fill="none" stroke="rgba(59,130,246,0.1)" strokeDasharray="4,4" />
-
-            <style>{`
-              .tf-1 { animation: tfRotate1 4s infinite linear; }
-              .tf-2 { animation: tfRotate2 4s infinite linear; }
-              @keyframes tfRotate1 { 0% { transform: rotate(0deg) translate(40px) rotate(0deg); } 100% { transform: rotate(360deg) translate(40px) rotate(-360deg); } }
-              @keyframes tfRotate2 { 0% { transform: rotate(180deg) translate(40px) rotate(-180deg); } 100% { transform: rotate(540deg) translate(40px) rotate(-540deg); } }
-            `}</style>
-            <Annotation x="50%" y="52%" text="全员流动性" color="#3b82f6" className="opacity-40" />
           </svg>
         );
       case 'vertical-counter':
         return (
           <svg viewBox={zoomedViewBox} className="w-full h-full">
             <Pitch />
-            <Annotation x="50%" y="30%" text="垂直打击路径 / VERTICAL" className="opacity-30" />
+            <Annotation x="50%" y="30%" text="垂直渗透效率 / VERTICALITY" className="opacity-30" />
+            
             <Player x="20%" y="50%" team="home" />
             <Player x="45%" y="40%" team="home" className="vc-mid" />
             <Player x="80%" y="50%" team="home" className="vc-fwd" />
             
             <g className="action-labels">
                <Annotation x="45%" y="32%" text="枢纽过渡" color="#3b82f6" className="vc-mid-label" />
-               <Annotation x="80%" y="62%" text="弱侧前插" color="#ff4444" className="vc-fwd-label" />
+               <Annotation x="80%" y="62%" text="致命突刺" color="#ff4444" className="vc-fwd-label" />
             </g>
 
-            <circle cx="20%" cy="50%" r="4" fill="#fff">
+            <circle cx="20%" cy="50%" r="4" fill="#fff" className="ball-anim">
                 <animate attributeName="cx" values="20%;45%;80%;80%" dur="2s" repeatCount="indefinite" />
                 <animate attributeName="cy" values="50%;40%;50%;50%" dur="2s" repeatCount="indefinite" />
                 <animate attributeName="opacity" values="0;1;1;0" dur="2s" repeatCount="indefinite" />
@@ -149,66 +142,19 @@ export const TacticalVisualizer: React.FC<TacticalVisualizerProps> = ({ type, si
             `}</style>
           </svg>
         );
-      case 'pressing':
-      case 'counter-press':
-        return (
-          <svg viewBox={zoomedViewBox} className="w-full h-full">
-            <Pitch />
-            <Annotation x="50%" y="25%" text="高压合围 / COLLECTIVE PRESS" className="opacity-30" />
-            <Player x="50%" y="50%" team="away" />
-            <circle cx="52%" cy="52%" r="4" fill="#fff" style={{ filter: 'drop-shadow(0 0 4px #fff)' }} />
-            <g>
-              <Player x="35%" y="35%" team="home" className="press-1" />
-              <Player x="65%" y="35%" team="home" className="press-2" />
-              <Player x="50%" y="75%" team="home" className="press-3" />
-              
-              <line x1="35%" y1="35%" x2="48%" y2="48%" stroke="#fff" strokeWidth="0.5" strokeDasharray="1,1" className="press-line-1" />
-              <line x1="65%" y1="35%" x2="52%" y2="48%" stroke="#fff" strokeWidth="0.5" strokeDasharray="1,1" className="press-line-2" />
-              <line x1="50%" y1="75%" x2="50%" y2="55%" stroke="#fff" strokeWidth="0.5" strokeDasharray="1,1" className="press-line-3" />
-
-              <style>{`
-                .press-1 { animation: press1 1.2s infinite alternate ease-in-out; }
-                .press-2 { animation: press2 1.2s infinite alternate ease-in-out; }
-                .press-3 { animation: press3 1.2s infinite alternate ease-in-out; }
-                .press-line-1, .press-line-2, .press-line-3 { animation: lineFade 1.2s infinite alternate; }
-                @keyframes lineFade { from { opacity: 0; } to { opacity: 0.3; } }
-                @keyframes press1 { from { transform: translate(0,0); } to { transform: translate(35px,35px); } }
-                @keyframes press2 { from { transform: translate(0,0); } to { transform: translate(-35px,35px); } }
-                @keyframes press3 { from { transform: translate(0,0); } to { transform: translate(0,-55px); } }
-              `}</style>
-            </g>
-            <Annotation x="50%" y="60%" text="截断路径" color="#ef4444" className="opacity-40" />
-          </svg>
-        );
-      case 'low-block':
-        return (
-          <svg viewBox={zoomedViewBox} className="w-full h-full">
-            <Pitch />
-            <Annotation x="50%" y="25%" text="紧凑防守块 / COMPACT BLOCK" className="opacity-30" />
-            <g className="defense-block">
-              <Player x="72%" y="25%" team="away" />
-              <Player x="72%" y="42%" team="away" />
-              <Player x="72%" y="58%" team="away" />
-              <Player x="72%" y="75%" team="away" />
-              <rect x="70%" y="20%" width="15" height="60%" fill="rgba(239, 68, 68, 0.1)" stroke="rgba(239, 68, 68, 0.3)" strokeDasharray="2,2" />
-              <Annotation x="88%" y="50%" text="防线平移" align="start" color="#ef4444" className="opacity-40" />
-            </g>
-            <Player x="35%" y="50%" team="home" />
-            <style>{`
-              .defense-block { animation: blockShift 2.5s infinite alternate ease-in-out; }
-              @keyframes blockShift { from { transform: translate(0, -12px); } to { transform: translate(0, 12px); } }
-            `}</style>
-          </svg>
-        );
       case 'overlap':
         return (
           <svg viewBox={zoomedViewBox} className="w-full h-full">
             <Pitch />
-            <Annotation x="50%" y="15%" text="边后卫套边 / OVERLAP RUN" className="opacity-30" />
+            <Annotation x="50%" y="15%" text="边路超载博弈 / OVERLAP" className="opacity-30" />
+            
+            {/* 边路空档标注 */}
+            <rect x="75%" y="5%" width="20" height="25" fill="rgba(59,130,246,0.1)" stroke="#3b82f6" strokeWidth="0.5" strokeDasharray="2,2" />
+            <Annotation x="85%" y="35%" text="利用边路真空" color="#3b82f6" className="opacity-40 text-[6px]" />
+
             <Player x="65%" y="25%" team="home" />
-            <Annotation x="65%" y="35%" text="内切吸引" color="#fff" className="opacity-20" />
             <Player x="40%" y="15%" team="home" className="fullback-overlap" />
-            <path d="M 40 15 Q 65 10 85 20" fill="none" stroke="#3b82f6" strokeWidth="0.5" strokeDasharray="2,2" className="opacity-40" />
+            
             <style>{`
               .fullback-overlap { animation: overlapRun 3s infinite ease-out; }
               @keyframes overlapRun { 0% { cx: 40%; cy: 15%; opacity: 0; } 10% { opacity: 1; } 80% { cx: 85%; cy: 20%; opacity: 1; } 100% { cx: 85%; cy: 20%; opacity: 0; } }
@@ -219,7 +165,7 @@ export const TacticalVisualizer: React.FC<TacticalVisualizerProps> = ({ type, si
         return (
           <svg viewBox={zoomedViewBox} className="w-full h-full">
             <Pitch />
-            <text x="50%" y="50%" fill="#fff" fontSize="10" fontWeight="900" textAnchor="middle" className="opacity-20 uppercase tracking-[0.5em]">Tactic Loading...</text>
+            <Annotation x="50%" y="50%" text="战术推演中..." className="opacity-20" />
           </svg>
         );
     }

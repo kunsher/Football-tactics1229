@@ -16,8 +16,8 @@ interface TacticBoardProps {
   showZones?: boolean;
   annotations?: TacticalAnnotation[];
   previousPhasePlayers?: { home: PlayerPosition[], away: PlayerPosition[] };
-  currentPhase?: TacticPhase; // 新增：用于获取当前比赛时间
-  battleTitle?: string; // 比赛名称
+  currentPhase?: TacticPhase; 
+  battleTitle?: string; 
 }
 
 const FootballPitch: React.FC<{ showZones?: boolean }> = memo(({ showZones }) => (
@@ -138,30 +138,48 @@ const AnnotationLayer: React.FC<{ annotations: TacticalAnnotation[] }> = ({ anno
       const key = `${ann.type}-${i}`;
       if (ann.type === 'line') {
         return (
-          <path key={key} d={`M ${ann.points.map(p => `${p.x * 12},${p.y * 6.7 + 5}`).join(' L ')}`} 
-            fill="none" stroke={ann.color || 'rgba(59, 130, 246, 0.6)'} strokeWidth="3" strokeDasharray="8,4" 
-            className="animate-fade-in" />
+          <g key={key} className="animate-fade-in">
+            <path d={`M ${ann.points.map(p => `${p.x * 12},${p.y * 6.7 + 5}`).join(' L ')}`} 
+              fill="none" stroke={ann.color || 'rgba(59, 130, 246, 0.6)'} strokeWidth="3" strokeDasharray="8,4" />
+            {ann.label && (
+               <text x={ann.points[0].x * 12} y={ann.points[0].y * 6.7 - 10} fill="#fff" fontSize="10" fontWeight="900" className="uppercase tracking-widest bg-black/40">{ann.label}</text>
+            )}
+          </g>
         );
       }
       if (ann.type === 'area') {
         return (
-          <polygon key={key} points={ann.points.map(p => `${p.x * 12},${p.y * 6.7 + 5}`).join(' ')} 
-            fill={ann.color || "rgba(59, 130, 246, 0.2)"} stroke="rgba(59, 130, 246, 0.4)" strokeWidth="2" 
-            className="animate-fade-in" />
+          <g key={key} className="animate-fade-in">
+            <polygon points={ann.points.map(p => `${p.x * 12},${p.y * 6.7 + 5}`).join(' ')} 
+              fill={ann.color || "rgba(59, 130, 246, 0.2)"} stroke="rgba(59, 130, 246, 0.4)" strokeWidth="2" />
+            {ann.label && (
+               <text x={ann.points[0].x * 12 + 20} y={ann.points[0].y * 6.7 + 20} fill="#fff" fontSize="11" fontWeight="900" className="uppercase tracking-[0.2em]">{ann.label}</text>
+            )}
+          </g>
         );
       }
       if (ann.type === 'arrow' && ann.points.length >= 2) {
         const p1 = ann.points[0];
         const p2 = ann.points[1];
         return (
-          <line key={key} x1={p1.x*12} y1={p1.y*6.7+5} x2={p2.x*12} y2={p2.y*6.7+5} 
-            stroke="rgba(59, 130, 246, 1)" strokeWidth="4" markerEnd="url(#arrowhead)" className="animate-fade-in" />
+          <g key={key} className="animate-fade-in">
+            <line x1={p1.x*12} y1={p1.y*6.7+5} x2={p2.x*12} y2={p2.y*6.7+5} 
+              stroke="rgba(59, 130, 246, 1)" strokeWidth="4" markerEnd="url(#arrowhead)" />
+            {ann.label && (
+               <text x={p2.x*12 + 10} y={p2.y*6.7 + 25} fill="#fff" fontSize="10" fontWeight="900" textAnchor="middle" className="uppercase tracking-widest">{ann.label}</text>
+            )}
+          </g>
         );
       }
       if (ann.type === 'focus') {
         const p = ann.points[0];
         return (
-          <circle key={key} cx={p.x*12} cy={p.y*6.7+5} r="45" fill="none" stroke="rgba(59, 130, 246, 0.5)" strokeWidth="3" strokeDasharray="6,6" className="animate-[spin_25s_linear_infinite]" />
+          <g key={key} className="animate-fade-in">
+            <circle cx={p.x*12} cy={p.y*6.7+5} r="45" fill="none" stroke="rgba(59, 130, 246, 0.5)" strokeWidth="3" strokeDasharray="6,6" className="animate-[spin_25s_linear_infinite]" />
+            {ann.label && (
+               <text x={p.x*12} y={p.y*6.7 - 55} fill="#3b82f6" fontSize="12" fontWeight="900" textAnchor="middle" className="uppercase tracking-[0.3em]">{ann.label}</text>
+            )}
+          </g>
         );
       }
       return null;
@@ -190,20 +208,17 @@ export const TacticBoard: React.FC<TacticBoardProps> = ({
 
     return (
         <div className="w-full h-full max-w-7xl aspect-[120/68] relative select-none">
-            {/* 比赛实况 HUD */}
+            {/* 比赛实况 HUD - 仅保留非阻塞性的基础信息 */}
             {currentPhase?.matchMinute && (
                 <div className="absolute top-6 left-6 z-[100] animate-fade-in pointer-events-none">
                     <div className="bg-black/80 backdrop-blur-xl border border-white/10 rounded-xl px-4 py-2 flex items-center gap-4 shadow-2xl">
                         <div className="flex flex-col">
-                            <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Live Match Time</span>
-                            <div className="flex items-center gap-2">
-                                <div className="w-2 h-2 rounded-full bg-red-600 animate-pulse shadow-[0_0_8px_red]"></div>
-                                <span className="text-xl font-black text-white font-mono tabular-nums leading-none">{currentPhase.matchMinute}</span>
-                            </div>
+                            <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Match Time</span>
+                            <span className="text-xl font-black text-white font-mono tabular-nums leading-none">{currentPhase.matchMinute}</span>
                         </div>
                         <div className="w-px h-8 bg-white/10"></div>
                         <div className="flex flex-col">
-                            <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Score Context</span>
+                            <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Score</span>
                             <span className="text-xl font-black text-blue-400 tracking-tighter leading-none">{currentPhase.matchContext || '0 - 0'}</span>
                         </div>
                     </div>
