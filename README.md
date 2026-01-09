@@ -65,7 +65,7 @@ const transformY = player.y * 6.7 + 5; // 逻辑 100 映射到 680 像素视口�
 
 ## 🤖 AI 辅助作用 (AI Co-Pilot Role)
 
-本项目的开发采用了 **AI 增强开发 (AI-Augmented Development)** 模式，Google Gemini 模型在其中扮演了重要辅助角色：
+本项目 Google Gemini 模型在其中扮演了重要辅助角色：
 
 1.  **战术语义建模**：AI 辅助将《战术史》中的文字描述转化为逻辑坐标序列，丰富了内置的战术案例库。
 2.  **数学算法优化**：在处理 SVG 复杂连线（如 TacticalVisualizer 中的弧线压迫逻辑）时，AI 提供了精确的三角函数计算支持。
