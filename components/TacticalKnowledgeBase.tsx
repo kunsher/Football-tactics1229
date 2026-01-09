@@ -381,7 +381,8 @@ export const TacticalKnowledgeBase: React.FC<TacticalKnowledgeBaseProps> = ({ on
                            <div className="w-1.5 h-1.5 rounded-full bg-blue-500/30"></div>
                         </div>
                      </div>
-                     <TacticalVisualizer type={selectedTerm.visualEffect} size="large" />
+                     {/* Fix: cast visualEffect to any to satisfy TacticalVisualizer's type requirements */}
+                     <TacticalVisualizer type={selectedTerm.visualEffect as any} size="large" />
                      <p className="text-[9px] text-gray-700 font-black uppercase tracking-[0.5em] mt-6">QUANTUM ENGINE INTERACTIVE PREVIEW</p>
                   </div>
                 )}

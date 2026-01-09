@@ -1,8 +1,7 @@
 
 import React, { useMemo } from 'react';
-import type { PlayerPosition } from '../types';
-import { PlayerIcon } from './icons';
-import { ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, Radar, Tooltip, PolarRadiusAxis } from 'recharts';
+import type { PlayerPosition, ProfessionalGpsData } from '../types';
+import { PlayerIcon, InfoIcon, TrophyIcon, CoachIcon } from './icons';
 
 interface PlayerModalProps {
   player: PlayerPosition;
@@ -10,200 +9,131 @@ interface PlayerModalProps {
   onClose: () => void;
 }
 
-const CustomTooltip = ({ active, payload }: any) => {
-  if (active && payload && payload.length) {
-    return (
-      <div className="bg-[#0f172a] border border-blue-500/50 p-3 rounded-xl shadow-2xl backdrop-blur-md ring-1 ring-white/10">
-        <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-1">能力特征</p>
-        <p className="text-sm font-black text-white">
-          {payload[0].payload.subject}: <span className="text-blue-500">{payload[0].value}</span>
-        </p>
-      </div>
-    );
-  }
-  return null;
-};
-
-const TacticalBriefItem: React.FC<{ text: string; delay: number }> = ({ text, delay }) => {
-  return (
-    <div 
-      className="flex items-start gap-5 p-5 rounded-3xl bg-white/[0.03] border border-white/5 hover:border-blue-500/40 transition-all group relative overflow-hidden animate-reveal-right opacity-0"
-      style={{ animationDelay: `${delay}s` }}
-    >
-      <div className="absolute top-0 left-0 w-1.5 h-full bg-blue-600 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500"></div>
-      <div className="mt-2 w-2 h-2 rounded-full bg-blue-600 group-hover:scale-125 transition-transform shrink-0 shadow-[0_0_10px_rgba(59,130,246,0.5)]"></div>
-      <p className="text-base text-gray-300 font-medium leading-relaxed group-hover:text-white transition-colors">
-        {text}
-      </p>
+const SpeedZoneBar: React.FC<{ zone: string; range: string; value: number; color: string }> = ({ zone, range, value, color }) => (
+  <div className="space-y-1.5 flex-grow">
+    <div className="flex justify-between items-end">
+      <span className="text-[9px] font-black text-white uppercase tracking-tighter">{zone} <span className="text-gray-600 ml-1">{range}</span></span>
+      <span className="text-[10px] font-black" style={{ color }}>{value}%</span>
     </div>
-  );
-};
+    <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+      <div className="h-full transition-all duration-1000 ease-out" style={{ width: `${value}%`, backgroundColor: color }}></div>
+    </div>
+  </div>
+);
 
 export const PlayerModal: React.FC<PlayerModalProps> = ({ player, phaseTitle, onClose }) => {
-  // 备选模拟数据
-  const displayBrief = useMemo(() => {
-    return player.tacticalBrief && player.tacticalBrief.length > 0 
-      ? player.tacticalBrief 
-      : [
-          "当前战术阶段要求该球员保持高位压迫，切断对手传球弧线。",
-          "接球后优先寻找纵向突破空间，利用速度优势撕扯防线。",
-          "作为战术核心点，需时刻观察队友插上时机并送出斜塞球。"
-        ];
-  }, [player.tacticalBrief]);
-
-  const displayStats = useMemo(() => {
-    return player.scoutingStats && player.scoutingStats.length > 0
-      ? player.scoutingStats.map(s => ({ subject: s.label, value: s.value }))
-      : [
-          { subject: '速度', value: 85 }, { subject: '技术', value: 92 }, { subject: '防守', value: 65 }, 
-          { subject: '意识', value: 95 }, { subject: '对抗', value: 78 }, { subject: '视野', value: 90 }
-        ];
-  }, [player.scoutingStats]);
+  // 模拟拉夫堡/英超标准的 GPS 数据
+  const gpsData: ProfessionalGpsData = useMemo(() => player.gps || {
+    totalDistance: 9850,
+    metabolicPower: 22.4,
+    highIntensityDistance: 640,
+    sprintsCount: 18,
+    maxSpeed: 33.4,
+    speedZones: [
+      { zone: 'Z1 Walking', speedRange: '0.7-7.2km/h', distance: 3400, percentage: 35 },
+      { zone: 'Z2 Jogging', speedRange: '7.2-14.4km/h', distance: 4200, percentage: 42 },
+      { zone: 'Z3 Running', speedRange: '14.4-19.8km/h', distance: 1500, percentage: 15 },
+      { zone: 'Z4 HSR', speedRange: '19.8-25.2km/h', distance: 450, percentage: 5 },
+      { zone: 'Z5 Sprint', speedRange: '>25.2km/h', distance: 300, percentage: 3 },
+    ]
+  }, [player.gps]);
 
   return (
-    <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 md:p-8 animate-fade-in backdrop-blur-md bg-black/70" onClick={onClose}>
+    <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 md:p-8 animate-fade-in backdrop-blur-xl bg-black/80" onClick={onClose}>
       <div 
-        className="relative w-full max-w-6xl bg-[#0a0f14] border border-white/10 rounded-[3rem] shadow-[0_30px_100px_rgba(0,0,0,0.9)] overflow-hidden flex flex-col md:flex-row max-h-[90vh] overflow-y-auto md:overflow-visible"
+        className="relative w-full max-w-6xl bg-[#0a0f14] border border-blue-500/20 rounded-[3rem] shadow-[0_30px_100px_rgba(0,0,0,0.9)] overflow-hidden flex flex-col md:flex-row max-h-[90vh]"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* 背景氛围 */}
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-50"></div>
-        <div className="absolute -top-40 -left-40 w-96 h-96 bg-blue-600/10 rounded-full blur-[120px] pointer-events-none"></div>
-
-        {/* 左侧：档案核心 */}
-        <div className="w-full md:w-[380px] bg-white/[0.02] p-10 flex flex-col items-center border-b md:border-b-0 md:border-r border-white/5 relative shrink-0">
-          <div className="w-48 h-48 rounded-[3rem] bg-gradient-to-br from-blue-600/20 to-blue-900/40 border border-blue-500/30 flex items-center justify-center mb-10 relative group overflow-hidden shadow-2xl">
-            <PlayerIcon className="w-28 h-28 text-blue-400 opacity-80 group-hover:scale-110 transition-transform duration-700" />
-            <div className="absolute bottom-4 right-4 text-6xl font-black text-white/5 italic select-none">#{player.number}</div>
+        {/* 左侧：职业档案 */}
+        <div className="w-full md:w-[320px] bg-white/[0.02] p-10 flex flex-col border-r border-white/5 relative shrink-0">
+          <div className="w-40 h-40 rounded-[2.5rem] bg-blue-600/10 border border-blue-500/20 flex items-center justify-center mb-8 relative group mx-auto">
+            <PlayerIcon className="w-20 h-20 text-blue-500 opacity-60 group-hover:scale-110 transition-transform duration-700" />
+            <div className="absolute top-4 left-4 text-xs font-black text-blue-500/40 italic">#PRO_SCAN</div>
           </div>
           
-          <div className="text-center w-full">
-            <h2 className="text-4xl font-black text-white tracking-tighter mb-2">{player.name}</h2>
-            <div className="inline-flex items-center gap-2 bg-blue-500/10 py-1 px-4 rounded-full border border-blue-500/20 mb-10">
-                <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
-                <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest">{player.role}</span>
-            </div>
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-black text-white tracking-tighter mb-1">{player.name}</h2>
+            <p className="text-[10px] font-black text-blue-500 uppercase tracking-[0.3em]">{player.role} / UID: {player.id}</p>
           </div>
 
-          <div className="w-full grid grid-cols-2 gap-4 mb-10">
-            {[
-              { label: '年龄', val: player.physical?.age || '25' },
-              { label: '身高', val: player.physical?.height || '180cm' },
-              { label: '惯用脚', val: player.physical?.foot === 'Left' ? '左脚' : '右脚' },
-              { label: '活跃区', val: player.position },
-            ].map((item, idx) => (
-              <div key={idx} className="bg-white/5 rounded-2xl p-4 border border-white/5 hover:bg-white/10 transition-colors">
-                <p className="text-[9px] text-gray-500 uppercase font-black mb-1 tracking-widest">{item.label}</p>
-                <p className="text-sm text-gray-100 font-bold">{item.val}</p>
-              </div>
-            ))}
-          </div>
-
-          <div className="w-full space-y-6 pt-10 border-t border-white/5">
-            <p className="text-[10px] text-gray-500 font-black uppercase tracking-widest mb-4 flex items-center gap-2">
-                <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div> 生物特征参数
-            </p>
-            <div className="space-y-4">
-              {displayStats.slice(0, 3).map((stat, i) => (
-                <div key={i} className="group">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-xs font-bold text-gray-400 group-hover:text-white transition-colors">{stat.subject}</span>
-                    <span className="text-xs font-black text-blue-400">{stat.value}</span>
-                  </div>
-                  <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-                    <div 
-                      className="h-full bg-gradient-to-r from-blue-600 to-blue-400 shadow-[0_0_8px_rgba(59,130,246,0.5)] transition-all duration-1000 ease-out" 
-                      style={{ width: `${stat.value}%` }}
-                    ></div>
-                  </div>
+          <div className="space-y-3">
+             <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
+                <p className="text-[9px] text-gray-500 font-black uppercase tracking-widest mb-1">代谢功率指数 / POWER</p>
+                <div className="flex items-end gap-2">
+                    <span className="text-2xl font-black text-white">{gpsData.metabolicPower}</span>
+                    <span className="text-[10px] text-blue-500 font-bold mb-1">W/kg</span>
                 </div>
-              ))}
-            </div>
+             </div>
+             <div className="p-4 bg-blue-600/10 rounded-2xl border border-blue-500/20">
+                <p className="text-[9px] text-blue-400 font-black uppercase tracking-widest mb-1">高强度跑动阈值 / HSR</p>
+                <div className="flex items-end gap-2">
+                    <span className="text-2xl font-black text-white">{gpsData.highIntensityDistance}</span>
+                    <span className="text-[10px] text-blue-400 font-bold mb-1">METERS</span>
+                </div>
+             </div>
+          </div>
+          
+          <div className="mt-auto pt-8">
+             <div className="flex items-center gap-2 mb-4">
+                <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
+                <span className="text-[10px] text-gray-500 font-black uppercase tracking-widest">物理状态评估: 极佳</span>
+             </div>
+             <button className="w-full py-3 bg-white/5 hover:bg-white/10 text-white text-[10px] font-black uppercase tracking-widest rounded-xl border border-white/10 transition-all">导出分析报告 PDF</button>
           </div>
         </div>
 
-        {/* 右侧：深度分析内容 */}
-        <div className="flex-grow p-10 md:p-14 space-y-12 bg-[#0a0f14] relative overflow-y-auto">
+        {/* 右侧：性能实验室详情 */}
+        <div className="flex-grow p-10 md:p-14 space-y-10 overflow-y-auto custom-scrollbar">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-               <div className="w-2 h-8 bg-blue-600 rounded-full shadow-[0_0_20px_rgba(59,130,246,0.6)]"></div>
-               <h3 className="text-lg font-black text-white uppercase tracking-[0.4em]">实战能力指纹报告 <span className="text-gray-600 font-bold ml-2 text-sm italic">/ SCOUT-INTEL</span></h3>
+               <div className="w-10 h-10 rounded-xl bg-blue-600/10 border border-blue-500/20 flex items-center justify-center">
+                  <TrophyIcon className="w-5 h-5 text-blue-500" />
+               </div>
+               <h3 className="text-xl font-black text-white uppercase tracking-tighter">性能实验室深度透视 <span className="text-gray-700 font-bold text-sm ml-2">/ Loughborough Standards</span></h3>
             </div>
-            <button 
-              onClick={onClose}
-              className="w-12 h-12 rounded-2xl bg-white/5 hover:bg-red-500/10 border border-white/10 hover:border-red-500/30 flex items-center justify-center transition-all group active:scale-90"
-            >
-              <span className="text-2xl text-gray-500 group-hover:text-red-400 transition-colors">×</span>
-            </button>
+            <button onClick={onClose} className="text-gray-500 hover:text-white transition-colors text-2xl">×</button>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-            {/* 雷达图可视化 */}
-            <div className="space-y-8 animate-fade-in">
-              <div className="flex flex-col gap-1">
-                <p className="text-sm font-black text-blue-500 uppercase tracking-widest">战术 DNA 拓扑</p>
-                <p className="text-[10px] text-gray-500 italic uppercase tracking-tighter">基于实战片段的多维数据拟合</p>
-              </div>
-              <div className="aspect-square bg-white/[0.03] rounded-[3rem] border border-white/5 p-8 flex items-center justify-center relative overflow-hidden group/radar shadow-inner">
-                <div className="absolute inset-0 bg-blue-600/[0.03] opacity-0 group-hover/radar:opacity-100 transition-opacity"></div>
-                <ResponsiveContainer width="100%" height="100%">
-                    <RadarChart cx="50%" cy="50%" outerRadius="80%" data={displayStats}>
-                      <PolarGrid stroke="rgba(255,255,255,0.06)" />
-                      <PolarAngleAxis dataKey="subject" tick={{fill: '#94a3b8', fontSize: 12, fontWeight: '900'}} />
-                      <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
-                      <Radar
-                        name={player.name}
-                        dataKey="value"
-                        stroke="#3b82f6"
-                        strokeWidth={3}
-                        fill="#3b82f6"
-                        fillOpacity={0.4}
-                        animationDuration={1500}
-                        dot={{ r: 4, fill: '#3b82f6', stroke: '#fff', strokeWidth: 2 }}
-                      />
-                      <Tooltip content={<CustomTooltip />} cursor={false} />
-                    </RadarChart>
-                  </ResponsiveContainer>
-              </div>
-            </div>
-
-            {/* 战术简报区 (Tactical Brief) */}
-            <div className="space-y-12 animate-fade-in">
-              <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                    <div className="flex flex-col">
-                      <p className="text-sm font-black text-blue-500 uppercase tracking-widest">战术简报 / Tactical Briefing</p>
-                      {phaseTitle && <p className="text-[10px] text-gray-500 font-bold uppercase tracking-tighter mt-1">针对阶段：{phaseTitle}</p>}
-                    </div>
-                    <div className="px-3 py-1 bg-blue-600/20 rounded border border-blue-500/30 text-[9px] font-black text-blue-400 uppercase">实战扫描解码中...</div>
-                </div>
-                
-                <div className="space-y-4">
-                  {displayBrief.map((brief, i) => (
-                    <TacticalBriefItem key={i} text={brief} delay={0.2 + i * 0.15} />
-                  ))}
-                </div>
-              </div>
-
-              <div className="pt-10 border-t border-white/5 animate-reveal-right opacity-0" style={{ animationDelay: '0.8s' }}>
-                <p className="text-xs font-black text-gray-500 uppercase tracking-widest mb-6">核心战术角色定义</p>
-                <div className="p-8 bg-gradient-to-br from-blue-600/10 to-transparent border border-blue-500/20 rounded-3xl relative overflow-hidden shadow-inner group">
-                  <div className="absolute -top-4 -right-4 text-7xl font-black text-white/[0.03] italic uppercase select-none tracking-tighter group-hover:scale-110 transition-transform duration-1000">ROLE</div>
-                  <p className="text-lg text-blue-100/90 font-medium leading-relaxed relative z-10 italic">
-                    “ 作为球队在当前阶段的 <span className="text-white font-black">{player.role}</span>，<span className="text-white font-black">{player.name}</span> 不仅承担着执行指令的义务，
-                    更是整个战术闭环中的 <span className="text-blue-400 font-black">关键触发器</span>。他的每次跑位都直接决定了对手防线的重心偏移方向。”
-                  </p>
-                </div>
-              </div>
-            </div>
+          {/* 核心跑动指标格点 */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+             {[
+               { label: '总跑动距离', val: (gpsData.totalDistance/1000).toFixed(2), unit: 'KM', color: 'text-white' },
+               { label: '最高瞬时时速', val: gpsData.maxSpeed, unit: 'KM/H', color: 'text-orange-500' },
+               { label: '冲刺次数', val: gpsData.sprintsCount, unit: 'TIMES', color: 'text-blue-400' },
+               { label: '代谢负荷', val: (gpsData.metabolicPower * 0.85).toFixed(1), unit: 'LOAD', color: 'text-green-400' },
+             ].map((stat, i) => (
+               <div key={i} className="p-6 bg-white/[0.03] border border-white/5 rounded-3xl">
+                  <p className="text-[9px] text-gray-500 font-black uppercase tracking-widest mb-2">{stat.label}</p>
+                  <p className={`text-3xl font-black ${stat.color}`}>{stat.val} <span className="text-[10px] font-bold opacity-40 ml-1">{stat.unit}</span></p>
+               </div>
+             ))}
           </div>
-          
-          <div className="flex items-center justify-center gap-6 opacity-30 pt-10 border-t border-white/5">
-            <div className="h-px flex-grow bg-gradient-to-r from-transparent to-gray-700"></div>
-            <div className="text-[10px] text-gray-600 uppercase tracking-[0.5em] font-black whitespace-nowrap">
-              Tactical Lab DB v2.1 / Intelligence Unit
-            </div>
-            <div className="h-px flex-grow bg-gradient-to-l from-transparent to-gray-700"></div>
+
+          {/* 速度区间百分比堆叠图 */}
+          <div className="space-y-6">
+             <div className="flex items-center justify-between">
+                <p className="text-[11px] font-black text-gray-500 uppercase tracking-[0.3em]">速度区间分布分析 / SPEED ZONES</p>
+                <InfoIcon className="w-4 h-4 text-gray-700" />
+             </div>
+             <div className="bg-[#05080b] p-8 rounded-[2.5rem] border border-white/5 shadow-inner">
+                <div className="flex flex-col gap-6">
+                   <SpeedZoneBar zone="Z1-Z2 基础跑动" range="0-14.4 km/h" value={77} color="#4b5563" />
+                   <SpeedZoneBar zone="Z3 中强度跑动" range="14.4-19.8 km/h" value={15} color="#3b82f6" />
+                   <SpeedZoneBar zone="Z4 高强度跑动 (HSR)" range="19.8-25.2 km/h" value={5} color="#f59e0b" />
+                   <SpeedZoneBar zone="Z5 极限冲刺" range=">25.2 km/h" value={3} color="#ef4444" />
+                </div>
+                <p className="text-[9px] text-gray-600 font-medium italic mt-8 text-center uppercase tracking-widest">数据由 GPS 运动捕捉系统同步提供 • 采样率: 10Hz</p>
+             </div>
+          </div>
+
+          <div className="p-8 bg-blue-600/5 border border-blue-500/20 rounded-[2.5rem] relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:scale-110 transition-transform">
+                  <CoachIcon className="w-20 h-20" />
+              </div>
+              <p className="text-[10px] text-blue-400 font-black uppercase tracking-widest mb-4">分析师建议 / INSIGHTS</p>
+              <p className="text-base text-gray-300 font-medium leading-relaxed italic pr-12">
+                “ 尽管该球员的总距离仅处于中游，但其 **HSR 占比极高 (8%)**，且多数爆发发生在防守转换的 5 秒窗口内。这表明其在职业体系中具备极佳的 **‘战术适应性爆发力’**，是拉夫堡模型下的典型高效能边锋。”
+              </p>
           </div>
         </div>
       </div>

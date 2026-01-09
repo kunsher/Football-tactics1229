@@ -17,27 +17,40 @@ export interface TacticalAnnotation {
   color?: string;
 }
 
+export interface TacticalEvent {
+  id: string;
+  type: 'Goal' | 'Shot' | 'Transition' | 'Interception' | 'HSR_Burst';
+  minute: string;
+  phaseId: string;
+  label: string;
+}
+
 export interface TacticPhase {
   id: string;
   title: string;
   description: string;
-  matchMinute?: string; // 新增：比赛具体时刻
-  matchContext?: string; // 新增：瞬时比分或事件背景
+  matchMinute?: string;
+  matchContext?: string;
   homePlayers: PlayerPosition[];
   awayPlayers: PlayerPosition[];
   connections: Connection[];
   annotations?: TacticalAnnotation[]; 
 }
 
-export interface ScoutingStat {
-  label: string;
-  value: number;
+export interface GpsMetric {
+  zone: string;
+  speedRange: string;
+  distance: number; // meters
+  percentage: number;
 }
 
-export interface PhysicalInfo {
-  age: string;
-  height: string;
-  foot: 'Left' | 'Right';
+export interface ProfessionalGpsData {
+  totalDistance: number;
+  metabolicPower: number; // W/kg
+  highIntensityDistance: number; // > 19.8 km/h
+  sprintsCount: number; // > 25.2 km/h
+  maxSpeed: number;
+  speedZones: GpsMetric[];
 }
 
 export interface PlayerPosition {
@@ -51,8 +64,8 @@ export interface PlayerPosition {
   role: string;
   team: 'home' | 'away';
   tacticalBrief?: string[];
-  scoutingStats?: ScoutingStat[];
-  physical?: PhysicalInfo;
+  gps?: ProfessionalGpsData; // 升级为职业 GPS 数据
+  physical?: { age: string; height: string; foot: 'Left' | 'Right' };
 }
 
 export interface Connection {
@@ -92,6 +105,7 @@ export interface Battle {
   score: { home: number; away: number };
   teams: { home: TeamInfo; away: TeamInfo };
   phases: TacticPhase[];
+  events: TacticalEvent[]; // 新增：Sportscode 事件轴
   stats: MatchStatistics;
   radarData: RadarPoint[];
 }
@@ -101,7 +115,7 @@ export interface GlossaryTerm {
   definition: string;
   category: 'Position' | 'Phase' | 'Action' | 'System';
   icon?: string;
-  visualEffect?: 'overlap' | 'tiki-taka' | 'pressing' | 'false-9' | 'low-block' | 'counter-press' | 'half-space' | 'vertical-counter' | 'catenaccio' | 'total-football';
+  visualEffect?: string;
   complexity?: number;
   strategicFocus?: string[];
   historicalContext?: string;
@@ -111,20 +125,11 @@ export interface GlossaryTerm {
   relatedBattleId?: string;
 }
 
-export interface LearningModule {
-  id: string;
-  title: string;
-  description: string;
-  type: 'Theory' | 'Simulation' | 'Quiz';
-  relatedBattleId?: string;
-  relatedKnowledgeId?: string;
-}
-
 export interface LearningPath {
   id: string;
   title: string;
   description: string;
   level: string;
   icon: string;
-  modules: LearningModule[];
+  modules: any[];
 }
