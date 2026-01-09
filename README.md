@@ -1,4 +1,4 @@
-# ⚽ 基于 Web 可视化技术的足球科普系统 (TacticalLab)
+# ⚽ 基于 Web 可视化技术的足球科普 system (TacticalLab)
 ### —— 从绿茵博弈到空间语义的数字化重构 (2026 毕业设计作品)
 
 [![Version](https://img.shields.io/badge/Version-3.2_QUANTUM-blue?style=for-the-badge)](https://github.com/kunsher/Football-tactics1229)
@@ -14,7 +14,7 @@
 *   **战术拓扑论 (Tactical Topology)**：
     不将球员视为孤立的点，而是将 22 个球员及球权视为构成动态力场（Force Field）的“节点”。通过计算节点间的拓扑关系（如传球链路、防守紧凑度、区域超载），将复杂的比赛瞬时转化为可量化的几何模型。
 *   **空间语义化 (Spatial Semantics)**：
-    将底层的 (x, y) 坐标数据流，通过算法和规则映射为“肋部渗透”、“阵型压缩”、“伪九号回撤”等高级战术语义。这解决了传统科普中“只见数据，不见逻辑”的痛点。
+    将底层的 (x, y) 坐标数据流，通过算法 and 规则映射为“肋部渗透”、“阵型压缩”、“伪九号回撤”等高级战术语义。这解决了传统科普中“只见数据，不见逻辑”的痛点。
 *   **时空相位同步 (Spatiotemporal Phase Sync)**：
     引入“相位（Phase）”概念。每一帧战术演示都是一个状态快照，系统通过声明式状态管理，确保 22 个节点在时空维度上的强同步演进。
 
@@ -83,6 +83,43 @@ const transformY = player.y * 6.7 + 5; // 逻辑 100 映射到 680 像素视口�
 
 ---
 
+## 📦 本地开发指南 (Local Development)
+
+### 1. 环境准备
+确保您的开发环境中已安装以下工具：
+*   **Node.js**: v18.0.0 或更高版本 (推荐 v20+)
+*   **npm**: v9.0.0 或更高版本 (通常随 Node.js 一起安装)
+*   **浏览器**: 现代浏览器 (Chrome, Edge, Safari, Firefox)，需支持 SVG 动画与 React 19。
+
+### 2. 快速启动
+1.  **克隆项目**
+    ```bash
+    git clone https://github.com/kunsher/Football-tactics1229.git
+    cd Football-tactics1229
+    ```
+2.  **安装依赖**
+    ```bash
+    npm install
+    ```
+3.  **启动开发环境**
+    ```bash
+    npm run dev
+    ```
+    *   运行后，访问控制台输出的本地地址（通常为 `http://localhost:5173`）即可预览系统。
+
+### 3. 项目构建
+若需部署生产环境版本：
+```bash
+npm run build
+```
+构建产物将生成在 `/dist` 目录下。
+
+### 4. 常见问题 (FAQ)
+*   **权限问题**: 在 Windows PowerShell 下若遇到脚本运行限制，请尝试执行 `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser`。
+*   **内存溢出**: 本项目使用 Vite，若内存受限，建议关闭大型设计软件后再进行调试。
+
+---
+
 ## 🎓 毕业设计学术价值
 
 1.  **工程性**：展示了现代 Web 技术（React 19 + SVG）处理复杂动态数据的性能边界。
@@ -91,6 +128,6 @@ const transformY = player.y * 6.7 + 5; // 逻辑 100 映射到 680 像素视口�
 
 ---
 
-**© 2025 数字化足球战术研究报告 · 谢坤作品**
+**© 2026 数字化足球战术研究报告 · 谢坤作品**
 **指导教师：周书臣 副教授**
 **DESIGNED FOR THE BEAUTIFUL GAME.**
