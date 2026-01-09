@@ -11,6 +11,18 @@ interface UserSpaceModalProps {
   onUpdateProfile: (updates: Partial<UserProfile>) => void;
 }
 
+const AchievementBadge: React.FC<{ title: string; desc: string; icon: string; isLocked?: boolean }> = ({ title, desc, icon, isLocked }) => (
+  <div className={`flex items-center gap-4 p-4 rounded-2xl border transition-all group ${isLocked ? 'bg-white/[0.01] border-white/5 opacity-40' : 'bg-blue-600/5 border-blue-500/20 hover:bg-blue-600/10 hover:border-blue-500/40'}`}>
+    <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl shadow-inner ${isLocked ? 'bg-gray-800' : 'bg-blue-600/20 border border-blue-500/30 group-hover:scale-110 transition-transform'}`}>
+      {icon}
+    </div>
+    <div>
+      <p className="text-sm font-black text-white tracking-tight">{title}</p>
+      <p className="text-[10px] text-gray-500 font-medium">{desc}</p>
+    </div>
+  </div>
+);
+
 export const UserSpaceModal: React.FC<UserSpaceModalProps> = ({ user, onClose, onLogout, onOpenLogin, onUpdateProfile }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [newName, setNewName] = useState(user.name);
@@ -19,6 +31,12 @@ export const UserSpaceModal: React.FC<UserSpaceModalProps> = ({ user, onClose, o
     onUpdateProfile({ name: newName });
     setIsEditing(false);
   };
+
+  const achievements = [
+    { title: '战术基因大师', desc: '成功掌握 5 种核心战术体系', icon: '🧬', isLocked: user.tacticsMastered < 5 },
+    { title: '战役解码专家', desc: '深度复盘超过 10 场历史名局', icon: '📽️', isLocked: user.battlesAnalyzed < 10 },
+    { title: '系统求知者', desc: '完整通过一条专业学习路径', icon: '🎓', isLocked: user.learningProgress < 100 },
+  ];
 
   return (
     <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 md:p-8 animate-fade-in backdrop-blur-xl bg-black/80" onClick={onClose}>
@@ -98,7 +116,7 @@ export const UserSpaceModal: React.FC<UserSpaceModalProps> = ({ user, onClose, o
           </div>
         </div>
 
-        <div className="flex-grow p-10 md:p-14 space-y-12 overflow-y-auto max-h-[80vh] md:max-h-none">
+        <div className="flex-grow p-10 md:p-14 space-y-12 overflow-y-auto max-h-[80vh] md:max-h-none custom-scrollbar">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
                 <div className="w-10 h-10 rounded-xl bg-blue-600/10 flex items-center justify-center border border-blue-600/20">
@@ -150,6 +168,22 @@ export const UserSpaceModal: React.FC<UserSpaceModalProps> = ({ user, onClose, o
                     <div className="h-full bg-blue-400 w-1/2"></div>
                 </div>
             </div>
+          </div>
+
+          {/* 新增：荣誉成就版块 */}
+          <div className="space-y-6 animate-fade-in">
+             <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                    <div className="w-1.5 h-4 bg-orange-500 rounded-full"></div>
+                    <p className="text-[10px] text-gray-400 font-black uppercase tracking-[0.2em]">荣誉成就 / ACHIEVEMENTS</p>
+                </div>
+                <span className="text-[10px] text-orange-500 font-black uppercase tracking-widest opacity-60">Medals Unlocked</span>
+             </div>
+             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {achievements.map((ach, i) => (
+                  <AchievementBadge key={i} {...ach} />
+                ))}
+             </div>
           </div>
 
           <div className="space-y-6 pt-6 border-t border-white/5">

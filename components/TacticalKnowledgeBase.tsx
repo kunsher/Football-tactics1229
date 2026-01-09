@@ -2,7 +2,7 @@
 import React, { useState, useMemo } from 'react';
 import { GLOSSARY } from '../constants';
 import type { GlossaryTerm } from '../types';
-import { ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Tooltip, Legend } from 'recharts';
+import { ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Tooltip } from 'recharts';
 import { InfoIcon, CoachIcon, TrophyIcon } from './icons';
 import { TacticalVisualizer } from './TacticalVisualizer';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -37,14 +37,79 @@ const CustomRadarTooltip = ({ active, payload }: any) => {
 };
 
 const ComplexityMeter: React.FC<{ value: number }> = ({ value }) => (
-    <div className="flex gap-1.5">
-        {[1, 2, 3, 4, 5].map(i => (
-            <div 
-                key={i} 
-                className={`h-1.5 w-4 rounded-full ${i <= value ? 'bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.6)]' : 'bg-white/10'}`}
-            />
+  <div className="flex gap-1.5">
+    {[1, 2, 3, 4, 5].map(i => (
+      <div 
+        key={i} 
+        className={`h-1.5 w-4 rounded-full ${i <= value ? 'bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.6)]' : 'bg-white/10'}`}
+      />
+    ))}
+  </div>
+);
+
+const DetailColumn: React.FC<{ term: GlossaryTerm; accentColor: string; isSecondary?: boolean }> = ({ term, accentColor, isSecondary }) => (
+  <div className={`space-y-10 animate-fade-in ${isSecondary ? 'border-l border-white/5 pl-8 hidden md:block' : ''}`}>
+    {isSecondary && (
+      <div className="flex items-center gap-2 mb-2">
+        <span className="px-2 py-0.5 bg-orange-500/10 border border-orange-500/30 text-[9px] font-black text-orange-500 uppercase tracking-widest rounded">Comparison Target</span>
+      </div>
+    )}
+    
+    <section className="space-y-4">
+      <h4 className="text-[12px] font-black uppercase tracking-[0.3em] flex items-center gap-3" style={{ color: accentColor }}>
+        历史基因演化 <span className="text-[9px] text-gray-700 font-bold ml-1">/ GENE EVOLUTION</span>
+      </h4>
+      <p className="text-base text-gray-400 leading-relaxed font-bold italic bg-white/[0.02] p-6 rounded-2xl border border-white/5 shadow-inner">
+        {term.historicalContext || '该战术体系深刻影响了教练员对空间与球权的认知。'}
+      </p>
+    </section>
+
+    <section className="space-y-4">
+      <h4 className="text-[12px] font-black uppercase tracking-[0.3em]" style={{ color: accentColor }}>关键技术指纹 / KEY TRAITS</h4>
+      <div className="flex flex-wrap gap-2.5">
+        {term.keyTraits?.map(trait => (
+          <span key={trait} className="px-4 py-2 bg-white/[0.03] border rounded-xl text-[10px] font-black uppercase tracking-tight" style={{ borderColor: `${accentColor}33`, color: accentColor }}>
+            {trait}
+          </span>
         ))}
-    </div>
+      </div>
+    </section>
+
+    <section className="space-y-4">
+      <h4 className="text-[12px] text-gray-500 font-black uppercase tracking-[0.3em] flex items-center gap-3">
+        标杆战队模型 <CoachIcon className="w-5 h-5" />
+      </h4>
+      <div className="grid grid-cols-1 gap-3">
+        {term.famousTeams?.map((team, idx) => (
+          <div key={idx} className="p-5 rounded-2xl border border-white/5 bg-white/[0.02] flex items-center justify-between group transition-all hover:border-blue-500/40">
+            <div className="flex items-center gap-4">
+              <TrophyIcon className="w-4 h-4 text-blue-500" />
+              <span className="text-base font-black text-gray-300 group-hover:text-white transition-colors">{team}</span>
+            </div>
+            <span className="text-[9px] text-gray-700 font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">MODEL_ACTIVE</span>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section className={`p-8 border rounded-[2rem] relative group overflow-hidden shadow-inner bg-opacity-10`} style={{ borderColor: `${accentColor}33`, backgroundColor: `${accentColor}11` }}>
+      <h5 className="text-[11px] font-black uppercase tracking-[0.4em] mb-4" style={{ color: accentColor }}>利弊深度拆解 / CRITICAL DECODER</h5>
+      <div className="space-y-4 relative z-10">
+        <div className="flex gap-3">
+          <div className="w-1 h-8 rounded-full shrink-0" style={{ backgroundColor: accentColor }}></div>
+          <p className="text-xs font-bold leading-relaxed italic pr-4" style={{ color: `${accentColor}cc` }}>
+            <span className="font-black mr-2 uppercase tracking-widest text-[9px]">优点:</span> 最大化球员技术特征，通过空间坐标重构创造结构性优势。
+          </p>
+        </div>
+        <div className="flex gap-3">
+          <div className="w-1 h-8 bg-gray-700 rounded-full shrink-0"></div>
+          <p className="text-xs text-gray-500 font-bold leading-relaxed italic pr-4">
+            <span className="text-gray-600 font-black mr-2 uppercase tracking-widest text-[9px]">风险:</span> 对球员智商与体能要求极高，高位防线身后的空档是天然风险点。
+          </p>
+        </div>
+      </div>
+    </section>
+  </div>
 );
 
 export const TacticalKnowledgeBase: React.FC<TacticalKnowledgeBaseProps> = ({ onNavigateToBattle }) => {
@@ -68,7 +133,7 @@ export const TacticalKnowledgeBase: React.FC<TacticalKnowledgeBaseProps> = ({ on
   const radarData = useMemo(() => {
     const primary = selectedTerm.radarProfile || [];
     if (!compareMode || !comparisonTarget || !comparisonTarget.radarProfile) {
-        return primary;
+      return primary;
     }
     
     return primary.map((point, i) => ({
@@ -96,6 +161,7 @@ export const TacticalKnowledgeBase: React.FC<TacticalKnowledgeBaseProps> = ({ on
 
   return (
     <div className="flex flex-col gap-8 animate-fade-in max-w-7xl mx-auto py-2 mb-20 px-4">
+      {/* 头部筛选器与搜索 */}
       <div className="bg-[#0a0f14] border border-white/10 rounded-[2.5rem] p-6 lg:p-8 flex flex-col lg:flex-row items-center justify-between gap-6 shadow-2xl relative overflow-hidden">
         <div className="absolute inset-0 bg-blue-600/[0.02] pointer-events-none"></div>
         
@@ -143,6 +209,7 @@ export const TacticalKnowledgeBase: React.FC<TacticalKnowledgeBaseProps> = ({ on
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        {/* 左侧列表 */}
         <div className="lg:col-span-3 space-y-3 max-h-[80vh] overflow-y-auto pr-2 custom-scrollbar">
           <AnimatePresence mode="popLayout">
             {filteredTerms.map((term) => (
@@ -169,13 +236,6 @@ export const TacticalKnowledgeBase: React.FC<TacticalKnowledgeBaseProps> = ({ on
                     </p>
                   </div>
                 </div>
-                
-                {term.visualEffect && (
-                   <div className={`w-full aspect-[2/1] rounded-xl overflow-hidden pointer-events-none transition-all duration-700 border border-white/5 relative bg-black/40 ${selectedTerm.term === term.term ? 'opacity-100' : 'opacity-10 group-hover:opacity-40'}`}>
-                      <TacticalVisualizer type={term.visualEffect} size="small" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-                   </div>
-                )}
               </motion.button>
             ))}
           </AnimatePresence>
@@ -205,6 +265,7 @@ export const TacticalKnowledgeBase: React.FC<TacticalKnowledgeBaseProps> = ({ on
           )}
         </div>
 
+        {/* 右侧详情 / 对比区域 */}
         <div className="lg:col-span-9 space-y-6">
           <AnimatePresence mode="wait">
             <motion.div
@@ -216,6 +277,7 @@ export const TacticalKnowledgeBase: React.FC<TacticalKnowledgeBaseProps> = ({ on
               style={{ background: `radial-gradient(circle at top right, ${atmosphereColor}, transparent)` }}
             >
               <div className="relative z-10">
+                {/* 顶部标题与 DNA 图表 */}
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-10">
                   <div className="lg:col-span-7 space-y-8">
                     <div className="flex items-center gap-4">
@@ -234,7 +296,8 @@ export const TacticalKnowledgeBase: React.FC<TacticalKnowledgeBaseProps> = ({ on
                         </div>
                     </div>
                     
-                    <div className="flex items-center gap-8 py-1">
+                    {!compareMode && (
+                      <div className="flex items-center gap-8 py-1">
                         <div className="space-y-1.5">
                             <p className="text-[9px] text-gray-600 font-black uppercase tracking-widest">学习复杂度</p>
                             <ComplexityMeter value={selectedTerm.complexity || 3} />
@@ -245,10 +308,16 @@ export const TacticalKnowledgeBase: React.FC<TacticalKnowledgeBaseProps> = ({ on
                                 <span key={f} className="text-[9px] font-black text-blue-400 uppercase border border-blue-500/30 px-3 py-1 rounded-lg bg-blue-500/5">#{f}</span>
                             ))}
                         </div>
-                    </div>
+                      </div>
+                    )}
 
                     <p className="text-lg md:text-xl text-gray-300 leading-relaxed font-bold italic border-l-4 border-blue-500/40 pl-6 py-3 bg-white/[0.03] rounded-r-2xl">
                         {selectedTerm.definition}
+                        {compareMode && comparisonTarget && (
+                          <span className="block mt-4 pt-4 border-t border-white/5 text-orange-400/80">
+                            对比视角: {comparisonTarget.definition}
+                          </span>
+                        )}
                     </p>
                     
                     {selectedTerm.relatedBattleId && !compareMode && (
@@ -293,8 +362,18 @@ export const TacticalKnowledgeBase: React.FC<TacticalKnowledgeBaseProps> = ({ on
                   </div>
                 </div>
 
+                {/* 侧并侧深度详情对比 */}
+                <div className={`grid grid-cols-1 ${compareMode && comparisonTarget ? 'md:grid-cols-2' : ''} gap-12 pt-10 border-t border-white/5`}>
+                  <DetailColumn term={selectedTerm} accentColor="#3b82f6" />
+                  
+                  {compareMode && comparisonTarget && (
+                    <DetailColumn term={comparisonTarget} accentColor="#f97316" isSecondary />
+                  )}
+                </div>
+
+                {/* 动态图解渲染（仅在非对比模式或主要视角显示） */}
                 {selectedTerm.visualEffect && !compareMode && (
-                  <div className="mb-10 bg-white/[0.02] border border-white/5 p-8 md:p-12 rounded-[2.5rem] relative overflow-hidden flex flex-col items-center shadow-inner">
+                  <div className="mt-16 bg-white/[0.02] border border-white/5 p-8 md:p-12 rounded-[2.5rem] relative overflow-hidden flex flex-col items-center shadow-inner">
                      <div className="w-full flex justify-between items-center mb-8">
                         <span className="text-[10px] text-blue-500 font-black uppercase tracking-[0.4em] pl-3 border-l-2 border-blue-500">动态核心逻辑演示 / DYNAMIC SCHEMA</span>
                         <div className="flex gap-1.5">
@@ -306,67 +385,6 @@ export const TacticalKnowledgeBase: React.FC<TacticalKnowledgeBaseProps> = ({ on
                      <p className="text-[9px] text-gray-700 font-black uppercase tracking-[0.5em] mt-6">QUANTUM ENGINE INTERACTIVE PREVIEW</p>
                   </div>
                 )}
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-10 pt-10 border-t border-white/5">
-                  <div className="space-y-10">
-                    <section className="space-y-4">
-                      <h4 className="text-[12px] text-blue-500 font-black uppercase tracking-[0.3em] flex items-center gap-3">
-                         历史基因演化 <span className="text-[9px] text-gray-700 font-bold ml-1">/ GENE EVOLUTION</span>
-                      </h4>
-                      <p className="text-base text-gray-400 leading-relaxed font-bold italic bg-white/[0.02] p-6 rounded-2xl border border-white/5">
-                         {selectedTerm.historicalContext || '该战术体系深刻影响了教练员对空间与球权的认知。'}
-                      </p>
-                    </section>
-
-                    <section className="space-y-4">
-                      <h4 className="text-[12px] text-blue-400 font-black uppercase tracking-[0.3em]">关键技术指纹 / KEY TRAITS</h4>
-                      <div className="flex flex-wrap gap-2.5">
-                         {selectedTerm.keyTraits?.map(trait => (
-                           <span key={trait} className="px-4 py-2 bg-blue-600/10 border border-blue-500/20 rounded-xl text-[10px] text-blue-300 font-black uppercase tracking-tight">
-                             {trait}
-                           </span>
-                         ))}
-                      </div>
-                    </section>
-                  </div>
-
-                  <div className="space-y-10">
-                    <section className="space-y-4">
-                      <h4 className="text-[12px] text-gray-500 font-black uppercase tracking-[0.3em] flex items-center gap-3">
-                         标杆战队模型 <CoachIcon className="w-5 h-5" />
-                      </h4>
-                      <div className="grid grid-cols-1 gap-3">
-                         {selectedTerm.famousTeams?.map((team, idx) => (
-                           <div key={idx} className="p-5 rounded-2xl border border-white/5 bg-white/[0.02] flex items-center justify-between group transition-all hover:border-blue-500/40">
-                              <div className="flex items-center gap-4">
-                                  <TrophyIcon className="w-4 h-4 text-blue-500" />
-                                  <span className="text-base font-black text-gray-300 group-hover:text-white transition-colors">{team}</span>
-                              </div>
-                              <span className="text-[9px] text-gray-700 font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">MODEL_ACTIVE</span>
-                           </div>
-                         ))}
-                      </div>
-                    </section>
-                    
-                    <section className="p-8 bg-gradient-to-br from-blue-600/15 to-transparent border border-blue-500/20 rounded-[2rem] relative group overflow-hidden shadow-inner">
-                       <h5 className="text-[11px] text-blue-400 font-black uppercase tracking-[0.4em] mb-4">利弊深度拆解 / CRITICAL DECODER</h5>
-                       <div className="space-y-4 relative z-10">
-                          <div className="flex gap-3">
-                             <div className="w-1 h-8 bg-blue-500 rounded-full shrink-0"></div>
-                             <p className="text-xs text-blue-200 font-bold leading-relaxed italic pr-4">
-                               <span className="text-blue-500 font-black mr-2 uppercase tracking-widest text-[9px]">优点:</span> 最大化球员技术特征，通过空间坐标重构创造结构性优势。
-                             </p>
-                          </div>
-                          <div className="flex gap-3">
-                             <div className="w-1 h-8 bg-gray-700 rounded-full shrink-0"></div>
-                             <p className="text-xs text-gray-500 font-bold leading-relaxed italic pr-4">
-                               <span className="text-gray-600 font-black mr-2 uppercase tracking-widest text-[9px]">风险:</span> 对球员智商与体能要求极高，高位防线身后的空档是天然风险点。
-                             </p>
-                          </div>
-                       </div>
-                    </section>
-                  </div>
-                </div>
               </div>
             </motion.div>
           </AnimatePresence>
