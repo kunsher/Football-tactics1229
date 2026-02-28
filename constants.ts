@@ -32,7 +32,7 @@ const generateFullSquad = (homeCoords: {x:number, y:number}[], awayCoords: {x:nu
   return { homePlayers, awayPlayers };
 };
 
-const RM_2012_NAMES = ['卡西', '阿韦洛亚', '佩佩', '拉莫斯', '科恩特朗', '赫迪拉', '阿隆索', '迪马利亚', '厄齐尔', 'C罗', '本泽马'];
+const RM_2012_NAMES = ['卡西利亚斯', '阿韦洛亚', '佩佩', '拉莫斯', '科恩特朗', '赫迪拉', '阿隆索', '迪马利亚', '厄齐尔', '克里斯蒂亚诺·罗纳尔多', '本泽马'];
 const BARSA_2011_NAMES = ['巴尔德斯', '阿尔维斯', '皮克', '马斯切拉诺', '阿比达尔', '布斯克茨', '哈维', '伊涅斯塔', '佩德罗', '梅西', '比利亚'];
 const MU_2011_NAMES = ['范德萨', '法比奥', '费迪南德', '维迪奇', '埃弗拉', '瓦伦西亚', '卡里克', '吉格斯', '朴智星', '鲁尼', '埃尔南德斯'];
 const INTER_2010_NAMES = ['塞萨尔', '麦孔', '卢西奥', '萨穆埃尔', '齐沃', '萨内蒂', '坎比亚索', '斯内德', '潘德夫', '埃托奥', '米利托'];
@@ -42,14 +42,14 @@ const LIV_2005_NAMES = ['杜德克', '芬南', '卡拉格', '海皮亚', '特拉
 export const BATTLES: Battle[] = [
   {
     id: 'barcelona-2011',
-    title: '2011 欧冠决赛：巴萨 3-1 曼联',
+    title: '2011 欧冠决赛：巴塞罗那 3-1 曼彻斯特联',
     subtitle: '温布利的杰作：传控足球的终极形态',
-    description: '巴萨通过极致的控球与空间重构，让曼联防线完全陷入被动。这是克鲁英夫哲学在瓜迪奥拉时代的最高体现。',
+    description: '巴塞罗那通过极致的控球与空间重构，让曼联防线完全陷入被动。这是克鲁伊夫哲学在瓜迪奥拉时代的最高体现。',
     score: { home: 3, away: 1 },
     teams: {
       home: { 
         name: '巴塞罗那', color: '#a50044', coach: '瓜迪奥拉', formation: '4-3-3', 
-        philosophy: '利用伪九号梅西回撤制造中场超载，两侧拉开宽度提供深度。'
+        philosophy: '利用伪九号梅西回撤制造中场超载，两侧拉开宽度提供进攻深度。'
       },
       away: { name: '曼彻斯特联', color: '#da291c', coach: '弗格森', formation: '4-4-1-1' }
     },
@@ -60,7 +60,7 @@ export const BATTLES: Battle[] = [
     phases: [
       {
         id: 'ba1', title: '哈维的视界：空间切割', matchMinute: "27:10", matchContext: "1 - 0",
-        description: '哈维在右肋部持球，成功吸引了埃弗拉的内切。佩德罗利用曼联左路空档，瞬间插向防线盲区。',
+        description: '哈维在右肋部持球，成功吸引了埃弗拉的防守内切。佩德罗利用曼联左路空档，瞬间插向防线盲区。',
         ...generateFullSquad(
           [{x:5,y:50},{x:35,y:85},{x:25,y:60},{x:25,y:40},{x:35,y:15},{x:45,y:50},{x:52,y:70},{x:52,y:30},{x:75,y:85},{x:68,y:50},{x:75,y:15}],
           [{x:95,y:50},{x:78,y:88},{x:82,y:58},{x:82,y:42},{x:78,y:12},{x:65,y:75},{x:65,y:40},{x:58,y:60},{x:58,y:30},{x:50,y:50},{x:45,y:50}],
@@ -150,9 +150,9 @@ export const BATTLES: Battle[] = [
   },
   {
     id: 'real-madrid-2012',
-    title: '2012 西甲：皇马 2-1 巴萨',
-    subtitle: '诺坎普的 Calma：穆氏反击的极致',
-    description: '皇马通过低位压缩阵型锁定梅西，利用垂直打击瞬间撕裂巴萨的高位防线。',
+    title: '2012 西甲：皇家马德里 2-1 巴塞罗那',
+    subtitle: '诺坎普的 Calma：穆式反击的极致',
+    description: '皇家马德里通过低位压缩阵型锁定梅西，利用垂直打击瞬间撕裂巴塞罗那的高位防线。',
     score: { home: 2, away: 1 },
     teams: {
       home: { 
@@ -215,9 +215,9 @@ export const BATTLES: Battle[] = [
   },
   {
     id: 'inter-2010',
-    title: '2010 欧冠：国米 3-1 巴萨',
+    title: '2010 欧冠：国际米兰 3-1 巴塞罗那',
     subtitle: '梅阿查的枷锁：身体对抗与区域标记',
-    description: '穆里尼奥利用萨内蒂与坎比亚索的钢铁后腰组合，切断了巴萨中场与梅西的物理连接。',
+    description: '穆里尼奥利用萨内蒂与坎比亚索的钢铁后腰组合，切断了巴塞罗那中场与梅西的物理连接。',
     score: { home: 3, away: 1 },
     teams: {
       home: { 
@@ -283,13 +283,13 @@ export const BATTLES: Battle[] = [
 export const GLOSSARY: GlossaryTerm[] = [
   {
     term: 'Tiki-taka (传控足球)',
-    definition: '极短距离传球、频繁跑位和绝对球权控制。通过三角传递重构防线。',
+    definition: '通过极短距离的连续传球、频繁的位置轮换和绝对的球权控制，在动态中重构对方防线并寻找破绽。',
     category: 'System',
     icon: '⚽',
     visualEffect: 'tiki-taka',
     complexity: 4,
     strategicFocus: ['球权控制', '空间重构', '第三人跑位'],
-    historicalContext: '由克鲁英夫奠基，瓜迪奥拉时期在巴萨达到巅峰。',
+    historicalContext: '由克鲁伊夫奠定基础，在瓜迪奥拉执教巴塞罗那时期达到艺术级巅峰。',
     keyTraits: ['短距离快速传递', '寻找第三人', '高位夺回球权'],
     radarProfile: [
       { subject: '控球率', A: 98, fullMark: 100 },
@@ -303,13 +303,13 @@ export const GLOSSARY: GlossaryTerm[] = [
   },
   {
     term: 'Gegenpressing (反抢压迫)',
-    definition: '丢球瞬时集体压迫。利用对手阵型切换混乱期夺回球权。',
+    definition: '在丢球瞬间立即发起集体压迫，利用对手从防守向进攻切换的心理与阵型混乱期夺回球权并实施就地打击。',
     category: 'Emerging',
     icon: '⚡',
     visualEffect: 'counter-press',
     complexity: 5,
     strategicFocus: ['攻守转换', '高位逼抢', '垂直进攻'],
-    historicalContext: '源自拉夫·朗尼克，由克洛普在多特蒙德和利物浦发扬光大。',
+    historicalContext: '源自拉夫·朗尼克的足球理念，由克洛普在多特蒙德和利物浦时期发扬光大。',
     keyTraits: ['5秒定律', '区域合围', '切断传球路径'],
     radarProfile: [
       { subject: '压迫', A: 100, fullMark: 100 },
@@ -322,13 +322,13 @@ export const GLOSSARY: GlossaryTerm[] = [
   },
   {
     term: 'Vertical Tiki-Taka (垂直传控)',
-    definition: '结合传控的节奏感与极高的纵向穿透力，强调快速寻找对方防线核心空档。',
+    definition: '结合传控的节奏感与极高的纵向穿透力，强调快速寻找对方防线核心空档，而非无效的横向倒脚。',
     category: 'Emerging',
     icon: '🏹',
     visualEffect: 'vertical-counter',
     complexity: 5,
     strategicFocus: ['纵向渗透', '快速节奏转换', '高位逼抢'],
-    historicalContext: '萨里在拿波里和切尔西时期完善，旨在保持控球的同时增加进攻效率。',
+    historicalContext: '萨里在拿波里和切尔西时期完善，旨在保持控球权的同时最大化进攻效率。',
     keyTraits: ['高频纵向传球', '中场三角形突刺', '快速一脚传球'],
     radarProfile: [
       { subject: '纵向效率', A: 95, fullMark: 100 },
@@ -337,17 +337,17 @@ export const GLOSSARY: GlossaryTerm[] = [
       { subject: '创造力', A: 95, fullMark: 100 },
       { subject: '纪律性', A: 85, fullMark: 100 }
     ],
-    famousTeams: ['萨里拿波里 (2015-2018)', '布莱顿 (2022-2024)']
+    famousTeams: ['拿波里 (2015-2018)', '布莱顿 (2022-2024)']
   },
   {
     term: 'Half-space (肋部空间)',
-    definition: '位于球场边路与中路之间的走廊，是现代战术中进攻威胁最大的区域。',
+    definition: '位于球场边路走廊与中路走廊之间的垂直地带，是现代战术中进攻威胁最大、防守最难覆盖的区域。',
     category: 'Phase',
     icon: '📐',
     visualEffect: 'half-space',
     complexity: 3,
     strategicFocus: ['空间利用', '传中角度', '接应盲区'],
-    historicalContext: '由德国战术分析家提出，现已成为顶级教练布阵的基础。',
+    historicalContext: '由德国战术分析网站提出，现已成为顶级教练布阵和进攻设计的战术基石。',
     keyTraits: ['边后卫助攻通道', '前腰拿球点', '防守死角'],
     radarProfile: [
       { subject: '创造力', A: 95, fullMark: 100 },
@@ -359,13 +359,13 @@ export const GLOSSARY: GlossaryTerm[] = [
   },
   {
     term: 'Inverted Fullback (内切边卫)',
-    definition: '边后卫在控球时移入中场，增加中场人数并协助组织。',
+    definition: '边后卫在球队控球阶段移入中场中路，增加中场接应人数并协助组织，同时为防范反击提供更好的覆盖。',
     category: 'Position',
     icon: '↩️',
     visualEffect: 'overlap',
     complexity: 5,
     strategicFocus: ['中路超载', '防反击覆盖', '出球路线'],
-    historicalContext: '瓜迪奥拉在拜仁时期对拉姆和阿拉巴的改造。',
+    historicalContext: '瓜迪奥拉在执教拜仁慕尼黑时期对拉姆和阿拉巴的成功改造方案。',
     keyTraits: ['双重职能', '传球覆盖', '阵型紧凑性'],
     radarProfile: [
       { subject: '意识', A: 100, fullMark: 100 },
@@ -377,13 +377,13 @@ export const GLOSSARY: GlossaryTerm[] = [
   },
   {
     term: 'False 9 (伪九号)',
-    definition: '前锋回撤至中场接球，吸引对手中卫拉出防线。',
+    definition: '名义上的中锋球员大幅度回撤至中场区域接球组织，旨在吸引并拉出对方防守方的中后卫，为边锋内切制造空档。',
     category: 'Position',
     icon: '🔄',
     visualEffect: 'false-9',
     complexity: 5,
     strategicFocus: ['拉扯防线', '中路组织', '边锋内切'],
-    historicalContext: '从1930年代匈牙利队到现代梅西的华丽演绎。',
+    historicalContext: '从1930年代的匈牙利国家队到现代巴萨梅西的华丽演绎，是战术史上最迷人的角色之一。',
     radarProfile: [
       { subject: '视野', A: 98, fullMark: 100 },
       { subject: '创造力', A: 100, fullMark: 100 },
@@ -395,7 +395,7 @@ export const GLOSSARY: GlossaryTerm[] = [
   },
   {
     term: 'Anchor Man (中场锚点)',
-    definition: '深处中场的防守屏障，负责横向扫荡并作为出球第一落点。',
+    definition: '深处中后场的防守屏障，负责横向扫荡和拦截，并作为球队由守转攻时的第一出球落点。',
     category: 'Position',
     icon: '⚓',
     complexity: 2,
@@ -410,12 +410,12 @@ export const GLOSSARY: GlossaryTerm[] = [
   },
   {
     term: 'Catenaccio (十字联防)',
-    definition: '极致的链式防守体系，强调自由人补位。',
+    definition: '源自意大利的链式防守体系，强调极其严密的阵型组织和最后一名自由人的深度补位。',
     category: 'System',
     icon: '🔒',
     visualEffect: 'catenaccio',
     complexity: 3,
-    historicalContext: '1960年代意大利足球的代名词。',
+    historicalContext: '1960年代大国际米兰时代与意大利足球防守艺术的代名词。',
     radarProfile: [
       { subject: '纪律性', A: 100, fullMark: 100 },
       { subject: '弹性', A: 95, fullMark: 100 },
@@ -437,7 +437,7 @@ export const LEARNING_PATHS: LearningPath[] = [
     modules: [
       { id: 'm1-1', title: '球场五走廊模型', type: 'Theory', description: '理解肋部空间（Half-space）的战略价值及中路、边路的分布。', relatedKnowledgeId: 'Half-space (肋部空间)' },
       { id: 'm1-2', title: '阵型演化史：从WM到现代', type: 'Theory', description: '从传统的4-4-2到现代的2-3-5控球变阵，理解位置职能的演变。' },
-      { id: 'm1-3', title: '基础：深度防守逻辑', type: 'Simulation', description: '复盘皇马与国米的防守阵列，理解如何压缩纵深。', relatedBattleId: 'real-madrid-2012' }
+      { id: 'm1-3', title: '基础：深度防守逻辑', type: 'Simulation', description: '复盘皇家马德里与国际米兰的防守阵列，理解如何压缩纵深。', relatedBattleId: 'real-madrid-2012' }
     ]
   },
   {

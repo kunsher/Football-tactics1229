@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ResponsiveContainer, BarChart, Bar, XAxis, Tooltip, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from 'recharts';
+import { ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Tooltip } from 'recharts';
 import type { MatchStatistics, TeamInfo, RadarPoint } from '../types';
 import { CoachIcon } from './icons';
 
@@ -46,11 +46,6 @@ const CoachCard: React.FC<{ team: TeamInfo; isHome: boolean }> = ({ team, isHome
 );
 
 export const StatsDashboard: React.FC<StatsDashboardProps> = ({ stats, teamNames, colors, teams, radarData }) => {
-  const shotsData = [
-    { name: '射门', [teamNames.home]: stats.shots.home, [teamNames.away]: stats.shots.away },
-    { name: '射正', [teamNames.home]: stats.shots.onTargetHome, [teamNames.away]: stats.shots.onTargetAway },
-  ];
-
   return (
     <div className="bg-gray-900/60 rounded-[2.5rem] p-6 border border-white/10 backdrop-blur-xl flex flex-col gap-8 shadow-2xl">
       
@@ -67,9 +62,18 @@ export const StatsDashboard: React.FC<StatsDashboardProps> = ({ stats, teamNames
           
           <div className="h-64 w-full bg-[#0a0f14]/80 rounded-[2rem] border border-white/5 pt-4 shadow-inner group/radar relative overflow-hidden">
             <ResponsiveContainer width="100%" height="100%">
-              <RadarChart cx="50%" cy="50%" outerRadius="70%" data={radarData}>
+              <RadarChart 
+                cx="50%" 
+                cy="50%" 
+                outerRadius="65%" 
+                data={radarData}
+                margin={{ top: 10, right: 50, left: 50, bottom: 10 }}
+              >
                 <PolarGrid stroke="rgba(255,255,255,0.06)" />
-                <PolarAngleAxis dataKey="subject" tick={{fill: '#64748b', fontSize: 10, fontWeight: '900'}} />
+                <PolarAngleAxis 
+                  dataKey="subject" 
+                  tick={{fill: '#94a3b8', fontSize: 10, fontWeight: '900', letterSpacing: '0.05em'}} 
+                />
                 <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
                 <Radar
                   name={teamNames.home}
@@ -134,21 +138,6 @@ export const StatsDashboard: React.FC<StatsDashboardProps> = ({ stats, teamNames
                 <div style={{ width: `${stats.possession.home}%`, backgroundColor: colors.home }} className="h-full transition-all duration-1000 ease-out"></div>
                 <div style={{ width: `${stats.possession.away}%`, backgroundColor: colors.away }} className="h-full transition-all duration-1000 ease-out opacity-50"></div>
             </div>
-        </div>
-
-        {/* 射门分布柱状图 */}
-        <div className="h-44 w-full bg-white/[0.02] p-4 rounded-2xl border border-white/5">
-            <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={shotsData} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
-                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 10, fontWeight: '900'}} />
-                    <Tooltip 
-                        contentStyle={{backgroundColor: '#0f172a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px'}}
-                        itemStyle={{fontSize: '10px', fontWeight: '900'}}
-                    />
-                    <Bar dataKey={teamNames.home} fill={colors.home} radius={[4, 4, 0, 0]} barSize={24} />
-                    <Bar dataKey={teamNames.away} fill={colors.away} radius={[4, 4, 0, 0]} barSize={24} opacity={0.4} />
-                </BarChart>
-            </ResponsiveContainer>
         </div>
       </div>
     </div>
