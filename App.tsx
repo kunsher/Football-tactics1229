@@ -1,8 +1,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { TacticBoard } from './components/TacticBoard';
-import { AnalysisPanel } from './components/AnalysisPanel';
-import { StatsDashboard } from './components/StatsDashboard';
+import { BattleRightPanel } from './components/BattleRightPanel';
 import { BattleSelector } from './components/BattleSelector';
 import { ProjectMission } from './components/ProjectMission';
 import { TacticalKnowledgeBase } from './components/TacticalKnowledgeBase';
@@ -13,7 +12,7 @@ import { LoginModal } from './components/LoginModal';
 import { TacticalSandbox } from './components/TacticalSandbox';
 import { TutorialOverlay } from './components/TutorialOverlay';
 import type { PlayerPosition, Battle, UserProfile } from './types';
-import { UserIcon } from './components/icons';
+import { UserIcon, SunIcon, MoonIcon } from './components/icons';
 import { mockApi } from './services/mockApi';
 
 type ActiveTab = 'simulation' | 'knowledge' | 'sandbox' | 'learning-paths' | 'about';
@@ -23,6 +22,7 @@ const App: React.FC = () => {
   const [selectedBattle, setSelectedBattle] = useState<Battle | null>(null);
   const [user, setUser] = useState<UserProfile | null>(null);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
   
   const [currentPhaseIndex, setCurrentPhaseIndex] = useState(0);
   const [previousPhaseIndex, setPreviousPhaseIndex] = useState<number | null>(null);
@@ -68,6 +68,24 @@ const App: React.FC = () => {
     };
     initApp();
   }, []);
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null;
+    if (savedTheme) {
+      setTheme(savedTheme);
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      setTheme('dark');
+    }
+  }, []);
+
+  useEffect(() => {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    localStorage.setItem('theme', theme);
+  }, [theme]);
 
   useEffect(() => {
     if (selectedBattle) {
@@ -131,7 +149,7 @@ const App: React.FC = () => {
 
   if (isInitialLoading) {
     return (
-        <div className="min-h-screen bg-[#0a0f14] flex flex-col items-center justify-center text-center p-4">
+        <div className="min-h-screen bg-background flex flex-col items-center justify-center text-center p-4">
             <div className="w-12 h-12 border-4 border-blue-500/10 border-t-blue-500 rounded-full animate-spin"></div>
             <h2 className="mt-6 text-[11px] font-black text-blue-500 uppercase tracking-[0.4em] animate-pulse">正在初始化战术科普平台...</h2>
         </div>
@@ -162,20 +180,24 @@ const App: React.FC = () => {
     localStorage.setItem('has_seen_tutorial_v12', 'true');
   };
 
+  const toggleTheme = () => {
+    setTheme(prev => prev === 'dark' ? 'light' : 'dark');
+  };
+
   return (
-    <div className="min-h-screen h-screen flex flex-col font-sans selection:bg-blue-500/30 overflow-hidden bg-[#0a0f14] text-white">
+    <div className="min-h-screen h-screen flex flex-col font-sans selection:bg-blue-500/30 overflow-hidden bg-background text-foreground">
       {showTutorial && activeTab === 'simulation' && <TutorialOverlay onClose={closeTutorial} />}
       {selectedPlayerForModal && <PlayerModal player={selectedPlayerForModal} phaseTitle={currentPhase.title} onClose={() => setSelectedPlayerForModal(null)} />}
       {isUserModalOpen && <UserSpaceModal user={user} onClose={() => setIsUserModalOpen(false)} onLogout={handleLogout} onOpenLogin={() => { setIsUserModalOpen(false); setIsLoginModalOpen(true); }} onUpdateProfile={(updates) => mockApi.updateProfile(updates).then(updated => setUser(updated))} />}
       {isLoginModalOpen && <LoginModal onLoginSuccess={handleLoginSuccess} onClose={() => setIsLoginModalOpen(false)} />}
 
-      <header id="tutorial-header" className="h-16 shrink-0 border-b border-white/5 bg-[#0a0f14] flex items-center justify-between px-6 z-50">
+      <header id="tutorial-header" className="h-16 shrink-0 border-b border-border/10 bg-card flex items-center justify-between px-6 z-50">
         <div className="flex items-center gap-8">
           <div className="flex flex-col">
             <h1 className="text-xl font-black tracking-tighter uppercase leading-none">
               足球<span className="text-blue-500 ml-1">可视化科普系统</span>
             </h1>
-            <p className="text-[9px] text-gray-600 font-bold uppercase tracking-[0.2em] mt-1">Football Tactical Visualization System</p>
+            <p className="text-[9px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-[0.2em] mt-1">Football Tactical Visualization System</p>
           </div>
           {activeTab === 'simulation' && (
              <div className="hidden md:block">
@@ -185,35 +207,45 @@ const App: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-6">
-          <nav className="hidden xl:flex bg-white/5 p-1.5 rounded-2xl border border-white/5 backdrop-blur-sm shadow-inner">
+          <nav className="hidden xl:flex bg-foreground/5 p-1.5 rounded-2xl border border-border/10 backdrop-blur-sm shadow-inner">
             {['simulation', 'learning-paths', 'sandbox', 'knowledge', 'about'].map(id => (
               <button 
                 key={id} 
                 onClick={() => { setActiveTab(id as any); if(id !== 'knowledge') setTargetKnowledgeId(null); }} 
-                className={`px-5 py-2 rounded-xl text-[13px] font-black uppercase tracking-tight transition-all duration-300 ${activeTab === id ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/40' : 'text-gray-400 hover:text-white'}`}
+                className={`px-5 py-2 rounded-xl text-[13px] font-black uppercase tracking-tight transition-all duration-300 ${activeTab === id ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/40' : 'text-slate-500 dark:text-slate-400 hover:text-foreground'}`}
               >
                 {id === 'simulation' ? '战役复盘' : id === 'learning-paths' ? '学习路径' : id === 'sandbox' ? '战术沙盒' : id === 'knowledge' ? '战术百科' : '项目使命'}
               </button>
             ))}
           </nav>
 
-          <button onClick={() => setIsUserModalOpen(true)} className="flex items-center gap-2.5 p-1.5 pr-3 rounded-lg border border-white/5 bg-white/5 hover:bg-white/10 transition-all">
-            <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${user.isGuest ? 'bg-gray-800' : 'bg-blue-600'}`}>
-              <UserIcon className="w-4 h-4 text-white" />
-            </div>
-            <div className="text-left hidden sm:block">
-              <p className="text-[11px] font-black text-white leading-none">{user.name}</p>
-              <p className="text-[8px] font-bold text-blue-500 uppercase tracking-widest mt-0.5 opacity-60">{user.rank}</p>
-            </div>
-          </button>
+          <div className="flex items-center gap-3">
+            <button 
+              onClick={toggleTheme}
+              className="w-10 h-10 rounded-xl border border-border/10 bg-foreground/5 flex items-center justify-center hover:bg-foreground/10 transition-all text-foreground"
+              title={theme === 'dark' ? '切换到白天模式' : '切换到黑夜模式'}
+            >
+              {theme === 'dark' ? <SunIcon className="w-5 h-5" /> : <MoonIcon className="w-5 h-5" />}
+            </button>
+
+            <button onClick={() => setIsUserModalOpen(true)} className="flex items-center gap-2.5 p-1.5 pr-3 rounded-lg border border-border/10 bg-foreground/5 hover:bg-foreground/10 transition-all">
+              <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${user.isGuest ? 'bg-foreground/10' : 'bg-blue-600'}`}>
+                <UserIcon className={`w-4 h-4 ${user.isGuest ? 'text-foreground/60' : 'text-white'}`} />
+              </div>
+              <div className="text-left hidden sm:block">
+                <p className="text-[11px] font-black leading-none">{user.name}</p>
+                <p className="text-[8px] font-bold text-blue-500 uppercase tracking-widest mt-0.5 opacity-60">{user.rank}</p>
+              </div>
+            </button>
+          </div>
         </div>
       </header>
       
-      <main className="flex-grow flex flex-col lg:flex-row overflow-hidden bg-[#0a0f14]">
+      <main className="flex-grow flex flex-col lg:flex-row overflow-hidden bg-background">
         {activeTab === 'simulation' ? (
           <>
-            <section className="w-full lg:w-[64%] h-full flex flex-col p-3 lg:p-4 shrink-0 border-r border-white/5">
-              <div id="tutorial-board" className="flex-grow bg-[#050c05] rounded-[3rem] border border-white/10 relative overflow-hidden shadow-[0_40px_100px_rgba(0,0,0,0.8)] group flex items-center justify-center aspect-[120/68]">
+            <section className="w-full lg:w-[64%] h-full flex flex-col p-3 lg:p-4 shrink-0 border-r border-border/10">
+              <div id="tutorial-board" className="flex-grow bg-[#050c05] rounded-[3rem] border border-white/10 relative overflow-hidden shadow-[0_40px_100px_rgba(0,0,0,0.4)] dark:shadow-[0_40px_100px_rgba(0,0,0,0.8)] group flex items-center justify-center aspect-[120/68]">
                  <TacticBoard 
                     homePlayers={currentPhase.homePlayers} 
                     awayPlayers={currentPhase.awayPlayers}
@@ -232,8 +264,8 @@ const App: React.FC = () => {
                  />
               </div>
 
-              <div id="tutorial-controls" className="mt-4 shrink-0 bg-[#0e141b] border border-white/5 rounded-[1.8rem] p-5 flex flex-col gap-6">
-                <div className="relative w-full h-1 bg-white/10 rounded-full flex items-center justify-between px-1">
+              <div id="tutorial-controls" className="mt-4 shrink-0 bg-card border border-border rounded-[1.8rem] p-5 flex flex-col gap-6">
+                <div className="relative w-full h-1 bg-foreground/10 rounded-full flex items-center justify-between px-1">
                   <div 
                     className="absolute left-0 top-0 h-full bg-blue-600 rounded-full transition-all duration-500 ease-linear shadow-[0_0_15px_rgba(59,130,246,0.6)]"
                     style={{ width: `${(currentPhaseIndex / (selectedBattle.phases.length - 1)) * 100}%` }}
@@ -242,10 +274,10 @@ const App: React.FC = () => {
                     <button 
                       key={p.id}
                       onClick={() => handlePhaseChange(idx)}
-                      className={`relative z-10 w-2.5 h-2.5 rounded-full border transition-all duration-300 ${idx <= currentPhaseIndex ? 'bg-blue-500 border-blue-400 scale-125' : 'bg-gray-800 border-white/10'}`}
+                      className={`relative z-10 w-2.5 h-2.5 rounded-full border transition-all duration-300 ${idx <= currentPhaseIndex ? 'bg-blue-500 border-blue-400 scale-125' : 'bg-foreground/20 border-border'}`}
                     >
                       {idx === currentPhaseIndex && (
-                        <div className="absolute -top-7 left-1/2 -translate-x-1/2 text-[10px] font-black whitespace-nowrap tracking-tight text-blue-400 animate-fade-in">
+                        <div className="absolute -top-7 left-1/2 -translate-x-1/2 text-[10px] font-black whitespace-nowrap tracking-tight text-blue-500 animate-fade-in">
                           {p.title}
                         </div>
                       )}
@@ -259,17 +291,17 @@ const App: React.FC = () => {
                         {isPlaying ? <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg> : <svg className="w-6 h-6 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>}
                     </button>
                     <div className="flex flex-col">
-                      <span className="text-[10px] text-gray-600 font-bold uppercase tracking-widest opacity-60">AI 实战模拟</span>
-                      <span className="text-base font-black text-white leading-none mt-1 uppercase tracking-tight">
+                      <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-widest opacity-70">AI 实战模拟</span>
+                      <span className="text-base font-black leading-none mt-1 uppercase tracking-tight">
                          {currentPhase.title} {currentPhase.matchMinute && <span className="text-blue-500 ml-2 font-mono">[{currentPhase.matchMinute}]</span>}
                       </span>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-8">
-                    <div className="flex items-center gap-4 px-4 py-1.5 bg-black/40 rounded-2xl border border-white/5">
+                    <div className="flex items-center gap-4 px-4 py-1.5 bg-foreground/5 rounded-2xl border border-border">
                         <div className="flex flex-col items-center gap-1.5">
-                            <span className="text-[9px] text-gray-600 font-black uppercase tracking-widest opacity-40">主队色彩</span>
+                            <span className="text-[9px] text-slate-500 dark:text-slate-400 font-black uppercase tracking-widest opacity-60">主队色彩</span>
                             <div className="relative w-8 h-8 group">
                                 <input 
                                     type="color" 
@@ -283,9 +315,9 @@ const App: React.FC = () => {
                                 ></div>
                             </div>
                         </div>
-                        <div className="w-px h-8 bg-white/5"></div>
+                        <div className="w-px h-8 bg-border"></div>
                         <div className="flex flex-col items-center gap-1.5">
-                            <span className="text-[9px] text-gray-600 font-black uppercase tracking-widest opacity-40">客队色彩</span>
+                            <span className="text-[9px] text-slate-500 dark:text-slate-400 font-black uppercase tracking-widest opacity-60">客队色彩</span>
                             <div className="relative w-8 h-8 group">
                                 <input 
                                     type="color" 
@@ -302,13 +334,13 @@ const App: React.FC = () => {
                     </div>
 
                     <div className="flex flex-col items-center gap-1.5">
-                        <span className="text-[9px] text-gray-600 font-black uppercase tracking-widest opacity-40">播放倍速率</span>
-                        <div className="flex bg-black/40 p-1 rounded-xl border border-white/5">
+                        <span className="text-[9px] text-slate-500 dark:text-slate-400 font-black uppercase tracking-widest opacity-60">播放倍速率</span>
+                        <div className="flex bg-foreground/5 p-1 rounded-xl border border-border">
                         {[0.5, 1, 1.5, 2].map(speed => (
                             <button 
                             key={speed} 
                             onClick={() => setAnimationSpeed(speed)} 
-                            className={`w-10 py-1.5 rounded-lg text-[11px] font-black transition-all ${animationSpeed === speed ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-600 hover:text-gray-400'}`}
+                            className={`w-10 py-1.5 rounded-lg text-[11px] font-black transition-all ${animationSpeed === speed ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-500 dark:text-slate-400 hover:text-foreground'}`}
                             >
                             {speed}x
                             </button>
@@ -317,12 +349,12 @@ const App: React.FC = () => {
                     </div>
                   </div>
 
-                  <div id="tutorial-phases" className="hidden xl:flex gap-1.5 bg-white/5 p-1.5 rounded-xl border border-white/5">
+                  <div id="tutorial-phases" className="hidden xl:flex gap-1.5 bg-foreground/5 p-1.5 rounded-xl border border-border">
                     {selectedBattle.phases.map((p, idx) => (
                       <button 
                         key={p.id} 
                         onClick={() => handlePhaseChange(idx)}
-                        className={`px-4 py-2 rounded-lg text-[11px] font-black uppercase transition-all ${idx === currentPhaseIndex ? 'bg-blue-600/30 text-blue-400 border border-blue-500/30' : 'text-gray-600 hover:text-gray-400'}`}
+                        className={`px-4 py-2 rounded-lg text-[11px] font-black uppercase transition-all ${idx === currentPhaseIndex ? 'bg-blue-600/20 text-blue-600 border border-blue-500/30' : 'text-slate-500 dark:text-slate-400 hover:text-foreground'}`}
                       >
                         {p.matchMinute ? `${p.matchMinute}` : `PHASE ${idx + 1}`}
                       </button>
@@ -332,18 +364,18 @@ const App: React.FC = () => {
               </div>
             </section>
 
-            <section className="flex-grow h-full overflow-y-auto custom-scrollbar p-6 lg:p-10 shrink bg-[#0a0f14]">
-                <div id="tutorial-analysis" className="mb-10">
-                    <AnalysisPanel 
-                      phase={currentPhase} 
-                      battle={selectedBattle} 
-                      hoveredPlayer={hoveredPlayer} 
-                      onNavigateToKnowledge={handleNavigateToKnowledge}
-                    />
-                </div>
-                <div id="tutorial-stats" className="pb-32">
-                    <StatsDashboard stats={selectedBattle.stats} teamNames={{ home: selectedBattle.teams.home.name, away: selectedBattle.teams.away.name }} colors={{ home: homeColor, away: awayColor }} teams={selectedBattle.teams} radarData={selectedBattle.radarData} />
-                </div>
+            <section className="flex-grow h-full p-6 lg:p-10 shrink bg-background overflow-hidden">
+                <BattleRightPanel 
+                  phase={currentPhase} 
+                  battle={selectedBattle} 
+                  hoveredPlayer={hoveredPlayer} 
+                  onNavigateToKnowledge={handleNavigateToKnowledge}
+                  stats={selectedBattle.stats}
+                  teamNames={{ home: selectedBattle.teams.home.name, away: selectedBattle.teams.away.name }}
+                  colors={{ home: homeColor, away: awayColor }}
+                  teams={selectedBattle.teams}
+                  radarData={selectedBattle.radarData}
+                />
             </section>
           </>
         ) : (

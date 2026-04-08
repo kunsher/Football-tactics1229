@@ -98,6 +98,24 @@ export interface RadarPoint {
   fullMark: number;
 }
 
+export interface StandingEntry {
+  pos: number;
+  team: string;
+  p: number;
+  w: number;
+  d: number;
+  l: number;
+  pts: number;
+  isCurrent?: boolean;
+}
+
+export interface H2HMatch {
+  date: string;
+  score: string;
+  winner: 'home' | 'away' | 'draw';
+  competition: string;
+}
+
 export interface Battle {
   id: string;
   title: string;
@@ -109,6 +127,8 @@ export interface Battle {
   events: TacticalEvent[]; // 新增：Sportscode 事件轴
   stats: MatchStatistics;
   radarData: RadarPoint[];
+  leagueStandings?: StandingEntry[]; // 新增：积分榜数据
+  h2hData?: H2HMatch[]; // 新增：历史交锋数据
 }
 
 export interface GlossaryTerm {

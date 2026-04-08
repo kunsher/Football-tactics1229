@@ -67,7 +67,6 @@ const TimelineEvent: React.FC<{
 }> = ({ event, isActive, onHover }) => {
   const ref = React.useRef<HTMLDivElement>(null);
   return (
-    // Change div to motion.div to support onHoverStart and onHoverEnd from framer-motion
     <motion.div 
       ref={ref}
       className={`flex flex-col items-center gap-2 group cursor-pointer transition-all relative ${isActive ? 'scale-110' : 'opacity-40 hover:opacity-100'}`}
@@ -80,13 +79,13 @@ const TimelineEvent: React.FC<{
         <span className="text-sm">{event.type === 'Goal' ? '⚽' : '⚡'}</span>
       </div>
       <div className="flex flex-col items-center gap-0.5">
-        <span className="text-[9px] font-black text-gray-500 tracking-tighter">{event.minute}</span>
-        <span className={`text-[7px] font-black px-1 rounded bg-white/5 border border-white/5 uppercase tracking-[0.1em]`}>
+        <span className="text-[9px] font-black text-slate-500 dark:text-slate-400 tracking-tighter">{event.minute}</span>
+        <span className={`text-[7px] font-black px-1 rounded bg-foreground/5 border border-border uppercase tracking-[0.1em]`}>
           {EVENT_CODE_MAP[event.type] || 'EVT'}
         </span>
       </div>
       {isActive && (
-        <div className="absolute -top-1 -right-1 w-2 h-2 bg-blue-500 rounded-full border border-[#0a0f14] shadow-[0_0_8px_#3b82f6]"></div>
+        <div className="absolute -top-1 -right-1 w-2 h-2 bg-blue-500 rounded-full border border-background shadow-[0_0_8px_#3b82f6]"></div>
       )}
     </motion.div>
   );
@@ -103,7 +102,7 @@ export const AnalysisPanel: React.FC<AnalysisPanelProps> = ({ phase, battle, hov
   }, [hoveredElement]);
 
   return (
-    <div className="bg-[#0a0f14]/80 rounded-[2.5rem] p-6 md:p-8 border border-white/10 flex flex-col gap-8 backdrop-blur-3xl shadow-2xl relative">
+    <div className="bg-card/80 rounded-[2.5rem] p-6 md:p-8 border border-border flex flex-col gap-8 backdrop-blur-3xl shadow-2xl relative">
       {/* 实时解说播报 HUD (侧边栏集成) */}
       <div className="bg-blue-600/10 border border-blue-500/20 rounded-3xl p-5 relative overflow-hidden group">
         <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:scale-110 transition-transform">
@@ -113,31 +112,31 @@ export const AnalysisPanel: React.FC<AnalysisPanelProps> = ({ phase, battle, hov
           <div className="flex flex-col">
             <span className="text-[10px] font-black text-blue-500 uppercase tracking-widest">Live Briefing</span>
             <div className="flex items-center gap-3 mt-1">
-               <span className="text-xl font-black text-white font-mono">{phase.matchMinute || '--:--'}</span>
-               <div className="w-px h-4 bg-white/20"></div>
-               <span className="text-sm font-black text-blue-400">{phase.matchContext || '0 - 0'}</span>
+               <span className="text-xl font-black font-mono">{phase.matchMinute || '--:--'}</span>
+               <div className="w-px h-4 bg-foreground/20"></div>
+               <span className="text-sm font-black text-blue-500">{phase.matchContext || '0 - 0'}</span>
             </div>
           </div>
           <button 
             onClick={() => setIsVoicePlaying(!isVoicePlaying)}
-            className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${isVoicePlaying ? 'bg-blue-600 shadow-lg' : 'bg-white/5 border border-white/10'}`}
+            className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${isVoicePlaying ? 'bg-blue-600 shadow-lg' : 'bg-foreground/5 border border-border'}`}
           >
-            {isVoicePlaying ? <AudioWaveform /> : <svg className="w-4 h-4 text-blue-400" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>}
+            {isVoicePlaying ? <AudioWaveform /> : <svg className="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>}
           </button>
         </div>
         <motion.p 
           key={phase.id}
           initial={{ opacity: 0, y: 5 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-xs text-gray-200 font-bold leading-relaxed italic pr-4"
+          className="text-xs font-bold leading-relaxed italic pr-4 text-foreground/90"
         >
           “ {phase.description} ”
         </motion.p>
       </div>
 
-      <div className="bg-black/40 p-6 rounded-3xl border border-white/5 relative">
+      <div className="bg-foreground/5 p-6 rounded-3xl border border-border relative">
         <div className="flex items-center justify-between mb-6">
-            <h4 className="text-[10px] font-black text-gray-600 uppercase tracking-[0.3em] flex items-center gap-2">
+            <h4 className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.3em] flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span>
               Sportscode 战术标签流
             </h4>
@@ -161,31 +160,31 @@ export const AnalysisPanel: React.FC<AnalysisPanelProps> = ({ phase, battle, hov
                   style={{ position: 'absolute', bottom: '100%', left: bubblePosition.left, transform: 'translateX(-50%)', marginBottom: '1.5rem', zIndex: 100 }}
                   className="pointer-events-auto"
                 >
-                  <div className="bg-[#0f172a] border border-blue-500/40 p-5 rounded-[2.5rem] shadow-2xl backdrop-blur-2xl flex flex-col gap-5 w-[320px]">
+                  <div className="bg-card border border-blue-500/40 p-5 rounded-[2.5rem] shadow-2xl backdrop-blur-2xl flex flex-col gap-5 w-[320px]">
                     <div className="flex items-center justify-between">
-                      <span className="text-[8px] font-black text-blue-400 uppercase tracking-widest">Tactic Schema</span>
-                      <span className="text-[8px] font-black text-white bg-blue-600/40 px-3 py-1 rounded-full uppercase">{hoveredEvent.type}</span>
+                      <span className="text-[8px] font-black text-blue-500 uppercase tracking-widest">Tactic Schema</span>
+                      <span className="text-[8px] font-black text-white bg-blue-600 px-3 py-1 rounded-full uppercase">{hoveredEvent.type}</span>
                     </div>
-                    <div className="w-full h-40 bg-black/40 rounded-2xl border border-white/5 overflow-hidden shadow-inner">
+                    <div className="w-full h-40 bg-background/40 rounded-2xl border border-border overflow-hidden shadow-inner">
                        <TacticalVisualizer type={EVENT_VISUAL_MAP[hoveredEvent.type] || 'tiki-taka'} size="small" />
                     </div>
                     <div className="space-y-4">
-                        <p className="text-xs text-gray-300 leading-relaxed font-medium italic">“ {EVENT_DETAILS_MAP[hoveredEvent.type]?.desc || '解析中...'} ”</p>
+                        <p className="text-xs leading-relaxed font-medium italic text-foreground/80">“ {EVENT_DETAILS_MAP[hoveredEvent.type]?.desc || '解析中...'} ”</p>
                         {hoveredEvent.relatedKnowledgeId && (
                            <button 
                              onClick={(e) => {
                                e.stopPropagation();
                                onNavigateToKnowledge?.(hoveredEvent.relatedKnowledgeId!);
                              }}
-                             className="w-full py-2.5 bg-blue-600/20 border border-blue-500/30 rounded-xl text-[10px] font-black text-blue-400 uppercase tracking-widest hover:bg-blue-600 hover:text-white transition-all"
+                             className="w-full py-2.5 bg-blue-600/20 border border-blue-500/30 rounded-xl text-[10px] font-black text-blue-500 uppercase tracking-widest hover:bg-blue-600 hover:text-white transition-all"
                            >
                              深度解码战术基因 →
                            </button>
                         )}
-                        <p className="text-[10px] text-gray-500 border-t border-white/5 pt-2 italic">{EVENT_DETAILS_MAP[hoveredEvent.type]?.tacticalNote}</p>
+                        <p className="text-[10px] text-slate-500 dark:text-slate-400 border-t border-border pt-2 italic">{EVENT_DETAILS_MAP[hoveredEvent.type]?.tacticalNote}</p>
                     </div>
                   </div>
-                  <div className="w-3 h-3 bg-[#0f172a] border-r border-b border-blue-500/40 rotate-45 absolute -bottom-1.5 left-1/2 -translate-x-1/2"></div>
+                  <div className="w-3 h-3 bg-card border-r border-b border-blue-500/40 rotate-45 absolute -bottom-1.5 left-1/2 -translate-x-1/2"></div>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -193,28 +192,28 @@ export const AnalysisPanel: React.FC<AnalysisPanelProps> = ({ phase, battle, hov
       </div>
 
       <div>
-        <h4 className="text-[10px] font-black text-gray-500 uppercase mb-4 flex items-center gap-3">
+        <h4 className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase mb-4 flex items-center gap-3">
             <PlayerIcon className="w-4 h-4" /> 球员即时性能诊断 (GPS Sync)
         </h4>
-        <div className={`bg-[#05080b] rounded-2xl p-6 border transition-all duration-700 relative overflow-hidden ${hoveredPlayer ? 'border-blue-500/40 shadow-xl scale-[1.01]' : 'border-white/5 opacity-50'}`}>
+        <div className={`bg-background/40 rounded-2xl p-6 border transition-all duration-700 relative overflow-hidden ${hoveredPlayer ? 'border-blue-500/40 shadow-xl scale-[1.01]' : 'border-border opacity-50'}`}>
           {hoveredPlayer ? (
             <div className="animate-fade-in">
               <div className="flex justify-between items-center mb-6">
                  <div>
                     <p className="text-[9px] font-black text-blue-500 uppercase tracking-widest mb-1 italic">LIVE_SQUAD_TRACKER</p>
-                    <p className="text-3xl font-black text-white tracking-tighter">{hoveredPlayer.name}</p>
+                    <p className="text-3xl font-black tracking-tighter">{hoveredPlayer.name}</p>
                  </div>
                  <div className="w-12 h-12 rounded-xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center">
-                    <span className="text-xl font-black text-blue-400">#{hoveredPlayer.number}</span>
+                    <span className="text-xl font-black text-blue-500">#{hoveredPlayer.number}</span>
                  </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
-                  <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
-                      <p className="text-[9px] text-gray-500 font-black uppercase mb-1">瞬时代谢率</p>
-                      <p className="text-xl font-black text-white">{(hoveredPlayer.gps?.metabolicPower || 24.2).toFixed(1)} <span className="text-[9px] text-blue-500 font-bold">W/KG</span></p>
+                  <div className="p-4 bg-foreground/5 rounded-2xl border border-border">
+                      <p className="text-[9px] text-slate-500 dark:text-slate-400 font-black uppercase mb-1">瞬时代谢率</p>
+                      <p className="text-xl font-black">{(hoveredPlayer.gps?.metabolicPower || 24.2).toFixed(1)} <span className="text-[9px] text-blue-500 font-bold">W/KG</span></p>
                   </div>
-                  <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
-                      <p className="text-[9px] text-gray-500 font-black uppercase mb-1">HSR 累积</p>
+                  <div className="p-4 bg-foreground/5 rounded-2xl border border-border">
+                      <p className="text-[9px] text-slate-500 dark:text-slate-400 font-black uppercase mb-1">HSR 累积</p>
                       <p className="text-xl font-black text-orange-500">{Math.round(hoveredPlayer.gps?.highIntensityDistance || 42)} <span className="text-[9px] font-bold">M</span></p>
                   </div>
               </div>
@@ -222,7 +221,7 @@ export const AnalysisPanel: React.FC<AnalysisPanelProps> = ({ phase, battle, hov
           ) : (
             <div className="py-12 flex flex-col items-center justify-center text-center opacity-30">
                <InfoIcon className="w-8 h-8 mb-4" />
-               <p className="text-xs font-black uppercase tracking-widest text-gray-500">悬停球员获取 GPS 数据链路</p>
+               <p className="text-xs font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">悬停球员获取 GPS 数据链路</p>
             </div>
           )}
         </div>

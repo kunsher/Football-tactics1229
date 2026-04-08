@@ -131,16 +131,15 @@ export const TacticalSandbox: React.FC = () => {
 
   return (
     <div className="w-full flex flex-col gap-8 animate-fade-in max-w-7xl mx-auto py-4">
-      {/* Hero Section */}
-      <div className="bg-gradient-to-br from-blue-900/40 to-[#0a0f14] border border-blue-500/20 rounded-[2.5rem] p-12 relative overflow-hidden group shadow-2xl">
+      <div className="bg-gradient-to-br from-blue-900/40 to-slate-900 dark:to-[#0a0f14] border border-blue-500/20 rounded-[2rem] p-10 relative overflow-hidden group shadow-2xl">
         <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:40px_40px]"></div>
         <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-6">
-             <div className="w-1.5 h-6 bg-blue-500 rounded-full shadow-[0_0_15px_rgba(59,130,246,0.5)]"></div>
-             <span className="text-blue-400 font-black text-xs uppercase tracking-[0.4em]">Tactical Creator Mode</span>
+          <div className="flex items-center gap-3 mb-5">
+             <div className="w-1 h-5 bg-blue-500 rounded-full shadow-[0_0_15px_rgba(59,130,246,0.5)]"></div>
+             <span className="text-blue-400 font-mono text-[10px] uppercase tracking-[0.4em]">TACTICAL_CREATOR_V2</span>
           </div>
-          <h2 className="text-5xl font-black text-white mb-4 tracking-tighter leading-none">战术沙盒实验室 <span className="text-blue-500">BETA</span></h2>
-          <p className="text-xl text-gray-400 max-w-2xl font-medium italic opacity-80">
+          <h2 className="text-4xl font-black text-white mb-3 tracking-tighter leading-none">战术沙盒实验室 <span className="text-blue-500">BETA</span></h2>
+          <p className="text-lg text-slate-300 dark:text-gray-400 max-w-2xl font-medium italic opacity-80">
             “ 自由重构空间，推演胜负逻辑。在这里，每个灵感都是通往胜利的蓝图。”
           </p>
         </div>
@@ -149,9 +148,9 @@ export const TacticalSandbox: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Toolbar */}
         <div className="lg:col-span-3 space-y-6">
-          <div className="bg-white/[0.03] border border-white/10 rounded-3xl p-6 space-y-8">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 space-y-8 shadow-lg">
             <div>
-              <p className="text-[10px] text-gray-500 font-black uppercase tracking-[0.3em] mb-4">创作工具 / TOOLS</p>
+              <p className="text-[9px] text-slate-400 dark:text-gray-500 font-mono uppercase tracking-[0.3em] mb-4">创作工具 / TOOLS_SET</p>
               <div className="grid grid-cols-3 gap-2">
                 {[
                   { id: 'move', label: '选择', icon: '🎯' },
@@ -166,38 +165,38 @@ export const TacticalSandbox: React.FC = () => {
                     }}
                     className={`flex flex-col items-center gap-2 p-3 rounded-xl border transition-all ${
                       activeTool === tool.id 
-                        ? 'bg-blue-600 border-blue-400 shadow-lg text-white' 
-                        : 'bg-white/5 border-white/5 text-gray-400 hover:bg-white/10'
+                        ? 'bg-blue-600 border-blue-500 shadow-md text-white' 
+                        : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-gray-400 hover:border-blue-400'
                     }`}
                   >
                     <span className="text-xl">{tool.icon}</span>
-                    <span className="text-[10px] font-black uppercase">{tool.label}</span>
+                    <span className="text-[9px] font-black uppercase">{tool.label}</span>
                   </button>
                 ))}
               </div>
             </div>
 
             <div>
-              <p className="text-[10px] text-gray-500 font-black uppercase tracking-[0.3em] mb-4">预设阵型 / FORMATIONS</p>
+              <p className="text-[9px] text-slate-400 dark:text-gray-500 font-mono uppercase tracking-[0.3em] mb-4">预设阵型 / PRESET_FORMATION</p>
               <div className="space-y-2">
                 {Object.keys(FORMATION_PRESETS).map(name => (
                   <button
                     key={name}
                     onClick={() => applyFormation(name)}
-                    className="w-full py-3 bg-white/5 border border-white/5 rounded-xl text-xs font-black text-gray-300 uppercase tracking-widest hover:bg-blue-600/20 hover:border-blue-500/30 transition-all flex items-center justify-center gap-3"
+                    className="w-full py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-[10px] font-black text-slate-700 dark:text-gray-300 uppercase tracking-widest hover:border-blue-400 transition-all flex items-center justify-center gap-3"
                   >
-                    {name} <span className="text-[10px] opacity-40">AUTO-LAYOUT</span>
+                    {name} <span className="text-[8px] opacity-40 font-mono">AUTO_LAYOUT</span>
                   </button>
                 ))}
               </div>
             </div>
 
             <div>
-              <p className="text-[10px] text-gray-500 font-black uppercase tracking-[0.3em] mb-4">战术备注 / BRIEFING</p>
+              <p className="text-[9px] text-slate-400 dark:text-gray-500 font-mono uppercase tracking-[0.3em] mb-4">战术备注 / BRIEFING_LOG</p>
               <textarea 
                 value={tacticalNote}
                 onChange={(e) => setTacticalNote(e.target.value)}
-                className="w-full h-40 bg-[#05080b] border border-white/10 rounded-xl p-4 text-xs text-gray-400 font-medium leading-relaxed resize-none focus:outline-none focus:border-blue-500/50 transition-all italic"
+                className="w-full h-40 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-4 text-[11px] text-slate-600 dark:text-gray-400 font-medium leading-relaxed resize-none focus:outline-none focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500/50 transition-all italic"
               />
             </div>
           </div>
@@ -207,7 +206,7 @@ export const TacticalSandbox: React.FC = () => {
                 <InfoIcon className="w-4 h-4 text-blue-400" />
                 <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest">当前工具指令</span>
              </div>
-             <p className="text-[11px] text-gray-500 leading-relaxed font-medium">
+             <p className="text-[11px] text-slate-500 dark:text-gray-500 leading-relaxed font-medium">
                 {activeTool === 'move' && '拖动球员图标以调整位置。'}
                 {activeTool === 'line' && '依次点击两名球员，在他们之间建立战术传导连线。'}
                 {activeTool === 'zone' && '点击草地区域以标记战术关键点或重点防区。'}
@@ -216,12 +215,12 @@ export const TacticalSandbox: React.FC = () => {
         </div>
 
         {/* Sandbox Canvas */}
-        <div className="lg:col-span-9 bg-black/40 rounded-[3rem] border border-white/10 p-10 relative overflow-hidden group shadow-2xl flex flex-col gap-6">
+        <div className="lg:col-span-9 bg-card rounded-[3rem] border border-border p-10 relative overflow-hidden group shadow-2xl flex flex-col gap-6">
           <div 
             ref={pitchRef}
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
-            className="w-full aspect-[105/68] rounded-2xl border-2 border-white/10 relative overflow-hidden shadow-inner bg-[#081208]"
+            className="w-full aspect-[105/68] rounded-2xl border-2 border-border relative overflow-hidden shadow-inner bg-[#081208]"
           >
             <div className="absolute inset-0 pointer-events-none">
               <SandboxPitch activeZones={activeZones} />
@@ -289,30 +288,30 @@ export const TacticalSandbox: React.FC = () => {
                 <div className="absolute inset-0 rounded-full bg-white/20 scale-0 group-hover/player:scale-[1.3] transition-transform duration-500 blur-sm pointer-events-none"></div>
                 
                 <span className="text-[10px] font-black text-white relative z-10">{p.number}</span>
-                <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-black/80 px-2 py-0.5 rounded text-[8px] font-black text-gray-300 uppercase opacity-0 group-hover/player:opacity-100 transition-opacity whitespace-nowrap border border-white/5 z-20">
+                <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-black/80 px-2 py-0.5 rounded text-[8px] font-black text-slate-300 dark:text-gray-300 uppercase opacity-0 group-hover/player:opacity-100 transition-opacity whitespace-nowrap border border-white/5 z-20">
                   {p.name}
                 </div>
               </div>
             ))}
           </div>
 
-          <div className="flex justify-between items-center px-4 pt-2 border-t border-white/5">
+          <div className="flex justify-between items-center px-4 pt-2 border-t border-border">
              <div className="flex gap-6">
                 <div>
-                   <p className="text-[10px] text-gray-500 font-black uppercase tracking-widest mb-1">活跃对象</p>
-                   <p className="text-xl font-black text-white">{players.length + tacticalLines.length} <span className="text-xs text-blue-500 font-bold ml-1">UNITS</span></p>
+                   <p className="text-[10px] text-slate-500 dark:text-gray-500 font-black uppercase tracking-widest mb-1">活跃对象</p>
+                   <p className="text-xl font-black text-foreground">{players.length + tacticalLines.length} <span className="text-xs text-blue-500 font-bold ml-1">UNITS</span></p>
                 </div>
-                <div className="w-px h-10 bg-white/5"></div>
+                <div className="w-px h-10 bg-border"></div>
                 <div>
-                   <p className="text-[10px] text-gray-500 font-black uppercase tracking-widest mb-1">创作状态</p>
-                   <p className="text-xl font-black text-orange-400 uppercase">{activeTool === 'move' ? '布阵中' : activeTool === 'line' ? '建立传导' : '防区规划'}</p>
+                   <p className="text-[10px] text-slate-500 dark:text-gray-500 font-black uppercase tracking-widest mb-1">创作状态</p>
+                   <p className="text-xl font-black text-orange-500 dark:text-orange-400 uppercase">{activeTool === 'move' ? '布阵中' : activeTool === 'line' ? '建立传导' : '防区规划'}</p>
                 </div>
              </div>
              
              <div className="flex gap-4">
                 <button 
                   onClick={() => { setTacticalLines([]); setActiveZones([]); }}
-                  className="px-6 py-2 bg-white/5 hover:bg-red-500/10 text-gray-500 hover:text-red-400 text-[10px] font-black uppercase tracking-widest rounded-xl border border-white/5 transition-all"
+                  className="px-6 py-2 bg-foreground/5 hover:bg-red-500/10 text-slate-500 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 text-[10px] font-black uppercase tracking-widest rounded-xl border border-border transition-all"
                 >
                   重置图层
                 </button>

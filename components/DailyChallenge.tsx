@@ -28,7 +28,7 @@ export const DailyChallenge: React.FC = () => {
                 <span className="text-[10px] text-blue-400 font-bold uppercase tracking-widest">+50 积分</span>
             </div>
 
-            <h3 className="text-sm font-bold text-white mb-4 leading-relaxed">{challenge.question}</h3>
+            <h3 className="text-sm font-bold mb-4 leading-relaxed">{challenge.question}</h3>
 
             <div className="space-y-2">
                 {challenge.options.map((option, idx) => (
@@ -39,12 +39,12 @@ export const DailyChallenge: React.FC = () => {
                         className={`w-full text-left p-3 rounded-xl text-xs font-medium transition-all border ${
                             selectedOption === idx 
                                 ? 'bg-blue-600 border-blue-400 text-white' 
-                                : 'bg-white/5 border-white/10 text-gray-400 hover:bg-white/10'
-                        } ${isSubmitted && idx === challenge.correctIndex ? 'border-green-500 bg-green-500/20 text-green-400' : ''}
-                        ${isSubmitted && selectedOption === idx && idx !== challenge.correctIndex ? 'border-red-500 bg-red-500/20 text-red-400' : ''}`}
+                                : 'bg-foreground/5 border-border text-slate-500 dark:text-slate-400 hover:bg-foreground/10'
+                        } ${isSubmitted && idx === challenge.correctIndex ? 'border-green-500 bg-green-500/20 text-green-500' : ''}
+                        ${isSubmitted && selectedOption === idx && idx !== challenge.correctIndex ? 'border-red-500 bg-red-500/20 text-red-500' : ''}`}
                     >
                         <div className="flex items-center gap-3">
-                            <span className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-[10px] font-black">{String.fromCharCode(65 + idx)}</span>
+                            <span className="w-5 h-5 rounded-full bg-foreground/10 flex items-center justify-center text-[10px] font-black">{String.fromCharCode(65 + idx)}</span>
                             {option}
                         </div>
                     </button>
@@ -56,15 +56,15 @@ export const DailyChallenge: React.FC = () => {
                     onClick={() => setIsSubmitted(true)}
                     disabled={selectedOption === null}
                     className={`mt-4 w-full py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${
-                        selectedOption !== null ? 'bg-blue-600 text-white shadow-lg' : 'bg-white/5 text-gray-600 cursor-not-allowed'
+                        selectedOption !== null ? 'bg-blue-600 text-white shadow-lg' : 'bg-foreground/5 text-slate-500 dark:text-slate-400 cursor-not-allowed'
                     }`}
                 >
                     提交分析
                 </button>
             ) : (
-                <div className="mt-4 p-3 bg-white/5 rounded-xl border border-white/10 animate-fade-in">
-                    <p className="text-[10px] font-black text-blue-400 uppercase mb-1">战术复盘</p>
-                    <p className="text-[11px] text-gray-400 leading-relaxed italic">{challenge.explanation}</p>
+                <div className="mt-4 p-3 bg-foreground/5 rounded-xl border border-border animate-fade-in">
+                    <p className="text-[10px] font-black text-blue-500 uppercase mb-1">战术复盘</p>
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed italic">{challenge.explanation}</p>
                 </div>
             )}
         </div>

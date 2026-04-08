@@ -176,7 +176,7 @@ export const TacticalVisualizer: React.FC<TacticalVisualizerProps> = ({ type, si
   );
 
   return (
-    <div className={`rounded-2xl overflow-hidden border border-white/10 bg-black/60 shadow-inner flex items-center justify-center ${isLarge ? 'p-6' : 'p-3'}`} style={{ width, height }}>
+    <div className={`rounded-2xl overflow-hidden border border-border bg-foreground/5 shadow-inner flex items-center justify-center ${isLarge ? 'p-6' : 'p-3'}`} style={{ width, height }}>
       {renderAnimation()}
     </div>
   );

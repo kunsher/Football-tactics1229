@@ -211,15 +211,15 @@ export const TacticBoard: React.FC<TacticBoardProps> = ({
             {/* 比赛实况 HUD - 仅保留非阻塞性的基础信息 */}
             {currentPhase?.matchMinute && (
                 <div className="absolute top-6 left-6 z-[100] animate-fade-in pointer-events-none">
-                    <div className="bg-black/80 backdrop-blur-xl border border-white/10 rounded-xl px-4 py-2 flex items-center gap-4 shadow-2xl">
+                    <div className="bg-card/80 backdrop-blur-xl border border-border rounded-xl px-4 py-2 flex items-center gap-4 shadow-2xl">
                         <div className="flex flex-col">
                             <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Match Time</span>
-                            <span className="text-xl font-black text-white font-mono tabular-nums leading-none">{currentPhase.matchMinute}</span>
+                            <span className="text-xl font-black font-mono tabular-nums leading-none">{currentPhase.matchMinute}</span>
                         </div>
-                        <div className="w-px h-8 bg-white/10"></div>
+                        <div className="w-px h-8 bg-border"></div>
                         <div className="flex flex-col">
                             <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Score</span>
-                            <span className="text-xl font-black text-blue-400 tracking-tighter leading-none">{currentPhase.matchContext || '0 - 0'}</span>
+                            <span className="text-xl font-black text-blue-500 tracking-tighter leading-none">{currentPhase.matchContext || '0 - 0'}</span>
                         </div>
                     </div>
                 </div>

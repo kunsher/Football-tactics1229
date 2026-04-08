@@ -1,6 +1,7 @@
 
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: 'class',
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
@@ -8,6 +9,12 @@ export default {
   ],
   theme: {
     extend: {
+      colors: {
+        background: 'rgba(var(--background), <alpha-value>)',
+        foreground: 'rgba(var(--foreground), <alpha-value>)',
+        card: 'rgba(var(--card), <alpha-value>)',
+        border: 'rgba(var(--border), <alpha-value>)',
+      },
       animation: {
         'fade-in': 'fadeIn 0.3s ease-out forwards',
         'reveal-right': 'revealRight 0.8s cubic-bezier(0.19, 1, 0.22, 1) forwards',

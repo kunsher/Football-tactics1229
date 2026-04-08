@@ -38,8 +38,8 @@ export const LoginModal: React.FC<LoginModalProps> = ({ onLoginSuccess, onClose 
     };
 
     return (
-        <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md animate-fade-in">
-            <div className="relative w-full max-w-md bg-[#0a0f14] border border-blue-500/30 rounded-[2.5rem] p-10 shadow-[0_0_100px_rgba(59,130,246,0.2)] overflow-hidden">
+        <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4 bg-black/60 dark:bg-black/90 backdrop-blur-md animate-fade-in">
+            <div className="relative w-full max-w-md bg-card border border-border rounded-[2.5rem] p-10 shadow-2xl overflow-hidden">
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent"></div>
                 
                 <div className="relative z-10">
@@ -47,10 +47,10 @@ export const LoginModal: React.FC<LoginModalProps> = ({ onLoginSuccess, onClose 
                         <div className="w-16 h-16 bg-blue-600/10 rounded-2xl flex items-center justify-center border border-blue-500/30 mb-4">
                             <span className="text-2xl">{isRegister ? '📝' : '🔐'}</span>
                         </div>
-                        <h2 className="text-2xl font-black text-white uppercase tracking-tighter">
+                        <h2 className="text-2xl font-black text-foreground dark:text-white uppercase tracking-tighter">
                             {isRegister ? '创建分析师账号' : '同步战术基因'}
                         </h2>
-                        <p className="text-[10px] text-gray-500 font-bold uppercase tracking-[0.2em] mt-2">
+                        <p className="text-[10px] text-slate-500 dark:text-gray-500 font-bold uppercase tracking-[0.2em] mt-2">
                             {isRegister ? 'Join the Tactical Elite' : 'Access Tactical Intelligence'}
                         </p>
                     </div>
@@ -63,39 +63,39 @@ export const LoginModal: React.FC<LoginModalProps> = ({ onLoginSuccess, onClose 
                         )}
 
                         <div className="space-y-1.5">
-                            <label className="text-[10px] text-gray-500 font-black uppercase tracking-widest pl-1">账号 / USERNAME</label>
+                            <label className="text-[10px] text-slate-500 dark:text-gray-500 font-black uppercase tracking-widest pl-1">账号 / USERNAME</label>
                             <input 
                                 type="text" 
                                 required
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
-                                className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-white text-sm focus:outline-none focus:border-blue-500/50 transition-all placeholder:text-gray-700"
+                                className="w-full bg-foreground/5 border border-border rounded-xl py-3 px-4 text-foreground dark:text-white text-sm focus:outline-none focus:border-blue-500/50 transition-all placeholder:text-slate-400 dark:placeholder:text-gray-700"
                                 placeholder="输入通行证 ID"
                             />
                         </div>
 
                         {isRegister && (
                             <div className="space-y-1.5">
-                                <label className="text-[10px] text-gray-500 font-black uppercase tracking-widest pl-1">昵称 / NICKNAME</label>
+                                <label className="text-[10px] text-slate-500 dark:text-gray-500 font-black uppercase tracking-widest pl-1">昵称 / NICKNAME</label>
                                 <input 
                                     type="text" 
                                     required
                                     value={nickname}
                                     onChange={(e) => setNickname(e.target.value)}
-                                    className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-white text-sm focus:outline-none focus:border-blue-500/50 transition-all placeholder:text-gray-700"
+                                    className="w-full bg-foreground/5 border border-border rounded-xl py-3 px-4 text-foreground dark:text-white text-sm focus:outline-none focus:border-blue-500/50 transition-all placeholder:text-slate-400 dark:placeholder:text-gray-700"
                                     placeholder="你的公开代号"
                                 />
                             </div>
                         )}
 
                         <div className="space-y-1.5">
-                            <label className="text-[10px] text-gray-500 font-black uppercase tracking-widest pl-1">密码 / PASSWORD</label>
+                            <label className="text-[10px] text-slate-500 dark:text-gray-500 font-black uppercase tracking-widest pl-1">密码 / PASSWORD</label>
                             <input 
                                 type="password" 
                                 required
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-white text-sm focus:outline-none focus:border-blue-500/50 transition-all placeholder:text-gray-700"
+                                className="w-full bg-foreground/5 border border-border rounded-xl py-3 px-4 text-foreground dark:text-white text-sm focus:outline-none focus:border-blue-500/50 transition-all placeholder:text-slate-400 dark:placeholder:text-gray-700"
                                 placeholder="••••••••"
                             />
                         </div>
@@ -116,15 +116,15 @@ export const LoginModal: React.FC<LoginModalProps> = ({ onLoginSuccess, onClose 
                             <button 
                                 type="button"
                                 onClick={() => setIsRegister(!isRegister)}
-                                className="text-xs text-gray-500 hover:text-blue-400 font-bold transition-colors uppercase tracking-widest py-2"
+                                className="text-xs text-slate-500 dark:text-gray-500 hover:text-blue-500 dark:hover:text-blue-400 font-bold transition-colors uppercase tracking-widest py-2"
                             >
                                 {isRegister ? '已有账号？立即登录' : '没有账号？创建新身份'}
                             </button>
                         </div>
                     </form>
 
-                    <div className="mt-10 pt-6 border-t border-white/5 text-center">
-                        <button onClick={onClose} className="text-[10px] text-gray-600 font-black uppercase tracking-widest hover:text-white transition-colors">
+                    <div className="mt-10 pt-6 border-t border-border text-center">
+                        <button onClick={onClose} className="text-[10px] text-slate-500 dark:text-gray-600 font-black uppercase tracking-widest hover:text-foreground dark:hover:text-white transition-colors">
                             暂不登录，以访客身份继续
                         </button>
                     </div>

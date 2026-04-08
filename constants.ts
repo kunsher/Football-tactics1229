@@ -92,6 +92,19 @@ export const BATTLES: Battle[] = [
       { subject: '转换效率', A: 85, B: 90, fullMark: 100 },
       { subject: '阵型紧凑', A: 92, B: 80, fullMark: 100 },
       { subject: '进攻广度', A: 98, B: 50, fullMark: 100 },
+    ],
+    leagueStandings: [
+      { pos: 1, team: '巴塞罗那', p: 38, w: 30, d: 6, l: 2, pts: 96, isCurrent: true },
+      { pos: 2, team: '皇家马德里', p: 38, w: 29, d: 5, l: 4, pts: 92 },
+      { pos: 3, team: '瓦伦西亚', p: 38, w: 21, d: 8, l: 9, pts: 71 },
+      { pos: 4, team: '比利亚雷亚尔', p: 38, w: 18, d: 8, l: 12, pts: 62 },
+      { pos: 5, team: '塞维利亚', p: 38, w: 17, d: 7, l: 14, pts: 58 },
+    ],
+    h2hData: [
+      { date: '2011-05-28', score: '3 - 1', winner: 'home', competition: 'Champions League' },
+      { date: '2009-05-27', score: '2 - 0', winner: 'home', competition: 'Champions League' },
+      { date: '2008-04-29', score: '1 - 0', winner: 'away', competition: 'Champions League' },
+      { date: '2008-04-23', score: '0 - 0', winner: 'draw', competition: 'Champions League' },
     ]
   },
   {
@@ -146,6 +159,18 @@ export const BATTLES: Battle[] = [
       { subject: '体能储备', A: 75, B: 100, fullMark: 100 },
       { subject: '经验值', A: 100, B: 80, fullMark: 100 },
       { subject: '意志力', A: 60, B: 100, fullMark: 100 },
+    ],
+    leagueStandings: [
+      { pos: 1, team: '尤文图斯', p: 38, w: 26, d: 8, l: 4, pts: 86 },
+      { pos: 2, team: 'AC米兰', p: 38, w: 24, d: 7, l: 7, pts: 79, isCurrent: true },
+      { pos: 3, team: '国际米兰', p: 38, w: 18, d: 18, l: 2, pts: 72 },
+      { pos: 4, team: '乌迪内斯', p: 38, w: 17, d: 11, l: 10, pts: 62 },
+      { pos: 5, team: '桑普多利亚', p: 38, w: 17, d: 10, l: 11, pts: 61 },
+    ],
+    h2hData: [
+      { date: '2005-05-25', score: '3 - 3', winner: 'draw', competition: 'Champions League' },
+      { date: '2002-04-18', score: '1 - 0', winner: 'home', competition: 'UEFA Cup' },
+      { date: '2002-04-04', score: '0 - 0', winner: 'draw', competition: 'UEFA Cup' },
     ]
   },
   {
@@ -211,6 +236,19 @@ export const BATTLES: Battle[] = [
       { subject: '控球效率', A: 40, B: 98, fullMark: 100 },
       { subject: '身体负荷', A: 92, B: 88, fullMark: 100 },
       { subject: '战术执行', A: 100, B: 85, fullMark: 100 },
+    ],
+    leagueStandings: [
+      { pos: 1, team: '皇家马德里', p: 38, w: 32, d: 4, l: 2, pts: 100, isCurrent: true },
+      { pos: 2, team: '巴塞罗那', p: 38, w: 28, d: 7, l: 3, pts: 91 },
+      { pos: 3, team: '瓦伦西亚', p: 38, w: 17, d: 10, l: 11, pts: 61 },
+      { pos: 4, team: '马拉加', p: 38, w: 17, d: 7, l: 14, pts: 58 },
+      { pos: 5, team: '马德里竞技', p: 38, w: 15, d: 11, l: 12, pts: 56 },
+    ],
+    h2hData: [
+      { date: '2012-04-21', score: '2 - 1', winner: 'home', competition: 'La Liga' },
+      { date: '2012-01-25', score: '2 - 2', winner: 'draw', competition: 'Copa del Rey' },
+      { date: '2012-01-18', score: '1 - 2', winner: 'away', competition: 'Copa del Rey' },
+      { date: '2011-12-10', score: '1 - 3', winner: 'away', competition: 'La Liga' },
     ]
   },
   {
@@ -276,6 +314,19 @@ export const BATTLES: Battle[] = [
       { subject: '转换打击', A: 95, B: 60, fullMark: 100 },
       { subject: '战术纪律', A: 100, B: 80, fullMark: 100 },
       { subject: '意志力', A: 100, B: 90, fullMark: 100 },
+    ],
+    leagueStandings: [
+      { pos: 1, team: '国际米兰', p: 38, w: 24, d: 10, l: 4, pts: 82, isCurrent: true },
+      { pos: 2, team: '罗马', p: 38, w: 24, d: 8, l: 6, pts: 80 },
+      { pos: 3, team: 'AC米兰', p: 38, w: 20, d: 10, l: 8, pts: 70 },
+      { pos: 4, team: '桑普多利亚', p: 38, w: 19, d: 10, l: 9, pts: 67 },
+      { pos: 5, team: '巴勒莫', p: 38, w: 18, d: 11, l: 9, pts: 65 },
+    ],
+    h2hData: [
+      { date: '2010-04-20', score: '3 - 1', winner: 'home', competition: 'Champions League' },
+      { date: '2010-04-28', score: '0 - 1', winner: 'away', competition: 'Champions League' },
+      { date: '2009-11-24', score: '0 - 2', winner: 'away', competition: 'Champions League' },
+      { date: '2009-09-16', score: '0 - 0', winner: 'draw', competition: 'Champions League' },
     ]
   }
 ];
